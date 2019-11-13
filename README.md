@@ -2,6 +2,9 @@
 
 A full fledged image to act as a Jenkins Agent. It is based on buildpack-deps:bionic, and it is a mashup of jenkins/slave with docker:dind.
 
+- Source code: https://github.com/felipecassiors/jenkins-agent-dind
+- Docker image: https://hub.docker.com/r/felipecassiors/jenkins-agent-dind
+
 ## Features
 
 - Based on Ubuntu 18.04 Bionic: a more common OS to run your builds.
@@ -18,13 +21,13 @@ Spin this agent in shell, if you want to play with it:
 
 ```sh
 # Fetches the latest version
-docker pull felipecassiors/jenkins-agent-docker:dind
+docker pull felipecassiors/jenkins-agent-dind
 # --privilged: needed for running Docker in Docker
 # --rm: besides removing the container when stopped, also removes the dangling volumes created by it
 # -ti: allocates a pseudo-TTY in order to run the default command, wich is bash
-docker run --privileged --rm -ti --name jenkins-agent-dind felipecassiors/jenkins-agent-docker:dind
+docker run --privileged --rm -ti --name jenkins-agent-dind felipecassiors/jenkins-agent-dind
 ```
 
 ### Agent Template in Docker Cloud configuration on Jenkins
 
-[Sample Agent Template configuration](docs/jenkins-agent-template-sample.png)
+![Sample Agent Template configuration](docs/jenkins-agent-template-sample.png)
