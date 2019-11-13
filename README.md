@@ -1,6 +1,6 @@
 # Jenkins Agent with Docker installed
 
-A full fledged image to act as a Jenkins Agent. It is based on buildpack-deps:bionic, and it is a mashup of jenkins/slave with docker:dind.
+A full fledged Docker in Docker image to act as a Jenkins Agent. Based on [buildpack-deps:bionic](https://github.com/docker-library/buildpack-deps/blob/master/bionic/Dockerfile), it is a mashup of [jenkins/slave](https://github.com/jenkinsci/docker-slave/blob/master/Dockerfile) with [docker:dind](https://github.com/docker-library/docker/blob/master/Dockerfile-dind.template).
 
 - Source code: https://github.com/felipecassiors/jenkins-agent-dind
 - Docker image: https://hub.docker.com/r/felipecassiors/jenkins-agent-dind
