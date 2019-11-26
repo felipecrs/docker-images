@@ -1,5 +1,6 @@
 FROM buildpack-deps:bionic
 
+SHELL ["/bin/bash", "-c"]
 ARG DEBIANFRONTEND=noninteractive
 
 USER root
@@ -76,4 +77,4 @@ USER root
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT [ "entrypoint.sh" ]
-CMD [ "bash" ]
+CMD [ "/bin/bash" ]
