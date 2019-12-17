@@ -23,7 +23,7 @@ RUN apt-get update && \
 	jq \
 	# Because of jenkins/slave
 	openjdk-8-jdk \
-	# Required to run Docker daemon in entrypoint 
+	# Required to run Docker daemon in entrypoint
 	supervisor \
 	# Required to go back to jenkins user in entrypoint
 	gosu \
@@ -38,6 +38,11 @@ RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.d
 
 RUN curl -fsSL https://get.docker.com | sh && \
 	usermod --append --groups docker ${user}
+
+RUN set -ex; \
+	VERSION=$(curl -fsL https://api.github.com/repos/docker/compose/releases/latest | jq .name -r); \
+	curl -fsSL "https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose; \
+	chmod +x /usr/local/bin/docker-compose
 
 RUN rm -rf /var/lib/apt/lists/*
 
