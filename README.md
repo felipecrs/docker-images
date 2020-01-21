@@ -1,5 +1,9 @@
 # Jenkins Agent with Docker in Docker
 
+[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/felipecassiors/jenkins-agent-dind)](https://hub.docker.com/r/felipecassiors/jenkins-agent-dind/builds)
+[![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/felipecassiors/jenkins-agent-dind)](https://hub.docker.com/r/felipecassiors/jenkins-agent-dind/builds)
+[![Docker Pulls](https://img.shields.io/docker/pulls/felipecassiors/jenkins-agent-dind)](https://hub.docker.com/r/felipecassiors/jenkins-agent-dind)
+
 A full fledged Docker in Docker image to act as a Jenkins Agent. Based on [buildpack-deps:bionic](https://github.com/docker-library/buildpack-deps/blob/master/bionic/Dockerfile), it is a mashup of [jenkins/slave](https://github.com/jenkinsci/docker-slave/blob/master/Dockerfile) with [docker:dind](https://github.com/docker-library/docker/blob/master/Dockerfile-dind.template).
 
 - Source code: https://github.com/felipecassiors/jenkins-agent-dind
