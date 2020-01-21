@@ -90,6 +90,9 @@ RUN set -euxo pipefail; \
     | tar -xJf - --strip-components=1 -C /usr/local/bin shellcheck-stable/shellcheck; \
     chmod +x /usr/local/bin/shellcheck
 
+# Install bats
+RUN npm install -g bats
+
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT [ "entrypoint.sh" ]
