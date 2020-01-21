@@ -18,7 +18,7 @@ RUN apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository -y ppa:git-core/ppa && \
     apt-get update && \
-    apt-get install -y \
+    apt-get install -qq \
     git \
     jq \
     # Because of jenkins/slave
@@ -78,6 +78,11 @@ VOLUME ${AGENT_WORKDIR}
 WORKDIR /home/${user}
 
 USER root
+
+# Node.js v12.x
+RUN set -euxo pipefail; \
+    curl -fsSL https://deb.nodesource.com/setup_12.x | bash -; \
+    apt-get install -qq nodejs
 
 # Install shellcheck
 RUN set -euxo pipefail; \
