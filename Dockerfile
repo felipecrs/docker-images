@@ -1,5 +1,8 @@
 FROM buildpack-deps:bionic
 
+ADD https://github.com/just-containers/s6-overlay/releases/download/v1.22.1.0/s6-overlay-amd64.tar.gz /tmp/
+RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C /
+
 SHELL ["/bin/bash", "-c"]
 ARG DEBIANFRONTEND=noninteractive
 
@@ -92,7 +95,11 @@ RUN set -euxo pipefail; \
 # Install bats
 RUN npm install -g bats
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-ENTRYPOINT [ "entrypoint.sh" ]
+RUN set -ex; \
+    mkdir -p /etc/services.d/dind; \
+    printf "#!/usr/bin/execlineb -P\n/usr/local/bin/dind dockerd --host=unix:///var/run/docker.sock" > /etc/services.d/dind/run; \
+    printf "#!/usr/bin/execlineb -S0\ns6-svscanctl -t /var/run/s6/services" > /etc/services.d/dind/finish
+
+ENTRYPOINT [ "/init" ]
+
 CMD [ "/bin/bash" ]
