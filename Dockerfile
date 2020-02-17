@@ -98,7 +98,14 @@ RUN npm install -g bats
 RUN set -exo pipefail; \
     curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-ENTRYPOINT [ "entrypoint.sh" ]
-CMD [ "/bin/bash" ]
+# s6-overlay
+ADD https://github.com/just-containers/s6-overlay/releases/download/v1.22.1.0/s6-overlay-amd64.tar.gz /tmp/
+RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C /
+RUN set -ex; \
+    mkdir -p /etc/services.d/dind; \
+    printf '#!/usr/bin/execlineb -P\ns6-notifyoncheck -c "docker version"\n/usr/local/bin/dind dockerd' > /etc/services.d/dind/run; \
+    echo '3' > /etc/services.d/dind/notification-fd; \
+    printf '#!/usr/bin/execlineb -S0\ns6-svscanctl -t /var/run/s6/services' > /etc/services.d/dind/finish
+ENV S6_CMD_WAIT_FOR_SERVICES=1
+ENTRYPOINT [ "/init", "gosu", "jenkins" ]
+CMD [ "bash" ]
