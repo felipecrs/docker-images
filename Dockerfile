@@ -92,6 +92,10 @@ RUN set -euxo pipefail; \
 # Install bats
 RUN npm install -g bats
 
+# Install Helm
+RUN set -exo pipefail; \
+    curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 ENTRYPOINT [ "entrypoint.sh" ]
