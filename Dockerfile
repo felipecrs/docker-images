@@ -55,9 +55,11 @@ RUN set -x \
     && echo 'dockremap:165536:65536' >> /etc/subuid \
     && echo 'dockremap:165536:65536' >> /etc/subgid
 
-ARG DIND_COMMIT=3b5fac462d21ca164b3778647420016315289034
-RUN wget -O /usr/local/bin/dind "https://raw.githubusercontent.com/docker/docker/${DIND_COMMIT}/hack/dind" \
-    && chmod +x /usr/local/bin/dind
+RUN set -eux; \
+    dind_commit=37498f009d8bf25fbb6199e8ccd34bed84f2874b; \
+    dind_file=/usr/local/bin/dind; \
+    wget -qO "$dind_file" "https://raw.githubusercontent.com/docker/docker/$dind_commit/hack/dind"; \
+    chmod +x "$dind_file"
 
 VOLUME /var/lib/docker
 
