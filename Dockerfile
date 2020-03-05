@@ -13,24 +13,26 @@ ARG gid=1000
 RUN groupadd -g ${gid} ${group}
 RUN useradd -c "Jenkins user" -d /home/${user} -u ${uid} -g ${gid} -m ${user}
 
-RUN apt-get update && \
-    # To get latest version of git
-    apt-get install -y software-properties-common && \
-    add-apt-repository -y ppa:git-core/ppa && \
-    apt-get update && \
-    apt-get install -qq \
-    git \
-    jq \
-    # Because of jenkins/slave
-    openjdk-8-jdk \
-    # Required to run Docker daemon in entrypoint
-    supervisor \
-    # Required to go back to jenkins user in entrypoint
-    gosu \
-    # Required to run Docker in Docker
-    iptables \
-    xz-utils \
-    btrfs-progs
+RUN set -exo pipefail; \
+    apt-get update; \
+    apt-get install -yq software-properties-common; \
+    wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -; \
+    add-apt-repository -y ppa:git-core/ppa; \
+    add-apt-repository -y https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/; \
+    apt-get update; \
+    apt-get install -yq \
+        git \
+        jq \
+        # Because of jenkins/slave
+        adoptopenjdk-8-hotspot \
+        # Required to run Docker daemon in entrypoint
+        supervisor \
+        # Required to go back to jenkins user in entrypoint
+        gosu \
+        # Required to run Docker in Docker
+        iptables \
+        xz-utils \
+        btrfs-progs
 
 # Because of jenkins/slave
 RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
