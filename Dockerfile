@@ -3,15 +3,13 @@ FROM buildpack-deps:bionic
 SHELL ["/bin/bash", "-c"]
 ARG DEBIANFRONTEND=noninteractive
 
-USER root
-
 ARG user=jenkins
 ARG group=jenkins
 ARG uid=1000
 ARG gid=1000
 
 RUN groupadd -g ${gid} ${group}
-RUN useradd -c "Jenkins user" -d /home/${user} -u ${uid} -g ${gid} -m ${user}
+RUN useradd -c "Jenkins user" -d /home/${user} -u ${uid} -g ${gid} -m ${user} -s /bin/bash
 
 RUN set -exo pipefail; \
     apt-get update; \
