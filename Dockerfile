@@ -19,18 +19,18 @@ RUN set -exo pipefail; \
     add-apt-repository -y https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/; \
     apt-get update; \
     apt-get install -yq \
-        git \
-        jq \
-        # Because of jenkins/slave
-        adoptopenjdk-8-hotspot \
-        # Required to run Docker daemon in entrypoint
-        supervisor \
-        # Required to go back to jenkins user in entrypoint
-        gosu \
-        # Required to run Docker in Docker
-        iptables \
-        xz-utils \
-        btrfs-progs
+    git \
+    jq \
+    # Because of jenkins/slave
+    adoptopenjdk-8-hotspot \
+    # Required to run Docker daemon in entrypoint
+    supervisor \
+    # Required to go back to jenkins user in entrypoint
+    gosu \
+    # Required to run Docker in Docker
+    iptables \
+    xz-utils \
+    btrfs-progs
 
 # Because of jenkins/slave
 RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
@@ -97,6 +97,17 @@ RUN npm install -g bats
 # Install Helm
 RUN set -exo pipefail; \
     curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+# Install kind
+RUN set -ex; \
+    curl -fsSLo /usr/local/bin/kind "https://kind.sigs.k8s.io/dl/v0.7.0/kind-$(uname)-amd64"; \
+    chmod +x /usr/local/bin/kind
+
+# Install kubectl
+RUN set -exo pipefail; \
+    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -; \
+    add-apt-repository --yes --update "deb https://apt.kubernetes.io/ kubernetes-xenial main"; \
+    apt-get install -y kubectl
 
 # s6-overlay
 ADD https://github.com/just-containers/s6-overlay/releases/download/v1.22.1.0/s6-overlay-amd64.tar.gz /tmp/
