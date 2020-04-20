@@ -78,6 +78,8 @@ VOLUME /home/${user}/.jenkins
 VOLUME ${AGENT_WORKDIR}
 WORKDIR /home/${user}
 
+ENV CI=true
+
 USER root
 
 # Node.js v12.x
