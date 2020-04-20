@@ -94,6 +94,11 @@ RUN set -euxo pipefail; \
 # Install bats
 RUN npm install -g bats
 
+# Install Ansible
+RUN set -ex; \
+    apt-add-repository --yes --update ppa:ansible/ansible; \
+    apt-get install -y ansible
+
 # Install Helm
 RUN set -exo pipefail; \
     curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
