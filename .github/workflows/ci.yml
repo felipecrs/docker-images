@@ -1,0 +1,51 @@
+on:
+  push:
+    # Publish `master` as Docker `latest` image.
+    branches:
+      - master
+
+  # Run tests for any PRs.
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: felipecassiors/jenkins-agent-dind
+      IMAGE_NAME_WITH_SHA: felipecassiors/jenkins-agent-dind:${{ github.sha }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        run: docker build . -t $IMAGE_NAME
+
+      - name: Log into Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Push image tagged as commit sha
+        run: |
+          docker tag $IMAGE_NAME $IMAGE_NAME_WITH_SHA
+          docker push $IMAGE_NAME_WITH_SHA
+
+      # - name: Create commit comment with pull snippet
+      #   uses: peter-evans/commit-comment@v1
+      #   with:
+      #     body: |
+      #       The image of this commit was pushed to Docker Hub. Check it out
+      #       `$ docker pull ${{ env.IMAGE_NAME_WITH_SHA }}`
+
+      - name: Push image tagged as latest
+        # Only runs when commit is pushed to master
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        run: docker push $IMAGE_NAME
+
+      - name: Update Docker Hub Description
+        # Only runs when commit is pushed to master
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        uses: peter-evans/dockerhub-description@v2
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+          DOCKERHUB_REPOSITORY: felipecassiors/jenkins-agent-dind
