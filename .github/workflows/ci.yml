@@ -35,7 +35,7 @@ jobs:
         with:
           body: |
             The image of this commit was pushed to Docker Hub. Check it out
-            `$ docker pull $IMAGE_NAME_WITH_SHA`
+            `$ docker pull ${{ env.IMAGE_NAME_WITH_SHA }}`
 
       - name: Push image tagged as latest
         # Only runs when commit is pushed to master
