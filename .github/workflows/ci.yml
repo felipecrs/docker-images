@@ -9,7 +9,7 @@ on:
 
 env:
   IMAGE_NAME: felipecassiors/jenkins-agent-dind
-  IMAGE_NAME_WITH_SHA: ${{ IMAGE_NAME }}:${{ github.sha }}
+  IMAGE_NAME_WITH_SHA: $IMAGE_NAME:${{ github.sha }}
 
 jobs:
   ci:
@@ -42,4 +42,4 @@ jobs:
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-          DOCKERHUB_REPOSITORY: ${{ IMAGE_NAME }}
+          DOCKERHUB_REPOSITORY: $IMAGE_NAME
