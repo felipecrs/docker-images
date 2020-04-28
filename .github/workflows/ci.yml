@@ -1,5 +1,3 @@
-name: Docker
-
 on:
   push:
     # Publish `master` as Docker `latest` image.
@@ -11,11 +9,12 @@ on:
 
 env:
   IMAGE_NAME: felipecassiors/jenkins-agent-dind
+  IMAGE_NAME_WITH_SHA: ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
 jobs:
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
-  build-and-push:
+  ci:
     # Ensure test job passes before pushing image.
     needs: test
 
@@ -33,10 +32,6 @@ jobs:
 
       - name: Push image tagged as commit sha
         run: |
-          IMAGE_NAME_WITH_SHA=$IMAGE_NAME:$GITHUB_SHA
-
-          echo IMAGE_NAME_WITH_SHA=$IMAGE_NAME_WITH_SHA
-
           docker tag $IMAGE_NAME $IMAGE_NAME_WITH_SHA
           docker push $IMAGE_NAME_WITH_SHA
 
