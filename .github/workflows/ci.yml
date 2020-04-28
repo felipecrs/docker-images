@@ -1,3 +1,5 @@
+name: ci
+
 on:
   push:
     # Publish `master` as Docker `latest` image.
