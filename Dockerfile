@@ -15,13 +15,15 @@ RUN set -exo pipefail; \
     apt-get update; \
     apt-get install -yq software-properties-common; \
     wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add -; \
-    add-apt-repository -y ppa:git-core/ppa; \
     add-apt-repository -y https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/; \
+    add-apt-repository -y ppa:git-core/ppa; \
+    add-apt-repository -y ppa:rmescandon/yq; \
     apt-get update; \
     apt-get install -yq \
     git \
     tree \
     jq \
+    yq \
     # Because of jenkins/slave
     adoptopenjdk-8-hotspot \
     # Required to run Docker daemon in entrypoint
