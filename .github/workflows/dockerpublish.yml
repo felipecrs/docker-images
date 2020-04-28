@@ -6,43 +6,20 @@ on:
     branches:
       - master
 
-    # Publish `v1.2.3` tags as releases.
-    tags:
-      - v*
-
   # Run tests for any PRs.
   pull_request:
 
 env:
-  # TODO: Change variable to your image's name.
   IMAGE_NAME: felipecassiors/jenkins-agent-dind
 
 jobs:
-  # Run tests.
-  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Run tests
-        run: |
-          if [ -f docker-compose.test.yml ]; then
-            docker-compose --file docker-compose.test.yml build
-            docker-compose --file docker-compose.test.yml run sut
-          else
-            docker build . --file Dockerfile
-          fi
-
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/
-  push:
+  build-and-push:
     # Ensure test job passes before pushing image.
     needs: test
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v2
@@ -51,12 +28,26 @@ jobs:
         run: docker build . -t $IMAGE_NAME
 
       - name: Log into Docker Hub
+        if: github.event_name == 'push'
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      - name: Push image
+      - name: Push image tagged as commit sha
+        run: |
+          IMAGE_NAME_WITH_SHA=$IMAGE_NAME:$GITHUB_SHA
+
+          echo IMAGE_NAME_WITH_SHA=$IMAGE_NAME_WITH_SHA
+
+          docker tag $IMAGE_NAME $IMAGE_NAME_WITH_SHA
+          docker push $IMAGE_NAME_WITH_SHA
+
+      - name: Push image tagged as latest
+        # Only runs when commit is pushed to master
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: docker push $IMAGE_NAME
 
       - name: Update Docker Hub Description
+        # Only runs when commit is pushed to master
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         uses: peter-evans/dockerhub-description@v2
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
