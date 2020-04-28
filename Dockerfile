@@ -20,6 +20,7 @@ RUN set -exo pipefail; \
     apt-get update; \
     apt-get install -yq \
     git \
+    tree \
     jq \
     # Because of jenkins/slave
     adoptopenjdk-8-hotspot \
