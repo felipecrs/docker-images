@@ -7,13 +7,13 @@ on:
   # Run tests for any PRs.
   pull_request:
 
-env:
-  IMAGE_NAME: felipecassiors/jenkins-agent-dind
-  IMAGE_NAME_WITH_SHA: $IMAGE_NAME:${{ github.sha }}
-
 jobs:
   ci:
     runs-on: ubuntu-latest
+
+    env:
+      IMAGE_NAME: felipecassiors/jenkins-agent-dind
+      IMAGE_NAME_WITH_SHA: felipecassiors/jenkins-agent-dind:${{ github.sha }}
 
     steps:
       - uses: actions/checkout@v2
@@ -29,6 +29,13 @@ jobs:
         run: |
           docker tag $IMAGE_NAME $IMAGE_NAME_WITH_SHA
           docker push $IMAGE_NAME_WITH_SHA
+
+      - name: Create commit comment with pull snippet
+        uses: peter-evans/commit-comment@v1
+        with:
+          body: |
+            The image of this commit was pushed to Docker Hub. Check it out
+            `$ docker pull $IMAGE_NAME_WITH_SHA`
 
       - name: Push image tagged as latest
         # Only runs when commit is pushed to master
