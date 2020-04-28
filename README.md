@@ -1,7 +1,6 @@
 # Jenkins Agent with Docker in Docker
 
-[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/felipecassiors/jenkins-agent-dind)](https://hub.docker.com/r/felipecassiors/jenkins-agent-dind/builds)
-[![Docker Cloud Automated build](https://img.shields.io/docker/cloud/automated/felipecassiors/jenkins-agent-dind)](https://hub.docker.com/r/felipecassiors/jenkins-agent-dind/builds)
+[![CI on GitHub Actions](https://github.com/felipecassiors/jenkins-agent-dind/workflows/.github/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/felipecassiors/jenkins-agent-dind/actions?query=workflow%3A.github%2Fworkflows%2Fci.yml+branch%3Amaster+event%3Apush)
 [![Docker Pulls](https://img.shields.io/docker/pulls/felipecassiors/jenkins-agent-dind)](https://hub.docker.com/r/felipecassiors/jenkins-agent-dind)
 
 A full fledged Docker in Docker image to act as a Jenkins Agent. Based on [buildpack-deps:bionic](https://github.com/docker-library/buildpack-deps/blob/master/bionic/Dockerfile), it is a mashup of [jenkins/slave](https://github.com/jenkinsci/docker-slave/blob/master/Dockerfile) with [docker:dind](https://github.com/docker-library/docker/blob/master/Dockerfile-dind.template).
@@ -26,10 +25,10 @@ Spin this agent in shell, if you want to play with it:
 ```sh
 # Fetches the latest version
 docker pull felipecassiors/jenkins-agent-dind
+# -ti: allocates a pseudo-TTY in order to run the default command, which is bash
+# --rm: removes the container after using it (don't forget to remove the volumes created by it)
 # --privilged: needed for running Docker in Docker
-# --rm: besides removing the container when stopped, also removes the dangling volumes created by it
-# -ti: allocates a pseudo-TTY in order to run the default command, wich is bash
-docker run --privileged --rm -ti --name jenkins-agent-dind felipecassiors/jenkins-agent-dind
+docker run -ti --rm --privileged felipecassiors/jenkins-agent-dind
 ```
 
 ### Agent Template in Docker Cloud configuration on Jenkins
