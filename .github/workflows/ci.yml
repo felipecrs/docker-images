@@ -29,12 +29,12 @@ jobs:
           docker tag $IMAGE_NAME $IMAGE_NAME_WITH_SHA
           docker push $IMAGE_NAME_WITH_SHA
 
-      - name: Create commit comment with pull snippet
-        uses: peter-evans/commit-comment@v1
-        with:
-          body: |
-            The image of this commit was pushed to Docker Hub. Check it out
-            `$ docker pull ${{ env.IMAGE_NAME_WITH_SHA }}`
+      # - name: Create commit comment with pull snippet
+      #   uses: peter-evans/commit-comment@v1
+      #   with:
+      #     body: |
+      #       The image of this commit was pushed to Docker Hub. Check it out
+      #       `$ docker pull ${{ env.IMAGE_NAME_WITH_SHA }}`
 
       - name: Push image tagged as latest
         # Only runs when commit is pushed to master
