@@ -12,12 +12,7 @@ env:
   IMAGE_NAME_WITH_SHA: ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
 jobs:
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
   ci:
-    # Ensure test job passes before pushing image.
-    needs: test
-
     runs-on: ubuntu-latest
 
     steps:
