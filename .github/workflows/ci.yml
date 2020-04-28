@@ -22,7 +22,6 @@ jobs:
         run: docker build . -t $IMAGE_NAME
 
       - name: Log into Docker Hub
-        if: github.event_name == 'push'
         run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Push image tagged as commit sha
