@@ -110,7 +110,7 @@ RUN set -exo pipefail; \
 
 # Install kind
 RUN set -ex; \
-    curl -fsSLo /usr/local/bin/kind "https://kind.sigs.k8s.io/dl/v0.7.0/kind-$(uname)-amd64"; \
+    curl -fsSLo /usr/local/bin/kind "https://kind.sigs.k8s.io/dl/v0.8.1/kind-$(uname)-amd64"; \
     chmod +x /usr/local/bin/kind
 
 # Install kubectl
