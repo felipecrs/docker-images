@@ -24,6 +24,7 @@ RUN set -exo pipefail; \
     tree \
     jq \
     yq \
+    parallel \
     # Because of jenkins/slave
     adoptopenjdk-8-hotspot \
     # Required to run Docker daemon in entrypoint
