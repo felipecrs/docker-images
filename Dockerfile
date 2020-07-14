@@ -17,7 +17,7 @@ RUN apt-get update; \
     rm -rf /var/lib/apt/lists/*; \
     usermod -aG sudo ${user}; \
     echo "${user}  ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${user}"; \
-    sudo --version
+    sudo -u ${user} sudo true # Dismiss sudo welcome message
 
 RUN apt-get update; \
     apt-get install -yq software-properties-common; \
