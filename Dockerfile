@@ -16,7 +16,8 @@ RUN apt-get update; \
     apt-get install -yq sudo; \
     rm -rf /var/lib/apt/lists/*; \
     usermod -aG sudo ${user}; \
-    echo "${user}  ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${user}"
+    echo "${user}  ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${user}"; \
+    sudo --version
 
 RUN apt-get update; \
     apt-get install -yq software-properties-common; \
@@ -58,7 +59,7 @@ RUN VERSION=$(curl -fsL https://api.github.com/repos/docker/compose/releases/lat
 
 # set up subuid/subgid so that "--userns-remap=default" works out-of-the-box
 RUN addgroup --system dockremap; \
-    adduser --system --ingroup dockremap dockrema;p \
+    adduser --system --ingroup dockremap dockremap; \
     echo 'dockremap:165536:65536' >> /etc/subuid; \
     echo 'dockremap:165536:65536' >> /etc/subgid
 
