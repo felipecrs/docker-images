@@ -25,6 +25,7 @@ RUN apt-get update; \
     add-apt-repository -y https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/; \
     add-apt-repository -y ppa:git-core/ppa; \
     add-apt-repository -y ppa:rmescandon/yq; \
+    add-apt-repository -y ppa:neurobin/ppa; \
     apt-get update; \
     apt-get install -yq \
     git \
@@ -32,12 +33,11 @@ RUN apt-get update; \
     jq \
     yq \
     parallel \
+    # Required by the entrypoint
+    shc \
+    setpriv \
     # Because of jenkins/slave
     adoptopenjdk-8-hotspot \
-    # Required to run Docker daemon in entrypoint
-    supervisor \
-    # Required to go back to jenkins user in entrypoint
-    gosu \
     # Required to run Docker in Docker
     iptables \
     xz-utils \
@@ -130,6 +130,20 @@ RUN mkdir -p /etc/services.d/dind; \
     printf '#!/usr/bin/execlineb -P\ns6-notifyoncheck -c "docker version"\n/usr/local/bin/dind dockerd' > /etc/services.d/dind/run; \
     echo '3' > /etc/services.d/dind/notification-fd; \
     printf '#!/usr/bin/execlineb -S0\ns6-svscanctl -t /var/run/s6/services' > /etc/services.d/dind/finish
-ENV S6_CMD_WAIT_FOR_SERVICES=1
-ENTRYPOINT [ "/init", "gosu", "jenkins" ]
+
+RUN curl -fSsL https://github.com/boxboat/fixuid/releases/download/v0.5/fixuid-0.5-linux-amd64.tar.gz | tar -C /usr/local/bin -xzf -; \
+    chown root:root /usr/local/bin/fixuid;\
+    chmod 4755 /usr/local/bin/fixuid; \
+    mkdir -p /etc/fixuid; \
+    printf '%s\n' "user: ${user}" "group: ${group}" "paths:" "  - /" "  - /home/${user}/.jenkins" "  - ${AGENT_WORKDIR}" >/etc/fixuid/config.yml
+
+COPY _entrypoint.sh entrypoint.sh /
+RUN shc -S -r -f /_entrypoint.sh -o /_entrypoint; \
+    chown root:root /_entrypoint; \
+    chmod 4755 /_entrypoint; \
+    rm -f /_entrypoint.sh
+
+USER ${user}
+
+ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "bash" ]
