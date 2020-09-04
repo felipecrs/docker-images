@@ -123,14 +123,11 @@ RUN curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key a
     apt-get install -yq kubectl; \
     rm -rf /var/lib/apt/lists/*
 
-# Workaround for https://issues.jenkins-ci.org/browse/JENKINS-57655
-ENV DOCKER_HOST=unix:///var/run/docker2.sock
-
 # s6-overlay
 ADD https://github.com/just-containers/s6-overlay/releases/download/v1.22.1.0/s6-overlay-amd64.tar.gz /tmp/
 RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C /
 RUN mkdir -p /etc/services.d/dind; \
-    printf '%s\n' '#!/usr/bin/execlineb -P' "s6-notifyoncheck -c \"docker --host \"${DOCKER_HOST}\" version\"" "/usr/local/bin/dind dockerd -H ${DOCKER_HOST}" > /etc/services.d/dind/run; \
+    printf '#!/usr/bin/execlineb -P\ns6-notifyoncheck -c "docker version"\n/usr/local/bin/dind dockerd' > /etc/services.d/dind/run; \
     echo '3' > /etc/services.d/dind/notification-fd; \
     printf '#!/usr/bin/execlineb -S0\ns6-svscanctl -t /var/run/s6/services' > /etc/services.d/dind/finish
 
