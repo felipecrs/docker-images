@@ -2,52 +2,48 @@ name: ci
 
 on:
   push:
-    # Publish `master` as Docker `latest` image.
-    branches:
-      - master
-
-  # Run tests for any PRs.
+    branches: [master]
   pull_request:
+    branches: [master]
 
 jobs:
-  ci:
+  build-and-push:
     runs-on: ubuntu-latest
 
     env:
-      IMAGE_NAME: felipecassiors/jenkins-agent-dind
-      IMAGE_NAME_WITH_SHA: felipecassiors/jenkins-agent-dind:${{ github.sha }}
+      CR_USERNAME: felipecrs
+      DOCKERHUB_USERNAME: felipecassiors
+      IMAGE_NAME: jenkins-agent-dind
 
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build image
-        run: docker build . -t $IMAGE_NAME
+      - name: Build and push to GitHub Container Registry
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ env.CR_USERNAME }}
+          password: ${{ secrets.CR_PAT }}
+          registry: ghcr.io
+          repository: ${{ env.CR_USERNAME }}/${{ env.IMAGE_NAME }}
+          add_git_labels: true
+          tag_with_ref: true
+          tag_with_sha: true
 
-      - name: Log into Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+      - name: Build and push to Docker Hub
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
+          add_git_labels: true
+          tag_with_ref: true
+          tag_with_sha: true
 
-      - name: Push image tagged as commit sha
-        run: |
-          docker tag $IMAGE_NAME $IMAGE_NAME_WITH_SHA
-          docker push $IMAGE_NAME_WITH_SHA
-
-      # - name: Create commit comment with pull snippet
-      #   uses: peter-evans/commit-comment@v1
-      #   with:
-      #     body: |
-      #       The image of this commit was pushed to Docker Hub. Check it out
-      #       `$ docker pull ${{ env.IMAGE_NAME_WITH_SHA }}`
-
-      - name: Push image tagged as latest
-        # Only runs when commit is pushed to master
-        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-        run: docker push $IMAGE_NAME
-
-      - name: Update Docker Hub Description
-        # Only runs when commit is pushed to master
-        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+      # Only runs when commit is pushed to master
+      - if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        name: Update Docker Hub description
         uses: peter-evans/dockerhub-description@v2
         env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_USERNAME: ${{ env.DOCKERHUB_USERNAME }}
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-          DOCKERHUB_REPOSITORY: felipecassiors/jenkins-agent-dind
+          DOCKERHUB_REPOSITORY: ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
