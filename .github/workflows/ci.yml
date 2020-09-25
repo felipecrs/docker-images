@@ -12,7 +12,7 @@ jobs:
 
     env:
       CR_USERNAME: felipecrs
-      DOCKERHUB_USERNAME: felipecassiors
+      DOCKERHUB_USERNAME: felipecrs
       IMAGE_NAME: jenkins-agent-dind
 
     steps:
