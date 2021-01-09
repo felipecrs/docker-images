@@ -4,7 +4,8 @@ You can use this image in VS Code Remote - Containers.
 
 ## Tags
 
-- `:base` and `:latest`: comes with some common dependencies and developer tools, such as Pyenv, NVM, SDKMAN! and the Docker CLI.
+- `:base` and `:latest`: comes with some common dependencies and developer tools, such as Pyenv, NVM, SDKMAN!, Docker CLI, `kubectl`, `helm`, `kind`.
+- `:github`: extending the base, comes with the latest GitHub CLI.
 - `:python`: extending the base, comes with the latest Python.
 - `:node`: extending the base, comes with the latest Node LTS.
 - `:java`: extending the base, comes with the latest Java LTS.

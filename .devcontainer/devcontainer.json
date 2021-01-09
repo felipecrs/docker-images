@@ -1,7 +1,7 @@
 {
 	"build": {
 		"dockerfile": "../images/devcontainer/Dockerfile",
-		"target": "base"
+		"target": "github"
 	},
 	"runArgs": [
 		"--init"
