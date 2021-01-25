@@ -1,0 +1,9 @@
+#!/bin/bash
+# fail on error and on variable unset
+set -eu
+
+# expand relative path
+path="$(realpath "$1")"
+
+# replace the /workspaces prefix with the parent folder of $LOCAL_WORKSPACE_FOLDER
+echo "${path/#"/workspaces"/"$(dirname "$LOCAL_WORKSPACE_FOLDER")"}"

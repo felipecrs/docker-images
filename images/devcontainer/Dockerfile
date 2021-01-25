@@ -4,10 +4,12 @@ FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04 AS base
 
 SHELL [ "/bin/bash", "-euxo", "pipefail", "-c" ]
 
-ARG USER="vscode"
+ENV USER="vscode"
 ARG USERNAME="${USER}"
-ARG HOME="/home/${USER}"
-USER ${USER}
+ENV HOME="/home/${USER}"
+USER "${USER}"
+WORKDIR "${HOME}"
+RUN sudo chsh "$USER" -s /usr/bin/zsh
 
 ARG DEBIAN_FRONTEND="noninteractive"
 
@@ -20,15 +22,6 @@ RUN sudo apt-get update; \
     libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
     xz-utils tk-dev libffi-dev liblzma-dev python-openssl git; \
     sudo rm -rf /var/lib/apt/lists/*;
-
-# Install pyenv
-ENV PYENV_ROOT="${HOME}/.pyenv"
-ENV PATH="${PYENV_ROOT}/bin:${PATH}"
-RUN bash -c "$(curl -fsSL https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer)"; \
-    printf '%s\n' 'eval "$(pyenv init -)"' | sudo tee -a /etc/bash.bashrc /etc/zsh/zshrc; \
-    git clone --depth 1 https://github.com/momo-lab/xxenv-latest.git "$(pyenv root)/plugins/xxenv-latest"
-
-# Install stuff using script-library's scripts
 
 # script-library options
 ARG SCRIPT_LIBRARY_VERSION=master
@@ -43,17 +36,21 @@ RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/docker-debian.sh")" -- true 
     sudo chmod +x /usr/local/bin/kind; \
     # Clean up
     sudo apt-get autoremove -y && sudo apt-get clean -y && sudo rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
+COPY ./scripts/localpath /usr/local/bin/
 ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD [ "sleep", "infinity" ]
 
-# Install nvm and yarn
-# script-library's node options
-ENV NVM_DIR="${HOME}/.nvm"
-ENV NVM_SYMLINK_CURRENT="true" \
-    PATH="${NVM_DIR}/current/bin:${PATH}"
-RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/node-debian.sh")" -- "${NVM_DIR}" none; \
-    # Clean up
-    sudo apt-get autoremove -y && sudo apt-get clean -y && sudo rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
+# Install pyenv
+ENV PYENV_ROOT="${HOME}/.pyenv"
+ENV PATH="${PYENV_ROOT}/bin:${PYENV_ROOT}/shims:${PATH}"
+RUN bash -c "$(curl -fsSL https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer)"; \
+    printf '%s\n' 'eval "$(pyenv init -)"' | sudo tee -a /etc/bash.bashrc /etc/zsh/zshrc; \
+    git clone --depth 1 https://github.com/momo-lab/xxenv-latest.git "$(pyenv root)/plugins/xxenv-latest"
+
+# Install volta
+ENV VOLTA_HOME="${HOME}/.volta"
+ENV PATH="${VOLTA_HOME}/bin:${PATH}"
+RUN bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
 
 # Install SDKMAN!
 ENV SDKMAN_DIR="${HOME}/.sdkman"
@@ -78,4 +75,4 @@ RUN pyenv latest install; \
 
 FROM ${BASE_IMAGE} AS node
 
-RUN nvm install --lts
+RUN volta install node
