@@ -44,12 +44,14 @@ RUN apt-get update; \
     btrfs-progs; \
     rm -rf /var/lib/apt/lists/*
 
+ENV JAVA_HOME="/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64"
+
 # Because of jenkins/slave
 RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
     apt-get install -y git-lfs; \
     rm -rf /var/lib/apt/lists/*
 
-RUN curl -fsSL https://get.docker.com | sh; \
+RUN sh -c "$(curl -fsSL https://releases.rancher.com/install-docker/19.03.sh)"; \
     rm -rf /var/lib/apt/lists/*; \
     usermod -aG docker ${user}
 
@@ -63,7 +65,7 @@ RUN addgroup --system dockremap; \
     echo 'dockremap:165536:65536' >> /etc/subuid; \
     echo 'dockremap:165536:65536' >> /etc/subgid
 
-RUN dind_commit=37498f009d8bf25fbb6199e8ccd34bed84f2874b; \
+RUN dind_commit=ed89041433a031cafc0a0f19cfe573c31688d377; \
     dind_file=/usr/local/bin/dind; \
     wget -qO "$dind_file" "https://raw.githubusercontent.com/docker/docker/$dind_commit/hack/dind"; \
     chmod +x "$dind_file"
@@ -77,7 +79,9 @@ RUN REMOTING_URL="https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remotin
     curl --create-dirs -fsSLo /usr/share/jenkins/agent.jar ${REMOTING_URL}/${VERSION}/remoting-${VERSION}.jar; \
     chmod 755 /usr/share/jenkins; \
     chmod 644 /usr/share/jenkins/agent.jar; \
-    ln -sf /usr/share/jenkins/agent.jar /usr/share/jenkins/slave.jar
+    ln -sf /usr/share/jenkins/agent.jar /usr/share/jenkins/slave.jar; \
+    curl -fsSLo /usr/local/bin/jenkins-agent https://raw.githubusercontent.com/jenkinsci/docker-inbound-agent/master/jenkins-agent; \
+    chmod +x /usr/local/bin/jenkins-agent
 
 USER ${user}
 ENV AGENT_WORKDIR=${AGENT_WORKDIR}
@@ -146,4 +150,4 @@ RUN shc -S -r -f /_entrypoint.sh -o /_entrypoint; \
 USER ${user}
 
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD [ "bash" ]
+CMD [ "jenkins-agent" ]
