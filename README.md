@@ -25,10 +25,10 @@ Spin this agent in shell, if you want to play with it:
 ```sh
 # Fetches the latest version
 docker pull felipecrs/jenkins-agent-dind
-# -ti: allocates a pseudo-TTY in order to run the default command, which is bash
+# -ti: allocates a pseudo-TTY in order to run the command, which is bash
 # --rm: removes the container after using it (don't forget to remove the volumes created by it)
-# --privilged: needed for running Docker in Docker
-docker run -ti --rm --privileged felipecrs/jenkins-agent-dind
+# --privileged: needed for running Docker in Docker
+docker run -ti --rm --privileged felipecrs/jenkins-agent-dind bash
 ```
 
 ### Agent Template in Docker Cloud configuration on Jenkins
