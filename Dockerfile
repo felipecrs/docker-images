@@ -79,6 +79,10 @@ RUN sudo bash -c "$(curl -s https://packagecloud.io/install/repositories/github/
 # Docker v19.03 because of https://github.com/containerd/containerd/issues/4837
 RUN sudo sh -c "$(curl -fsSL https://releases.rancher.com/install-docker/19.03.sh)"; \
     sudo usermod -aG docker "${USER}"; \
+    # Enable buildx
+    mkdir -p "$HOME/.docker"; \
+    echo '{"experimental": "enabled"}' > "$HOME/.docker/config.json"; \
+    docker buildx install; \
     sudo rm -rf /var/lib/apt/lists/*
 
 RUN version=$(curl -fsSL https://api.github.com/repos/docker/compose/releases/latest | jq .name -er); \

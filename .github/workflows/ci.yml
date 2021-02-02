@@ -60,6 +60,7 @@ jobs:
 
       # Workaround for https://github.com/crazy-max/ghaction-docker-meta/issues/41
       - if: github.ref == 'refs/heads/master'
+        name: Sync latest tag
         run: |
           skopeo copy docker://docker.io/${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:master \
             docker://docker.io/${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}:latest
