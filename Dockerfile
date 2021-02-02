@@ -2,17 +2,17 @@ FROM buildpack-deps:focal
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-ARG user=jenkins
+ENV USER=jenkins
 ARG group=jenkins
 ARG uid=1000
 ARG gid=1000
 
-ENV HOME="/home/${user}"
+ENV HOME="/home/${USER}"
 ENV AGENT_WORKDIR="${HOME}/agent" \
     CI=true
 
 RUN groupadd -g ${gid} ${group}; \
-    useradd -c "Jenkins user" -d "${HOME}" -u ${uid} -g ${gid} -m ${user} -s /bin/bash
+    useradd -c "Jenkins user" -d "${HOME}" -u ${uid} -g ${gid} -m ${USER} -s /bin/bash
 
 ARG DEBIANFRONTEND=noninteractive
 
@@ -20,11 +20,11 @@ ARG DEBIANFRONTEND=noninteractive
 RUN apt-get update; \
     apt-get install -yq sudo; \
     rm -rf /var/lib/apt/lists/*; \
-    usermod -aG sudo ${user}; \
-    echo "${user}  ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${user}"; \
-    sudo -u "${user}" sudo true # Dismiss sudo welcome message
+    usermod -aG sudo ${USER}; \
+    echo "${USER}  ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${USER}"; \
+    sudo -u "${USER}" sudo true # Dismiss sudo welcome message
 
-USER "${user}"
+USER "${USER}"
 
 RUN mkdir -p "${AGENT_WORKDIR}"; \
     mkdir -p "${HOME}/.jenkins"
@@ -78,7 +78,7 @@ RUN sudo bash -c "$(curl -s https://packagecloud.io/install/repositories/github/
 
 # Docker v19.03 because of https://github.com/containerd/containerd/issues/4837
 RUN sudo sh -c "$(curl -fsSL https://releases.rancher.com/install-docker/19.03.sh)"; \
-    sudo usermod -aG docker "${user}"; \
+    sudo usermod -aG docker "${USER}"; \
     sudo rm -rf /var/lib/apt/lists/*
 
 RUN version=$(curl -fsSL https://api.github.com/repos/docker/compose/releases/latest | jq .name -er); \
@@ -154,7 +154,7 @@ RUN curl -fsSL https://github.com/boxboat/fixuid/releases/download/v0.5/fixuid-0
     sudo chown root:root /usr/local/bin/fixuid;\
     sudo chmod 4755 /usr/local/bin/fixuid; \
     sudo mkdir -p /etc/fixuid; \
-    printf '%s\n' "user: ${user}" "group: ${group}" "paths:" "  - /" "  - ${HOME}/.jenkins" "  - ${AGENT_WORKDIR}" | sudo tee /etc/fixuid/config.yml
+    printf '%s\n' "user: ${USER}" "group: ${group}" "paths:" "  - /" "  - ${HOME}/.jenkins" "  - ${AGENT_WORKDIR}" | sudo tee /etc/fixuid/config.yml
 
 COPY _entrypoint.sh entrypoint.sh /
 RUN sudo shc -S -r -f /_entrypoint.sh -o /_entrypoint; \
