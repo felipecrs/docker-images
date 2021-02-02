@@ -154,12 +154,6 @@ RUN curl -fsSLo /tmp/s6-overlay-installer https://github.com/just-containers/s6-
     printf '%s\n' '3'| sudo tee /etc/services.d/dind/notification-fd; \
     printf '%s\n' '#!/usr/bin/execlineb -S0' 's6-svscanctl -t /var/run/s6/services' | sudo tee /etc/services.d/dind/finish
 
-RUN curl -fsSL https://github.com/boxboat/fixuid/releases/download/v0.5/fixuid-0.5-linux-amd64.tar.gz | sudo tar -C /usr/local/bin -xzf -; \
-    sudo chown root:root /usr/local/bin/fixuid;\
-    sudo chmod 4755 /usr/local/bin/fixuid; \
-    sudo mkdir -p /etc/fixuid; \
-    printf '%s\n' "user: ${USER}" "group: ${group}" "paths:" "  - /" "  - ${HOME}/.jenkins" "  - ${AGENT_WORKDIR}" | sudo tee /etc/fixuid/config.yml
-
 COPY _entrypoint.sh entrypoint.sh /
 RUN sudo shc -S -r -f /_entrypoint.sh -o /_entrypoint; \
     sudo chown root:root /_entrypoint; \
