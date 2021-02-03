@@ -34,4 +34,4 @@ docker run -ti --rm --privileged felipecrs/jenkins-agent-dind bash
 
 ### Agent Template in Docker Cloud configuration on Jenkins
 
-![Sample Agent Template configuration](docs/jenkins-agent-template-sample.png)
+![Sample Agent Template configuration](https://user-images.githubusercontent.com/29582865/106769145-66379180-661b-11eb-93e3-5a7742eb46c0.png)
