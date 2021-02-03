@@ -27,8 +27,8 @@ jobs:
           images: |
             ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
             ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
-          # Only tags with sha if the build comes from master, prevent creating sha tags for PRs
-          tag-sha: ${{ github.ref == 'refs/heads/master' }}
+          # Only tags with sha if the build comes from master, prevent creating sha tags for PRs and scheduled builds
+          tag-sha: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
           # Not working due to https://github.com/crazy-max/ghaction-docker-meta/issues/41
           tag-latest: ${{ github.ref == 'refs/heads/master' }}
 
@@ -68,7 +68,7 @@ jobs:
           skopeo copy docker://ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:master \
             docker://ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
 
-      - if: github.ref == 'refs/heads/master'
+      - if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         name: Update Docker Hub description
         uses: peter-evans/dockerhub-description@v2
         env:
