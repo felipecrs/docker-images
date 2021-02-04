@@ -34,6 +34,7 @@ VOLUME "${AGENT_WORKDIR}" "${HOME}/.jenkins" "/var/lib/docker"
 WORKDIR "${HOME}"
 
 RUN sudo apt-get update; \
+    sudo apt-get -y upgrade; \
     sudo apt-get install -yq software-properties-common; \
     curl -fsSL https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/; \
@@ -57,6 +58,11 @@ RUN sudo apt-get update; \
     iptables \
     xz-utils \
     btrfs-progs; \
+    # Setup python aliases
+    sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1; \
+    sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
+    # Upgrade pip
+    pip install --user --upgrade --no-cache-dir pip; \
     # Fix locale
     sudo sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen; \
     sudo locale-gen; \
@@ -116,6 +122,7 @@ RUN sudo bash -c "$(curl -fsSL https://deb.nodesource.com/setup_14.x)"; \
     sudo apt-get install -yq nodejs; \
     mkdir "${HOME}/.npm-global"; \
     npm config set prefix "${HOME}/.npm-global"; \
+    npm install -g npm@latest; \ 
     sudo rm -rf /var/lib/apt/lists/*
 
 # Install bats
@@ -127,7 +134,7 @@ RUN curl -fsSL 'https://storage.googleapis.com/shellcheck/shellcheck-stable.linu
     sudo chmod +x /usr/local/bin/shellcheck
 
 # Install Ansible
-RUN pip3 install --no-cache-dir ansible
+RUN pip install --user --no-cache-dir ansible
 
 # Install Helm
 RUN sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3)"
