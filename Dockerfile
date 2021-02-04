@@ -59,7 +59,7 @@ RUN sudo apt-get update; \
     xz-utils \
     btrfs-progs; \
     # Upgrade pip
-    sudo python3 -m pip install pip --upgrade; \
+    sudo python3 -m pip install --no-cache-dir --upgrade pip; \
     # Setup python aliases
     sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1; \
     sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
@@ -123,10 +123,13 @@ RUN sudo bash -c "$(curl -fsSL https://deb.nodesource.com/setup_14.x)"; \
     sudo npm install -g npm@latest; \
     mkdir "${HOME}/.npm-global"; \
     npm config set prefix "${HOME}/.npm-global"; \
+    npm install --global \
+    yarn \
+    semver \
+    bats; \
+    sudo npm cache clean --force; \
+    npm cache clean --force; \
     sudo rm -rf /var/lib/apt/lists/*
-
-# Install bats
-RUN npm install -g bats
 
 # Install shellcheck
 RUN version=$(curl -fsSL https://api.github.com/repos/koalaman/shellcheck/releases/latest | jq .tag_name -er); \
