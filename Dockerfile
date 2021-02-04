@@ -58,11 +58,11 @@ RUN sudo apt-get update; \
     iptables \
     xz-utils \
     btrfs-progs; \
+    # Upgrade pip
+    sudo python3 -m pip install pip --upgrade; \
     # Setup python aliases
     sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1; \
     sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
-    # Upgrade pip
-    pip install --user --upgrade --no-cache-dir pip; \
     # Fix locale
     sudo sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen; \
     sudo locale-gen; \
@@ -120,9 +120,9 @@ RUN base_url="https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting"; 
 # Node.js v14.x
 RUN sudo bash -c "$(curl -fsSL https://deb.nodesource.com/setup_14.x)"; \
     sudo apt-get install -yq nodejs; \
+    sudo npm install -g npm@latest; \
     mkdir "${HOME}/.npm-global"; \
     npm config set prefix "${HOME}/.npm-global"; \
-    npm install -g npm@latest; \ 
     sudo rm -rf /var/lib/apt/lists/*
 
 # Install bats
