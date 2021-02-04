@@ -129,8 +129,9 @@ RUN sudo bash -c "$(curl -fsSL https://deb.nodesource.com/setup_14.x)"; \
 RUN npm install -g bats
 
 # Install shellcheck
-RUN curl -fsSL 'https://storage.googleapis.com/shellcheck/shellcheck-stable.linux.x86_64.tar.xz' \
-    | sudo tar -xJf - --strip-components=1 -C /usr/local/bin shellcheck-stable/shellcheck; \
+RUN version=$(curl -fsSL https://api.github.com/repos/koalaman/shellcheck/releases/latest | jq .tag_name -er); \
+    curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/${version}/shellcheck-${version}.$(uname).$(uname -m).tar.xz" \
+    | sudo tar -xJf - --strip-components=1 -C /usr/local/bin shellcheck-${version}/shellcheck; \
     sudo chmod +x /usr/local/bin/shellcheck
 
 # Install Ansible
@@ -141,7 +142,7 @@ RUN sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/helm/helm/maste
 
 # Install kind
 RUN version=$(curl -fsSL https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | jq .name -er); \
-    sudo curl -fsSLo /usr/local/bin/kind https://github.com/kubernetes-sigs/kind/releases/download/${version}/kind-$(uname)-amd64; \
+    sudo curl -fsSLo /usr/local/bin/kind "https://github.com/kubernetes-sigs/kind/releases/download/${version}/kind-$(uname)-amd64"; \
     sudo chmod +x /usr/local/bin/kind
 
 # Install kubectl
