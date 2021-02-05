@@ -98,6 +98,9 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
         kubectl \
         jfrog-cli \
         shellcheck \
+        maven \
+        ant \
+        ant-contrib \
         # required for the entrypoint \
         shc \
         # required for docker in docker \
