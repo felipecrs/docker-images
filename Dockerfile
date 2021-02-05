@@ -97,7 +97,6 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
         yarn \
         kubectl \
         jfrog-cli \
-        helm \
         shellcheck \
         # required for the entrypoint \
         shc \
