@@ -3,9 +3,6 @@
 		"dockerfile": "../images/devcontainer/Dockerfile",
 		"target": "github"
 	},
-	"runArgs": [
-		"--init"
-	],
 	"mounts": [
 		"source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind"
 	],

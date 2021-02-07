@@ -1,5 +1,3 @@
-ARG BASE_IMAGE="base"
-
 FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04 AS base
 
 SHELL [ "/bin/bash", "-euxo", "pipefail", "-c" ]
@@ -31,13 +29,17 @@ ARG SCRIPT_LIBRARY_URL=https://raw.githubusercontent.com/microsoft/vscode-dev-co
 RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/docker-debian.sh")" -- true "/var/run/docker-host.sock" "/var/run/docker.sock" automatic false; \
     sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/kubectl-helm-debian.sh")"; \
     # Install kind
-    KIND_URL="$(curl -fsSL https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | jq -r '.assets[] | select(.name | contains("kind-linux-amd")) | .browser_download_url')"; \
+    KIND_URL="$(curl -fsSL https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | jq -er '.assets[] | select(.name | contains("kind-linux-amd")) | .browser_download_url')"; \
     sudo curl -fsSL -o /usr/local/bin/kind "$KIND_URL"; \
     sudo chmod +x /usr/local/bin/kind; \
+    # Install tini
+    version=$(curl -fsSL https://api.github.com/repos/krallin/tini/releases/latest | jq .tag_name -er); \
+    sudo curl -fsSL -o /init "https://github.com/krallin/tini/releases/download/${version}/tini"; \
+    sudo chmod +x /init; \
     # Clean up
     sudo apt-get autoremove -y && sudo apt-get clean -y && sudo rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
 COPY ./scripts/localpath /usr/local/bin/
-ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
+ENTRYPOINT [ "/init", "--", "/usr/local/share/docker-init.sh" ]
 CMD [ "sleep", "infinity" ]
 
 # Install pyenv
@@ -62,17 +64,19 @@ RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/java-debian.sh")" -- none "$
 # https://github.com/microsoft/vscode-remote-release/issues/4281
 # SHELL [ "/bin/bash", "-ic"]
 
-FROM ${BASE_IMAGE} as github
+FROM base as github
 
 RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/github-debian.sh")"; \
     # Clean up
     sudo apt-get autoremove -y && sudo apt-get clean -y && sudo rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
 
-FROM ${BASE_IMAGE} AS python
+FROM base AS python
 
 RUN pyenv latest install; \
     pyenv latest global
 
-FROM ${BASE_IMAGE} AS node
+FROM base AS node
 
-RUN volta install node
+RUN volta install node; \
+    volta install npm; \
+    volta install yarn
