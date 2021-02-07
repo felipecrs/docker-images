@@ -68,19 +68,28 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     ${SUDO_APT_GET} -yq upgrade; \
     # install add-apt-repository \
     ${SUDO_APT_GET_INSTALL} software-properties-common; \
-    # add apt repositories \
+    ## apt repositories \
+    # adopt openjdk \
     ${CURL} https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/; \
+    # kubernetes \
     ${CURL} https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "deb https://apt.kubernetes.io/ kubernetes-xenial main"; \
+    # yarn \
     ${CURL} https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "deb https://dl.yarnpkg.com/debian/ stable main"; \
+    # jfrog \
     ${CURL} https://releases.jfrog.io/artifactory/api/gpg/key/public | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "deb https://releases.jfrog.io/artifactory/jfrog-debs xenial contrib"; \
+    # git \
     sudo add-apt-repository --no-update -y ppa:git-core/ppa; \
+    # yq \
     sudo add-apt-repository --no-update -y ppa:rmescandon/yq; \
+    # shc \
     sudo add-apt-repository --no-update -y ppa:neurobin/ppa; \
+    # git-lfs \
     ${CURL} https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo -E bash -; \
+    # nodejs \
     ${CURL} https://deb.nodesource.com/setup_lts.x | sudo -E bash -; \
     # install apt packages \
     ${SUDO_APT_GET_INSTALL} \
