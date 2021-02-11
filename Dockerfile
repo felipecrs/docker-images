@@ -122,12 +122,13 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     ${SUDO_CLEAN_APT}; \
     # setup docker \
     sudo usermod -aG docker "${USER}"; \
-    # enable docker buildx and buildkit \
-    mkdir -p "$HOME/.docker"; \
-    echo '{"experimental": "enabled"}' > "$HOME/.docker/config.json"; \
+    # setup buildx \
+    version=$(${CURL} https://api.github.com/repos/docker/buildx/releases/latest | jq .tag_name -er); \
+    ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-buildx" "https://github.com/docker/buildx/releases/download/${version}/buildx-${version}.$(uname -s)-amd64"; \
+    chmod a+x "$HOME/.docker/cli-plugins/docker-buildx"; \
     docker buildx install; \
     # install docker-compose \
-    version=$(${CURL} https://api.github.com/repos/docker/compose/releases/latest | jq .name -er); \
+    version=$(${CURL} https://api.github.com/repos/docker/compose/releases/latest | jq .tag_name -er); \
     sudo ${CURL} -o /usr/local/bin/docker-compose "https://github.com/docker/compose/releases/download/${version}/docker-compose-$(uname -s)-$(uname -m)"; \
     sudo chmod +x /usr/local/bin/docker-compose; \
     ## dind \
