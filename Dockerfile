@@ -116,8 +116,8 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
         iptables \
         xz-utils \
         btrfs-progs; \
-    # install docker 19.03 (https://github.com/containerd/containerd/issues/4837) \
-    ${CURL} https://releases.rancher.com/install-docker/19.03.sh | sudo sh; \
+    # install docker \
+    ${CURL} https://get.docker.com | sudo sh; \
     ${SUDO_APT_GET} autoremove -yq; \
     ${SUDO_CLEAN_APT}; \
     # setup docker \
