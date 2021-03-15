@@ -54,14 +54,12 @@ RUN group=${USER}; \
 # use non-root user with sudo when needed
 USER "${USER}"
 
-# set volumes needed by jenkins-agent and dind
-VOLUME "${AGENT_WORKDIR}" "${HOME}/.jenkins" "/var/lib/docker"
+VOLUME "${AGENT_WORKDIR}"
 
 WORKDIR "${HOME}"
 
 # assure jenkins-agent directories
 RUN mkdir -p "${AGENT_WORKDIR}"; \
-    mkdir -p "${HOME}/.jenkins"; \
     ## apt \
     ${SUDO_APT_GET} update; \
     # upgrade system \
@@ -122,6 +120,9 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     ${SUDO_CLEAN_APT}; \
     # setup docker \
     sudo usermod -aG docker "${USER}"; \
+    # setup docker volume \
+    sudo mkdir -p /etc/docker; \
+    jq -n --arg d "${AGENT_WORKDIR}/docker" '."data-root" = $d' | sudo tee /etc/docker/daemon.json; \
     # setup buildx \
     version=$(${CURL} https://api.github.com/repos/docker/buildx/releases/latest | jq .tag_name -er); \
     ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-buildx" "https://github.com/docker/buildx/releases/download/${version}/buildx-${version}.$(uname -s)-amd64"; \
