@@ -113,7 +113,12 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
         # required for docker in docker \
         iptables \
         xz-utils \
-        btrfs-progs; \
+        btrfs-progs \
+        # network \
+        net-tools \
+        iputils-ping \
+        traceroute \
+        dnsutils; \
     # install docker \
     ${CURL} https://get.docker.com | sudo sh; \
     ${SUDO_APT_GET} autoremove -yq; \
