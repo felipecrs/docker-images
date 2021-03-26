@@ -98,6 +98,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
         yq \
         parallel \
         rsync \
+        sshpass \
         python3-pip \
         adoptopenjdk-8-hotspot \
         nodejs \
