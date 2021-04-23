@@ -120,8 +120,8 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
         iputils-ping \
         traceroute \
         dnsutils; \
-    # install docker \
-    ${CURL} https://get.docker.com | sudo sh; \
+    # install docker 19.03 \
+    ${CURL} https://releases.rancher.com/install-docker/19.03.sh | sudo sh; \
     ${SUDO_APT_GET} autoremove -yq; \
     ${SUDO_CLEAN_APT}; \
     # setup docker \
