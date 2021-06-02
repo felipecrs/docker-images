@@ -23,7 +23,7 @@ ARG NPM_GLOBAL_PATH="${HOME}/.npm-global"
 ENV AGENT_WORKDIR="${HOME}/agent" \
     CI=true \
     PATH="${NPM_GLOBAL_PATH}/bin:${HOME}/.local/bin:${PATH}" \
-    JAVA_HOME="/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64" \
+    JAVA_HOME="/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64" \
     # locale and encoding
     LANG="en_US.UTF-8" \
     LANGUAGE="en_US:en" \
@@ -100,7 +100,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
         rsync \
         sshpass \
         python3-pip \
-        adoptopenjdk-8-hotspot \
+        adoptopenjdk-11-hotspot \
         nodejs \
         yarn \
         kubectl \
