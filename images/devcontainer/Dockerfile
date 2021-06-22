@@ -55,7 +55,7 @@ ENV PATH="${VOLTA_HOME}/bin:${PATH}"
 RUN bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
 
 # Install SDKMAN!
-ENV SDKMAN_DIR="${HOME}/.sdkman"
+ENV SDKMAN_DIR="/opt/sdkman"
 ENV PATH="${SDKMAN_DIR}/bin:${SDKMAN_DIR}/candidates/java/current/bin:${PATH}"
 RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/java-debian.sh")" -- none "${SDKMAN_DIR}"; \
     # Clean up
