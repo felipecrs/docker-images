@@ -15,7 +15,7 @@ RUN sudo apt-get update; \
     sudo apt-get install --no-install-recommends -y software-properties-common; \
     sudo add-apt-repository -y ppa:git-core/ppa; \
     sudo apt-get install --no-install-recommends -y build-essential git \
-    # pyenv dependencies
+    # pyenv dependencies \
     build-essential libssl-dev zlib1g-dev libbz2-dev \
     libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
     xz-utils tk-dev libffi-dev liblzma-dev python-openssl git; \
@@ -27,12 +27,15 @@ ARG SCRIPT_LIBRARY_URL=https://raw.githubusercontent.com/microsoft/vscode-dev-co
 
 # Install docker cli, kubectl, helm and kind
 RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/docker-debian.sh")" -- true "/var/run/docker-host.sock" "/var/run/docker.sock" automatic false; \
+    # Add docker-host group \
+    sudo groupadd docker-host; \
+    sudo usermod -aG docker-host "$USERNAME"; \
     sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/kubectl-helm-debian.sh")"; \
-    # Install kind
+    # Install kind \
     KIND_URL="$(curl -fsSL https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | jq -er '.assets[] | select(.name | contains("kind-linux-amd")) | .browser_download_url')"; \
     sudo curl -fsSL -o /usr/local/bin/kind "$KIND_URL"; \
     sudo chmod +x /usr/local/bin/kind; \
-    # Install tini
+    # Install tini \
     version=$(curl -fsSL https://api.github.com/repos/krallin/tini/releases/latest | jq .tag_name -er); \
     sudo curl -fsSL -o /init "https://github.com/krallin/tini/releases/download/${version}/tini"; \
     sudo chmod +x /init; \
@@ -67,7 +70,7 @@ RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/java-debian.sh")" -- none "$
 FROM base as github
 
 RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/github-debian.sh")"; \
-    # Clean up
+    # Clean up \
     sudo apt-get autoremove -y && sudo apt-get clean -y && sudo rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
 
 FROM base AS python
