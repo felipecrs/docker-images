@@ -1,5 +1,5 @@
 {
-	"initializeCommand": "docker build --target=github --cache-from=ghcr.io/felipecrs/devcontainer:github .",
+	"initializeCommand": "docker build --file=./images/devcontainer/Dockerfile --target=github --cache-from=ghcr.io/felipecrs/devcontainer:github ./images/devcontainer/",
 	"build": {
 		"dockerfile": "../images/devcontainer/Dockerfile",
 		"target": "github"
