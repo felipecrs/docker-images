@@ -1,4 +1,5 @@
 {
+	"initializeCommand": "docker build --target=github --cache-from=ghcr.io/felipecrs/devcontainer:github .",
 	"build": {
 		"dockerfile": "../images/devcontainer/Dockerfile",
 		"target": "github"
@@ -11,7 +12,7 @@
 	},
 	"overrideCommand": false,
 	"settings": {
-		"terminal.integrated.shell.linux": "/bin/zsh"
+		"terminal.integrated.defaultProfile.linux": "zsh",
 	},
 	"extensions": [
 		"ms-azuretools.vscode-docker"

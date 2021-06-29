@@ -33,8 +33,10 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GHCR_TOKEN }}
       - name: Build and push
-        uses: crazy-max/ghaction-docker-buildx-bake@v1
+        uses: docker/bake-action@v1
         with:
+          pull: true
+          no-cache: true
           push: ${{ ! startsWith(github.ref, 'refs/pull/') }}
       - name: devcontainer - update Docker Hub description
         uses: peter-evans/dockerhub-description@v2

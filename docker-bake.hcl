@@ -25,6 +25,7 @@ target "devcontainer-base" {
 	dockerfile = "Dockerfile"
     target = "base"
 	tags = create_tags("${DEVCONTAINER_IMAGE_NAME}", "latest", "base")
+    cache-to = ["type=inline"]
 }
 
 target "devcontainer-github" {
