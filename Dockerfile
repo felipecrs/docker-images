@@ -135,9 +135,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     chmod a+x "$HOME/.docker/cli-plugins/docker-buildx"; \
     docker buildx install; \
     # install docker-compose \
-    version=$(${CURL} https://api.github.com/repos/docker/compose/releases/latest | jq .tag_name -er); \
-    sudo ${CURL} -o /usr/local/bin/docker-compose "https://github.com/docker/compose/releases/download/${version}/docker-compose-$(uname -s)-$(uname -m)"; \
-    sudo chmod +x /usr/local/bin/docker-compose; \
+    ${CURL} https://raw.githubusercontent.com/docker/compose-cli/HEAD/scripts/install/install_linux.sh | sh; \
     ## dind \
     # set up subuid/subgid so that "--userns-remap=default" works out-of-the-box \
     sudo addgroup --system dockremap; \
