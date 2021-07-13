@@ -27,9 +27,6 @@ ARG SCRIPT_LIBRARY_URL=https://raw.githubusercontent.com/microsoft/vscode-dev-co
 
 # Install docker cli, kubectl, helm and kind
 RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/docker-debian.sh")" -- true "/var/run/docker-host.sock" "/var/run/docker.sock" automatic false; \
-    # Add docker-host group \
-    sudo groupadd docker-host; \
-    sudo usermod -aG docker-host "$USERNAME"; \
     sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/kubectl-helm-debian.sh")"; \
     # Install kind \
     KIND_URL="$(curl -fsSL https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | jq -er '.assets[] | select(.name | contains("kind-linux-amd")) | .browser_download_url')"; \
