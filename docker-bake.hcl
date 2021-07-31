@@ -1,6 +1,6 @@
 function "create_tags" {
 	params = [image_name]
-    variadic_param = tags
+    variadic_params = tags
     
     result = concat(
         [for t in tags : "${image_name}:${t}"], 
