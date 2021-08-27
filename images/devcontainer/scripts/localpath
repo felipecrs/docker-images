@@ -2,8 +2,20 @@
 # fail on error and on variable unset
 set -eu
 
-# expand relative path
-path="$(realpath "$1")"
+# use current folder as default if none is passed
+readonly input_path="${1:-.}"
 
-# replace the /workspaces prefix with the parent folder of $LOCAL_WORKSPACE_FOLDER
-echo "${path/#"/workspaces"/"$(dirname "$LOCAL_WORKSPACE_FOLDER")"}"
+# try to expand it to an absolute path
+if ! expanded_path=$(realpath "$input_path" 2>/dev/null); then
+    # if expansion fails, move on
+    expanded_path="$input_path"
+fi
+readonly expanded_path
+
+if [[ -n "${LOCAL_WORKSPACE_FOLDER+x}" ]]; then
+    # if LOCAL_WORKSPACE_FOLDER is set, replace the /workspaces prefix with the parent folder of $LOCAL_WORKSPACE_FOLDER
+    echo "${expanded_path/#"/workspaces"/"$(dirname "$LOCAL_WORKSPACE_FOLDER")"}"
+else
+    # if it is not set, just return the absolute path
+    echo "$expanded_path"
+fi
