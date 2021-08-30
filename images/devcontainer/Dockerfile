@@ -13,7 +13,9 @@ ARG DEBIAN_FRONTEND="noninteractive"
 
 RUN sudo apt-get update; \
     sudo apt-get install --no-install-recommends -y software-properties-common; \
-    sudo add-apt-repository -y ppa:git-core/ppa; \
+    sudo add-apt-repository --no-update -y ppa:git-core/ppa; \
+    sudo add-apt-repository --no-update -y ppa:deadsnakes/ppa; \
+    sudo apt-get update; \
     sudo apt-get install --no-install-recommends -y build-essential git \
     # pyenv dependencies \
     build-essential libssl-dev zlib1g-dev libbz2-dev \
