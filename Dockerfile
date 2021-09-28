@@ -139,8 +139,9 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     version=$(${CURL} https://api.github.com/repos/docker/compose/releases/latest | jq .tag_name -er); \
     ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-compose" "https://github.com/docker/compose/releases/download/${version}/docker-compose-$(uname -s)-amd64"; \
     chmod a+x "$HOME/.docker/cli-plugins/docker-compose"; \
-    ## setup docker-compose shim \
-    printf '%s\n' '#!/bin/bash' '' 'exec docker compose --compatibility "$@"' | sudo tee /usr/local/bin/docker-compose; \
+    ## setup docker-switch (docker-compose v1 compatibility) \
+    version=$(${CURL} https://api.github.com/repos/docker/compose-switch/releases/latest | jq .tag_name -er); \
+    sudo ${CURL} --create-dirs -o "/usr/local/bin/docker-compose" "https://github.com/docker/compose-switch/releases/download/${version}/docker-compose-$(uname -s)-amd64"; \
     sudo chmod +x /usr/local/bin/docker-compose; \
     ## dind \
     # set up subuid/subgid so that "--userns-remap=default" works out-of-the-box \
