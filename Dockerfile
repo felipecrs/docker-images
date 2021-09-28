@@ -137,7 +137,10 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     docker buildx install; \
     # install docker-compose \
     version=$(${CURL} https://api.github.com/repos/docker/compose/releases/latest | jq .tag_name -er); \
-    sudo ${CURL} -o /usr/local/bin/docker-compose "https://github.com/docker/compose/releases/download/${version}/docker-compose-$(uname -s)-$(uname -m)"; \
+    ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-compose" "https://github.com/docker/compose/releases/download/${version}/docker-compose-$(uname -s)-amd64"; \
+    chmod a+x "$HOME/.docker/cli-plugins/docker-compose"; \
+    ## setup docker-compose shim \
+    printf '%s\n' '#!/bin/bash' '' 'exec docker compose --compatibility "$@"' | sudo tee /usr/local/bin/docker-compose; \
     sudo chmod +x /usr/local/bin/docker-compose; \
     ## dind \
     # set up subuid/subgid so that "--userns-remap=default" works out-of-the-box \
