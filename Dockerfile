@@ -109,6 +109,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
         maven \
         ant \
         ant-contrib \
+        time \
         # required for the entrypoint \
         shc \
         # required for docker in docker \
