@@ -137,7 +137,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     docker buildx install; \
     # install docker-compose \
     version=$(${CURL} https://api.github.com/repos/docker/compose/releases/latest | jq .tag_name -er); \
-    ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-compose" "https://github.com/docker/compose/releases/download/${version}/docker-compose-$(uname -s)-amd64"; \
+    ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-compose" "https://github.com/docker/compose/releases/download/${version}/docker-compose-$(uname -s)-$(uname -m)"; \
     chmod a+x "$HOME/.docker/cli-plugins/docker-compose"; \
     ## setup docker-switch (docker-compose v1 compatibility) \
     version=$(${CURL} https://api.github.com/repos/docker/compose-switch/releases/latest | jq .tag_name -er); \
