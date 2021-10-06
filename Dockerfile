@@ -150,7 +150,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     echo 'dockremap:165536:65536' | sudo tee -a /etc/subuid; \
     echo 'dockremap:165536:65536' | sudo tee -a /etc/subgid; \
     # install dind hack \
-    version=ed89041433a031cafc0a0f19cfe573c31688d377; \
+    version="42b1175eda071c0e9121e1d64345928384a93df1"; \
     sudo ${CURL} -o /usr/local/bin/dind "https://raw.githubusercontent.com/docker/docker/${version}/hack/dind"; \
     sudo chmod +x /usr/local/bin/dind; \
     # install jenkins-agent \
