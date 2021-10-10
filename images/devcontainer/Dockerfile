@@ -5,6 +5,7 @@ SHELL [ "/bin/bash", "-euxo", "pipefail", "-c" ]
 ENV USER="vscode"
 ARG USERNAME="${USER}"
 ENV HOME="/home/${USER}"
+ENV PATH="${HOME}/.local/bin:${PATH}"
 USER "${USER}"
 WORKDIR "${HOME}"
 RUN sudo chsh "$USER" -s /usr/bin/zsh
