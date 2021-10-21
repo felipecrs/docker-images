@@ -109,6 +109,8 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
         maven \
         ant \
         ant-contrib \
+        zip \
+        unzip \
         time \
         # required for the entrypoint \
         shc \
