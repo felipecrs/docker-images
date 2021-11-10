@@ -189,7 +189,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     # install helm 3 \
     ${CURL} https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sudo -E bash -
 
-COPY _entrypoint.sh entrypoint.sh /
+COPY _entrypoint.sh entrypoint.sh jenkins_agent.sh /
 
 # install s6-overlay
 RUN ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer; \
@@ -208,4 +208,4 @@ RUN ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-o
     sudo rm -f /_entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD [ "jenkins-agent" ]
+CMD [ "/jenkins_agent.sh" ]
