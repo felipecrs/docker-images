@@ -73,6 +73,10 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     # kubernetes \
     ${CURL} https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "deb https://apt.kubernetes.io/ kubernetes-xenial main"; \
+    # skopeo, podman, buildah \
+    version_id="$(source /etc/os-release && echo -n "$VERSION_ID")"; \
+    ${CURL} https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${version_id}/Release.key | sudo apt-key add -; \
+    sudo add-apt-repository --no-update -y "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${version_id}/ /"; \
     # yarn \
     ${CURL} https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "deb https://dl.yarnpkg.com/debian/ stable main"; \
@@ -104,6 +108,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
         nodejs \
         yarn \
         kubectl \
+        skopeo \
         jfrog-cli \
         shellcheck \
         maven \
