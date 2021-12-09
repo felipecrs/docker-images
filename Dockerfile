@@ -142,7 +142,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-buildx" "https://github.com/docker/buildx/releases/download/${version}/buildx-${version}.$(uname -s)-amd64"; \
     chmod a+x "$HOME/.docker/cli-plugins/docker-buildx"; \
     docker buildx install; \
-    # install docker-compose \
+    # install docker compose \
     version=$(${CURL} https://api.github.com/repos/docker/compose/releases/latest | jq .tag_name -er); \
     ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-compose" "https://github.com/docker/compose/releases/download/${version}/docker-compose-$(uname -s)-$(uname -m)"; \
     chmod a+x "$HOME/.docker/cli-plugins/docker-compose"; \
@@ -168,7 +168,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     sudo chmod +x /usr/share/jenkins/agent.jar; \
     sudo ln -sf /usr/share/jenkins/agent.jar /usr/share/jenkins/slave.jar; \
     # install jenkins-agent wrapper from inbound-agent \
-    version=$(${CURL} https://api.github.com/repos/jenkinsci/docker-inbound-agent/releases/latest | jq .name -er); \
+    version=$(${CURL} https://api.github.com/repos/jenkinsci/docker-inbound-agent/releases/latest | jq .tag_name -er); \
     sudo ${CURL} -o /usr/local/bin/jenkins-agent "https://raw.githubusercontent.com/jenkinsci/docker-inbound-agent/${version}/jenkins-agent"; \
     sudo chmod +x /usr/local/bin/jenkins-agent; \
     sudo ln -sf /usr/local/bin/jenkins-agent /usr/local/bin/jenkins-slave; \
@@ -195,9 +195,13 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     npm cache clean --force; \
     ## miscellaneous \
     # install kind \
-    version=$(${CURL} https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | jq .name -er); \
+    version=$(${CURL} https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | jq .tag_name -er); \
     sudo ${CURL} -o /usr/local/bin/kind "https://github.com/kubernetes-sigs/kind/releases/download/${version}/kind-$(uname)-amd64"; \
     sudo chmod +x /usr/local/bin/kind; \
+    # install hadolint \
+    version=$(${CURL} https://api.github.com/repos/hadolint/hadolint/releases/latest | jq .tag_name -er); \
+    sudo ${CURL} -o /usr/local/bin/hadolint "https://github.com/hadolint/hadolint/releases/download/${version}/hadolint-Linux-x86_64"; \
+    sudo chmod +x /usr/local/bin/hadolint; \
     # install helm 3 \
     ${CURL} https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sudo -E bash -
 
