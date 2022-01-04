@@ -67,9 +67,9 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     # install add-apt-repository \
     ${SUDO_APT_GET_INSTALL} software-properties-common; \
     ## apt repositories \
-    # adopt openjdk \
-    ${CURL} https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | sudo apt-key add -; \
-    sudo add-apt-repository --no-update -y https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/; \
+    # adoptium openjdk \
+    ${CURL} https://packages.adoptium.net/artifactory/api/gpg/key/public | sudo apt-key add -; \
+    sudo add-apt-repository --no-update -y "https://packages.adoptium.net/artifactory/deb"; \
     # kubernetes \
     ${CURL} https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "deb https://apt.kubernetes.io/ kubernetes-xenial main"; \
@@ -104,7 +104,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
         rsync \
         sshpass \
         python3-pip \
-        adoptopenjdk-11-hotspot \
+        temurin-11-jdk \
         nodejs \
         yarn \
         kubectl \
