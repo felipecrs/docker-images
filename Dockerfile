@@ -23,7 +23,7 @@ ARG NPM_GLOBAL_PATH="${HOME}/.npm-global"
 ENV AGENT_WORKDIR="${HOME}/agent" \
     CI=true \
     PATH="${NPM_GLOBAL_PATH}/bin:${HOME}/.local/bin:${PATH}" \
-    JAVA_HOME="/usr/lib/jvm/adoptopenjdk-11-hotspot-amd64" \
+    JAVA_HOME="/usr/lib/jvm/temurin-11-jdk-amd64" \
     # locale and encoding
     LANG="en_US.UTF-8" \
     LANGUAGE="en_US:en" \
