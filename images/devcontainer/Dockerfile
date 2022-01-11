@@ -25,7 +25,7 @@ RUN sudo apt-get update; \
     sudo rm -rf /var/lib/apt/lists/*;
 
 # script-library options
-ARG SCRIPT_LIBRARY_VERSION=master
+ARG SCRIPT_LIBRARY_VERSION=HEAD
 ARG SCRIPT_LIBRARY_URL=https://raw.githubusercontent.com/microsoft/vscode-dev-containers/${SCRIPT_LIBRARY_VERSION}/script-library
 
 # Install docker cli, kubectl, helm and kind
