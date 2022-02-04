@@ -136,7 +136,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     sudo usermod -aG docker "${USER}"; \
     # setup docker volume \
     sudo mkdir -p /etc/docker; \
-    jq -n --arg d "${AGENT_WORKDIR}/docker" '."data-root" = $d' | sudo tee /etc/docker/daemon.json; \
+    jq -n --arg d "${AGENT_WORKDIR}/docker" '."data-root" = $d | .features.buildkit = true ' | sudo tee /etc/docker/daemon.json; \
     # setup buildx \
     version=$(${CURL} https://api.github.com/repos/docker/buildx/releases/latest | jq .tag_name -er); \
     ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-buildx" "https://github.com/docker/buildx/releases/download/${version}/buildx-${version}.$(uname -s)-amd64"; \
