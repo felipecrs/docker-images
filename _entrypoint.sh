@@ -14,6 +14,10 @@ readonly _GID=${2?"GID is mandatory. Usage: $0 UID GID"}
 shift
 shift
 
+# Unset environment variables injected by Kubernetes (like the Jenkins Kubernetes Plugin)
+# to avoid conflicts with running Kubernetes inside of the agent.
+unset "${!KUBERNETES_@}"
+
 # S6_CMD_WAIT_FOR_SERVICES=1: wait for services to be running before executing CMD
 # /init: s6-overlay
 # setpriv: drop privileges
