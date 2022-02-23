@@ -34,7 +34,7 @@ RUN group=${USER}; \
     uid=1000; \
     gid=${uid}; \
     groupadd -g ${gid} ${group}; \
-    useradd -c "Jenkins user" -d "${HOME}" -u ${uid} -g ${gid} -m ${USER} -s /bin/bash; \
+    useradd -l -c "Jenkins user" -d "${HOME}" -u ${uid} -g ${gid} -m ${USER} -s /bin/bash; \
     # install sudo and locales\
     ${APT_GET} update; \
     ${APT_GET_INSTALL} \
