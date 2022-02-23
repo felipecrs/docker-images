@@ -1,0 +1,7 @@
+{
+    "data-root": "/home/jenkins/agent/docker",
+    "features": {
+        "buildkit": true
+    },
+    "mtu": 1400
+}

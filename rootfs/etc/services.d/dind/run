@@ -1,0 +1,4 @@
+#!/usr/bin/execlineb -P
+
+s6-notifyoncheck -c "docker version"
+/usr/local/bin/dind dockerd
