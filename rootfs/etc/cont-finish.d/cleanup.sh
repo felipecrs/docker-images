@@ -7,7 +7,7 @@ set -euo pipefail
 trap 'kill 0' EXIT
 
 echo "Waiting for dind to be stopped by s6-svc..." >&2
-s6-svwait -D /var/run/s6/services/dind
+s6-svwait -D /var/run/s6/services/dind || true
 
 echo "Starting dind again..." >&2
 dind dockerd &>/dev/null &
