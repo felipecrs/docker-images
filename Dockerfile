@@ -58,8 +58,9 @@ VOLUME "${AGENT_WORKDIR}"
 
 WORKDIR "${HOME}"
 
-# assure jenkins-agent directories
-RUN mkdir -p "${AGENT_WORKDIR}"; \
+RUN \
+    # assure jenkins-agent directories \
+    mkdir -p "${AGENT_WORKDIR}"; \
     ## apt \
     ${SUDO_APT_GET} update; \
     # upgrade system \
@@ -200,7 +201,11 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     sudo ${CURL} -o /usr/local/bin/hadolint "https://github.com/hadolint/hadolint/releases/download/${version}/hadolint-Linux-x86_64"; \
     sudo chmod +x /usr/local/bin/hadolint; \
     # install helm 3 \
-    ${CURL} https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sudo -E bash -; \
+    ${CURL} https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sudo -E bash -
+
+COPY rootfs/ /
+
+RUN \
     # install s6-overlay \
     ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer; \
     chmod +x /tmp/s6-overlay-installer; \
@@ -211,8 +216,6 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     sudo chown root:root /_entrypoint; \
     sudo chmod 4755 /_entrypoint; \
     sudo rm -f /_entrypoint.sh
-
-COPY rootfs/ /
 
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "/jenkins_agent.sh" ]
