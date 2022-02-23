@@ -35,3 +35,44 @@ docker run -ti --rm --privileged felipecrs/jenkins-agent-dind bash
 ### Agent Template in Docker Cloud configuration on Jenkins
 
 ![Sample Agent Template configuration](https://user-images.githubusercontent.com/29582865/106769145-66379180-661b-11eb-93e3-5a7742eb46c0.png)
+
+### Kubernetes Plugin Pod Template
+
+The following is the Pod definition that you can use as a Pod template with the Kubernetes Plugin. It contains [optimizations](https://github.com/kubernetes-sigs/kind/issues/303) to allow running KinD within the pod as well.
+
+```yaml
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: jnlp
+    image: ghcr.io/felipecrs/jenkins-agent-dind:latest
+    imagePullPolicy: Always
+    securityContext:
+      privileged: true
+    workingDir: /home/jenkins/agent
+    volumeMounts:
+      - mountPath: /home/jenkins/agent
+        name: workspace-volume
+      - mountPath: /lib/modules
+        name: lib-modules
+        readOnly: true
+      - mountPath: /sys/fs/cgroup
+        name: sys-fs-cgroup
+  hostNetwork: false
+  automountServiceAccountToken: false
+  enableServiceLinks: false
+  dnsPolicy: Default
+  restartPolicy: Never
+  volumes:
+    - name: workspace-volume
+      emptyDir: {}
+    - name: lib-modules
+      hostPath:
+        path: /lib/modules
+        type: Directory
+    - name: sys-fs-cgroup
+      hostPath:
+        path: /sys/fs/cgroup
+        type: Directory
+```
