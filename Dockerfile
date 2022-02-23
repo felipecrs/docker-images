@@ -134,9 +134,6 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     ${SUDO_CLEAN_APT}; \
     # setup docker \
     sudo usermod -aG docker "${USER}"; \
-    # setup docker volume \
-    sudo mkdir -p /etc/docker; \
-    jq -n --arg d "${AGENT_WORKDIR}/docker" '."data-root" = $d | .features.buildkit = true ' | sudo tee /etc/docker/daemon.json; \
     # setup buildx \
     version=$(${CURL} https://api.github.com/repos/docker/buildx/releases/latest | jq .tag_name -er); \
     ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-buildx" "https://github.com/docker/buildx/releases/download/${version}/buildx-${version}.$(uname -s)-amd64"; \
@@ -158,7 +155,7 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     echo 'dockremap:165536:65536' | sudo tee -a /etc/subgid; \
     # install dind hack \
     version="42b1175eda071c0e9121e1d64345928384a93df1"; \
-    sudo ${CURL} -o /usr/local/bin/dind "https://raw.githubusercontent.com/docker/docker/${version}/hack/dind"; \
+    sudo ${CURL} -o /usr/local/bin/dind "https://raw.githubusercontent.com/moby/moby/${version}/hack/dind"; \
     sudo chmod +x /usr/local/bin/dind; \
     # install jenkins-agent \
     base_url="https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting"; \
@@ -203,25 +200,19 @@ RUN mkdir -p "${AGENT_WORKDIR}"; \
     sudo ${CURL} -o /usr/local/bin/hadolint "https://github.com/hadolint/hadolint/releases/download/${version}/hadolint-Linux-x86_64"; \
     sudo chmod +x /usr/local/bin/hadolint; \
     # install helm 3 \
-    ${CURL} https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sudo -E bash -
-
-COPY _entrypoint.sh entrypoint.sh jenkins_agent.sh /
-
-# install s6-overlay
-RUN ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer; \
+    ${CURL} https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sudo -E bash -; \
+    # install s6-overlay \
+    ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer; \
     chmod +x /tmp/s6-overlay-installer; \
     sudo /tmp/s6-overlay-installer /; \
     rm -f /tmp/s6-overlay-installer; \
-    # create dind dockerd service \
-    sudo mkdir -p /etc/services.d/dind; \
-    printf '%s\n' '#!/usr/bin/execlineb -P' 's6-notifyoncheck -c "docker version"' '/usr/local/bin/dind dockerd' | sudo tee /etc/services.d/dind/run; \
-    printf '%s\n' '3'| sudo tee /etc/services.d/dind/notification-fd; \
-    printf '%s\n' '#!/usr/bin/execlineb -S0' 's6-svscanctl -t /var/run/s6/services' | sudo tee /etc/services.d/dind/finish; \
     # setup entrypoint \
     sudo shc -S -r -f /_entrypoint.sh -o /_entrypoint; \
     sudo chown root:root /_entrypoint; \
     sudo chmod 4755 /_entrypoint; \
     sudo rm -f /_entrypoint.sh
+
+COPY rootfs/ /
 
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "/jenkins_agent.sh" ]
