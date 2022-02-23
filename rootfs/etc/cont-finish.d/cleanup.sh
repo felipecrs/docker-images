@@ -25,4 +25,11 @@ until docker ps &>/dev/null; do
 done
 
 echo "Cleaning up..." >&2
+
+# Best effort to remove the kind cluster, perhaps not needed
+echo "Attempting to delete kind clusters..." >&2
+kind delete cluster || true
+kind get clusters | xargs --max-lines=1 --no-run-if-empty -- kind delete cluster --name || true
+
+echo "Removing all containers..." >&2
 docker ps --all --quiet | xargs --no-run-if-empty -- docker rm --force
