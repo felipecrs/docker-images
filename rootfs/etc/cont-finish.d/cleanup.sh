@@ -7,19 +7,19 @@ set -euo pipefail
 trap 'kill 0' EXIT
 
 echo "Waiting for dind to be stopped by s6-svc..." >&2
-s6-svwait -D /var/run/s6/services/dind || true
+s6-svwait -D -t 15000 /var/run/s6/services/dind || true
 
 echo "Starting dind again..." >&2
 dind dockerd &>/dev/null &
 
-# Wait until dind is ready.
+# Wait until dind is ready
 counter=0
 until docker ps &>/dev/null; do
     echo "Waiting for dind to be up..." >&2
     sleep 1
 
     counter=$((counter + 1))
-    if [[ $counter -gt 30 ]]; then
+    if [[ $counter -gt 15 ]]; then
         echo "dind failed to start" >&2
         exit 1
     fi

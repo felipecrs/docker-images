@@ -208,7 +208,11 @@ RUN \
     sudo /tmp/s6-overlay-installer /; \
     rm -f /tmp/s6-overlay-installer
 
-ENV S6_CMD_WAIT_FOR_SERVICES=1
+ENV \
+    # Wait for dind before running CMD \
+    S6_CMD_WAIT_FOR_SERVICES=1 \
+    # Time to wait for the cleanup.sh to finish \
+    S6_KILL_FINISH_MAXTIME=45000
 
 # s6-overlay runs as root so that it can properly start the docker daemon
 # but it executes CMD as jenkins by dropping the privileges with s6-setuidgid
