@@ -27,7 +27,12 @@ ENV AGENT_WORKDIR="${HOME}/agent" \
     # locale and encoding
     LANG="en_US.UTF-8" \
     LANGUAGE="en_US:en" \
-    LC_ALL="en_US.UTF-8"
+    LC_ALL="en_US.UTF-8" \
+    ## Entrypoint related \
+    # Wait for dind before running CMD \
+    S6_CMD_WAIT_FOR_SERVICES=1 \
+    # Time to wait for the cleanup.sh to finish \
+    S6_KILL_FINISH_MAXTIME=45000
 
 # create non-root user
 RUN group=${USER}; \
@@ -197,27 +202,20 @@ RUN \
     sudo ${CURL} -o /usr/local/bin/hadolint "https://github.com/hadolint/hadolint/releases/download/${version}/hadolint-Linux-x86_64"; \
     sudo chmod +x /usr/local/bin/hadolint; \
     # install helm 3 \
-    ${CURL} https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sudo -E bash -
-
-COPY rootfs/ /
-
-RUN \
+    ${CURL} https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sudo -E bash -; \
     # install s6-overlay \
     ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64-installer; \
     chmod +x /tmp/s6-overlay-installer; \
     sudo /tmp/s6-overlay-installer /; \
     rm -f /tmp/s6-overlay-installer
 
-ENV \
-    # Wait for dind before running CMD \
-    S6_CMD_WAIT_FOR_SERVICES=1 \
-    # Time to wait for the cleanup.sh to finish \
-    S6_KILL_FINISH_MAXTIME=45000
+USER root
+
+COPY rootfs/ /
 
 # s6-overlay runs as root so that it can properly start the docker daemon
 # but it executes CMD as jenkins by dropping the privileges with s6-setuidgid
 # hadolint ignore=DL3002
-USER root
 
 ENTRYPOINT [ "/init", "s6-setuidgid", "jenkins" ]
 CMD [ "jenkins-agent" ]
