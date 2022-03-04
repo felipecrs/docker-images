@@ -17,7 +17,7 @@ RUN sudo apt-get update; \
     sudo add-apt-repository --no-update -y ppa:git-core/ppa; \
     sudo add-apt-repository --no-update -y ppa:deadsnakes/ppa; \
     sudo apt-get update; \
-    sudo apt-get install --no-install-recommends -y build-essential git \
+    sudo apt-get install --no-install-recommends -y build-essential git tree parallel \
     # pyenv dependencies \
     build-essential libssl-dev zlib1g-dev libbz2-dev \
     libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
