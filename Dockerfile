@@ -88,8 +88,6 @@ RUN \
     sudo add-apt-repository --no-update -y ppa:git-core/ppa; \
     # yq \
     sudo add-apt-repository --no-update -y ppa:rmescandon/yq; \
-    # shc \
-    sudo add-apt-repository --no-update -y ppa:neurobin/ppa; \
     # git-lfs \
     ${CURL} https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo -E bash -; \
     # nodejs \
@@ -118,8 +116,6 @@ RUN \
         zip \
         unzip \
         time \
-        # required for the entrypoint \
-        shc \
         # required for docker in docker \
         iptables \
         xz-utils \
@@ -207,15 +203,17 @@ COPY rootfs/ /
 
 RUN \
     # install s6-overlay \
-    ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer; \
+    ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64-installer; \
     chmod +x /tmp/s6-overlay-installer; \
     sudo /tmp/s6-overlay-installer /; \
-    rm -f /tmp/s6-overlay-installer; \
-    # setup entrypoint \
-    sudo shc -S -r -f /_entrypoint.sh -o /_entrypoint; \
-    sudo chown root:root /_entrypoint; \
-    sudo chmod 4755 /_entrypoint; \
-    sudo rm -f /_entrypoint.sh
+    rm -f /tmp/s6-overlay-installer
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENV S6_CMD_WAIT_FOR_SERVICES=1
+
+# s6-overlay runs as root so that it can properly start the docker daemon
+# but it executes CMD as jenkins by dropping the privileges with s6-setuidgid
+# hadolint ignore=DL3002
+USER root
+
+ENTRYPOINT [ "/init", "s6-setuidgid", "jenkins" ]
 CMD [ "jenkins-agent" ]
