@@ -1,4 +1,4 @@
-#!/usr/bin/execlineb -P
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
 
-s6-notifyoncheck -c "docker version"
-/usr/local/bin/dind dockerd
+exec s6-notifyoncheck -c "docker version" dind dockerd
