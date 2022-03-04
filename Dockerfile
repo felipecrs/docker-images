@@ -218,4 +218,4 @@ RUN \
     sudo rm -f /_entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD [ "/jenkins_agent.sh" ]
+CMD [ "jenkins-agent" ]
