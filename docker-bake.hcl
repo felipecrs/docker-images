@@ -1,7 +1,7 @@
 function "create_tags" {
 	params = [image_name]
     variadic_params = tags
-    
+
     result = concat(
         [for t in tags : "${image_name}:${t}"], 
         [for t in tags : "ghcr.io/${image_name}:${t}"]
