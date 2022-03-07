@@ -142,8 +142,7 @@ RUN \
     chmod a+x "$HOME/.docker/cli-plugins/docker-buildx"; \
     docker buildx install; \
     # install docker compose \
-    # version=$(${CURL} https://api.github.com/repos/docker/compose/releases/latest | jq .tag_name -er); \
-    version="v2.2.3"; \
+    version=$(${CURL} https://api.github.com/repos/docker/compose/releases/latest | jq .tag_name -er); \
     ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-compose" "https://github.com/docker/compose/releases/download/${version}/docker-compose-$(uname -s)-$(uname -m)"; \
     chmod a+x "$HOME/.docker/cli-plugins/docker-compose"; \
     ## setup docker-switch (docker-compose v1 compatibility) \
