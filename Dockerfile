@@ -217,5 +217,14 @@ COPY rootfs/ /
 # but it executes CMD as jenkins by dropping the privileges with s6-setuidgid
 # hadolint ignore=DL3002
 
-ENTRYPOINT [ "/init", "s6-setuidgid", "jenkins" ]
+ENTRYPOINT [ "/init",\
+        # write jenkins-agent logs to /dev/termination-log so that Kubernets can use
+        # it as the termination message. See:
+        # https://github.com/just-containers/s6-overlay/issues/425
+        # redirect stdout of CMD to /dev/termination-log
+        "pipeline", "-w", "tee", "/dev/termination-log", "", \
+        # redirect stderr of CMD to stdout so that both goes to /dev/termination-log
+        "fdmove", "-c", "2", "1", \
+        # drop privileges for CMD (run as jenkins user)
+        "s6-setuidgid", "jenkins"]
 CMD [ "jenkins-agent" ]
