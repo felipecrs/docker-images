@@ -65,7 +65,6 @@ spec:
   dnsPolicy: Default
   restartPolicy: Never
   terminationGracePeriodSeconds: 60
-  terminationMessagePolicy: FallbackToLogsOnError
   volumes:
     - name: workspace-volume
       emptyDir: {}
