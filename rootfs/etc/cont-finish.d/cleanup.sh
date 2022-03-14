@@ -34,3 +34,12 @@ kind get clusters | xargs --max-lines=1 --no-run-if-empty -- kind delete cluster
 
 echo "Removing all containers..." >&2
 docker ps --all --quiet | xargs --no-run-if-empty -- docker rm --force
+
+# Copy jenkins-agent logs to /dev/termination-log so that K8s can set the
+# termination message.
+if [[ -d "${AGENT_WORKDIR}/remoting/logs" ]]; then
+    echo "Flushing termination log..." >&2
+    find "${AGENT_WORKDIR}/remoting/logs" \
+        -type f -name 'remoting.log.*' -and -not -name 'remoting.log.*.lck' \
+        -exec cat {} ";" | tee /dev/termination-log >/dev/null
+fi
