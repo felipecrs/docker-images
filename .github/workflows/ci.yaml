@@ -33,7 +33,7 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push
-        uses: docker/bake-action@v1
+        uses: docker/bake-action@v2
         with:
           pull: true
           no-cache: true
