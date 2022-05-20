@@ -1,3 +1,23 @@
+# Build skopeo from source because of https://github.com/containers/skopeo/issues/1648
+FROM golang:1.18 AS skopeo-build
+
+WORKDIR /usr/src/skopeo
+
+ARG SKOPEO_VERSION="1.8.0"
+RUN curl -fsSL "https://github.com/containers/skopeo/archive/v${SKOPEO_VERSION}.tar.gz" \
+  | tar -xzf - --strip-components=1
+
+RUN CGO_ENABLED=0 DISABLE_DOCS=1 make BUILDTAGS=containers_image_openpgp GO_DYN_FLAGS=
+
+RUN ./bin/skopeo --version
+
+
+FROM scratch AS skopeo-rootfs
+
+COPY --from=skopeo-build /usr/src/skopeo/bin/skopeo /usr/local/bin/
+COPY --from=skopeo-build /usr/src/skopeo/default-policy.json /etc/containers/policy.json
+
+
 FROM buildpack-deps:focal
 
 # set bash as the default interpreter for the build with:
@@ -63,7 +83,11 @@ VOLUME "${AGENT_WORKDIR}"
 
 WORKDIR "${HOME}"
 
+COPY --from=skopeo-rootfs / /
+
 RUN \
+    # ensure skopeo is working
+    skopeo --version; \
     # assure jenkins-agent directories \
     mkdir -p "${AGENT_WORKDIR}"; \
     ## apt \
@@ -79,10 +103,6 @@ RUN \
     # kubernetes \
     ${CURL} https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "deb https://apt.kubernetes.io/ kubernetes-xenial main"; \
-    # skopeo, podman, buildah \
-    version_id="$(source /etc/os-release && echo -n "$VERSION_ID")"; \
-    ${CURL} https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${version_id}/Release.key | sudo apt-key add -; \
-    sudo add-apt-repository --no-update -y "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${version_id}/ /"; \
     # yarn \
     ${CURL} https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "deb https://dl.yarnpkg.com/debian/ stable main"; \
@@ -112,7 +132,6 @@ RUN \
         nodejs \
         yarn \
         kubectl \
-        skopeo \
         jfrog-cli \
         shellcheck \
         maven \
