@@ -133,6 +133,7 @@ RUN \
         yarn \
         kubectl \
         jfrog-cli \
+        jfrog-cli-v2-jf \
         shellcheck \
         maven \
         ant \
