@@ -69,7 +69,8 @@ RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/java-debian.sh")" -- none "$
 
 FROM base as github
 
-RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/github-debian.sh")"; \
+ARG GITHUB_CLI_FEATURE_REVISION="7e6dd4b07089855b491da02ea66666505ebda541"
+RUN sudo bash -c "$(curl -fsSL "https://raw.githubusercontent.com/devcontainers/features/${GITHUB_CLI_FEATURE_REVISION}/src/github-cli/install.sh")"; \
     # Clean up \
     sudo apt-get autoremove -y && sudo apt-get clean -y && sudo rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
 
