@@ -38,7 +38,7 @@ docker run -ti --rm --privileged felipecrs/jenkins-agent-dind bash
 
 ### Kubernetes Plugin Pod Template
 
-The following is the Pod definition that you can use as a Pod template with the Kubernetes Plugin. It contains [optimizations](https://github.com/kubernetes-sigs/kind/issues/303) to allow running KinD within the pod as well.
+The following is the Pod definition that you can use as a Pod template with the Kubernetes Plugin.
 
 ```yaml
 apiVersion: v1
@@ -54,26 +54,14 @@ spec:
     volumeMounts:
       - mountPath: /home/jenkins/agent
         name: workspace-volume
-      - mountPath: /lib/modules
-        name: lib-modules
-        readOnly: true
-      - mountPath: /sys/fs/cgroup
-        name: sys-fs-cgroup
+    terminationMessagePolicy: FallbackToLogsOnError
   hostNetwork: false
   automountServiceAccountToken: false
   enableServiceLinks: false
   dnsPolicy: Default
   restartPolicy: Never
-  terminationGracePeriodSeconds: 60
+  terminationGracePeriodSeconds: 30
   volumes:
     - name: workspace-volume
       emptyDir: {}
-    - name: lib-modules
-      hostPath:
-        path: /lib/modules
-        type: Directory
-    - name: sys-fs-cgroup
-      hostPath:
-        path: /sys/fs/cgroup
-        type: Directory
 ```
