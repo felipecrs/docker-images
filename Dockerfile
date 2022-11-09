@@ -1,5 +1,28 @@
+FROM buildpack-deps:focal AS base
+
+# set bash as the default interpreter for the build with:
+# -e: exits on error, so we can use colon as line separator
+# -u: throw error on variable unset
+# -o pipefail: exits on first command failed in pipe
+SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
+
+
+# Build the init_as_root
+FROM base AS init_as_root
+
+# Install shc
+RUN apt-get update; \
+    apt-get install -y shc; \
+    rm -rf /var/lib/apt/lists/*
+
+COPY init_as_root.sh /
+RUN shc -S -r -f /init_as_root.sh -o /init_as_root; \
+    chown root:root /init_as_root; \
+    chmod 4755 /init_as_root
+
+
 # Build skopeo from source because of https://github.com/containers/skopeo/issues/1648
-FROM golang:1.18 AS skopeo-build
+FROM golang:1.18 AS skopeo
 
 WORKDIR /usr/src/skopeo
 
@@ -12,19 +35,15 @@ RUN CGO_ENABLED=0 DISABLE_DOCS=1 make BUILDTAGS=containers_image_openpgp GO_DYN_
 RUN ./bin/skopeo --version
 
 
-FROM scratch AS skopeo-rootfs
+FROM scratch AS rootfs
 
-COPY --from=skopeo-build /usr/src/skopeo/bin/skopeo /usr/local/bin/
-COPY --from=skopeo-build /usr/src/skopeo/default-policy.json /etc/containers/policy.json
+COPY --from=init_as_root /init_as_root /
+COPY rootfs /
+COPY --from=skopeo /usr/src/skopeo/bin/skopeo /usr/local/bin/
+COPY --from=skopeo /usr/src/skopeo/default-policy.json /etc/containers/policy.json
 
 
-FROM buildpack-deps:focal
-
-# set bash as the default interpreter for the build with:
-# -e: exits on error, so we can use colon as line separator
-# -u: throw error on variable unset
-# -o pipefail: exits on first command failed in pipe
-SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
+FROM base
 
 ENV USER=jenkins
 ENV HOME="/home/${USER}"
@@ -38,11 +57,11 @@ ARG SUDO_APT_GET_INSTALL="sudo DEBIANFRONTEND=noninteractive ${APT_GET_INSTALL}"
 ARG CLEAN_APT="rm -rf /var/lib/apt/lists/*"
 ARG SUDO_CLEAN_APT="sudo ${CLEAN_APT}"
 ARG CURL="curl -fsSL"
-ARG NPM_GLOBAL_PATH="${HOME}/.npm-global"
+ARG NPM_PREFIX="${HOME}/.npm"
 
 ENV AGENT_WORKDIR="${HOME}/agent" \
     CI=true \
-    PATH="${NPM_GLOBAL_PATH}/bin:${HOME}/.local/bin:${PATH}" \
+    PATH="${NPM_PREFIX}/bin:${HOME}/.local/bin:${PATH}" \
     JAVA_HOME="/usr/lib/jvm/temurin-11-jdk-amd64" \
     # locale and encoding \
     LANG="en_US.UTF-8" \
@@ -74,19 +93,16 @@ RUN group=${USER}; \
     # dismiss sudo welcome message \
     sudo -u "${USER}" sudo true
 
+
 # use non-root user with sudo when needed
 USER "${USER}"
 
+WORKDIR "${AGENT_WORKDIR}"
+
 VOLUME "${AGENT_WORKDIR}"
 
-WORKDIR "${HOME}"
-
-COPY --from=skopeo-rootfs / /
-
 RUN \
-    # ensure skopeo is working
-    skopeo --version; \
-    # assure jenkins-agent directories \
+    # ensure jenkins-agent directory exists \
     mkdir -p "${AGENT_WORKDIR}"; \
     ## apt \
     ${SUDO_APT_GET} update; \
@@ -159,10 +175,6 @@ RUN \
     ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-buildx" "https://github.com/docker/buildx/releases/download/${version}/buildx-${version}.$(uname -s)-amd64"; \
     chmod a+x "$HOME/.docker/cli-plugins/docker-buildx"; \
     docker buildx install; \
-    # install docker compose \
-    version=$(${CURL} https://api.github.com/repos/docker/compose/releases/latest | jq .tag_name -er); \
-    ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-compose" "https://github.com/docker/compose/releases/download/${version}/docker-compose-$(uname -s)-$(uname -m)"; \
-    chmod a+x "$HOME/.docker/cli-plugins/docker-compose"; \
     ## setup docker-switch (docker-compose v1 compatibility) \
     version=$(${CURL} https://api.github.com/repos/docker/compose-switch/releases/latest | jq .tag_name -er); \
     sudo ${CURL} --create-dirs -o "/usr/local/bin/docker-compose" "https://github.com/docker/compose-switch/releases/download/${version}/docker-compose-$(uname -s)-amd64"; \
@@ -190,26 +202,25 @@ RUN \
     sudo chmod +x /usr/local/bin/jenkins-agent; \
     sudo ln -sf /usr/local/bin/jenkins-agent /usr/local/bin/jenkins-slave; \
     ## pip \
-    # upgrade pip \
-    sudo python3 -m pip install --no-cache-dir --upgrade pip; \
     # setup python and pip aliases \
     sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1; \
     sudo update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
+    # upgrade pip \
+    sudo pip install --no-cache-dir --upgrade pip; \
     # install pip packages \
-    pip install --user --no-cache-dir ansible; \
+    sudo pip install --no-cache-dir ansible; \
     ## npm \
     # upgrade npm \
     sudo npm install -g npm@latest; \
     # allow npm --global to run as non-root \
-    mkdir "${NPM_GLOBAL_PATH}"; \
-    npm config set prefix "${NPM_GLOBAL_PATH}"; \
+    mkdir "${NPM_PREFIX}"; \
+    npm config set prefix "${NPM_PREFIX}"; \
     # install npm packages \
-    npm install --global \
+    sudo npm install --global \
         semver \
         bats; \
     # clean npm cache \
     sudo npm cache clean --force; \
-    npm cache clean --force; \
     ## miscellaneous \
     # install kind \
     version=$(${CURL} https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | jq .tag_name -er); \
@@ -222,18 +233,18 @@ RUN \
     # install helm 3 \
     ${CURL} https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sudo -E bash -; \
     # install s6-overlay \
-    ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64-installer; \
+    ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer; \
     chmod +x /tmp/s6-overlay-installer; \
     sudo /tmp/s6-overlay-installer /; \
-    rm -f /tmp/s6-overlay-installer
+    rm -f /tmp/s6-overlay-installer; \
+    # install fixuid \
+    curl -fsSL https://github.com/boxboat/fixuid/releases/download/v0.5.1/fixuid-0.5.1-linux-amd64.tar.gz | sudo tar -C /usr/local/bin -xzf -; \
+    sudo chown root:root /usr/local/bin/fixuid;\
+    sudo chmod 4755 /usr/local/bin/fixuid; \
+    sudo mkdir -p /etc/fixuid; \
+    printf '%s\n' "user: ${USER}" "group: ${USER}" "paths:" "  - /" "  - ${AGENT_WORKDIR}" | sudo tee /etc/fixuid/config.yml
 
-USER root
+COPY --from=rootfs / /
 
-COPY rootfs/ /
-
-# s6-overlay runs as root so that it can properly start the docker daemon
-# but it executes CMD as jenkins by dropping the privileges with s6-setuidgid
-# hadolint ignore=DL3002
-
-ENTRYPOINT [ "/init", "s6-setuidgid", "jenkins" ]
+ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "jenkins-agent" ]
