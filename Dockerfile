@@ -45,8 +45,8 @@ COPY --from=skopeo /usr/src/skopeo/default-policy.json /etc/containers/policy.js
 
 FROM base
 
-ENV USER=jenkins
-ENV HOME="/home/${USER}"
+ENV NON_ROOT_USER=jenkins
+ARG HOME="/home/${NON_ROOT_USER}"
 
 # build helpers
 ARG DEBIANFRONTEND="noninteractive"
@@ -72,11 +72,11 @@ ENV AGENT_WORKDIR="${HOME}/agent" \
     S6_CMD_WAIT_FOR_SERVICES=1
 
 # create non-root user
-RUN group=${USER}; \
-    uid=1000; \
-    gid=${uid}; \
-    groupadd -g ${gid} ${group}; \
-    useradd -l -c "Jenkins user" -d "${HOME}" -u ${uid} -g ${gid} -m ${USER} -s /bin/bash; \
+RUN group="${NON_ROOT_USER}"; \
+    uid="1000"; \
+    gid="${uid}"; \
+    groupadd -g "${gid}" "${group}"; \
+    useradd -l -c "Jenkins user" -d "${HOME}" -u "${uid}" -g "${gid}" -m "${NON_ROOT_USER}" -s /bin/bash; \
     # install sudo and locales\
     ${APT_GET} update; \
     ${APT_GET_INSTALL} \
@@ -88,14 +88,14 @@ RUN group=${USER}; \
     sudo sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen; \
     sudo locale-gen; \
     # setup sudo \
-    usermod -aG sudo ${USER}; \
-    echo "${USER}  ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${USER}"; \
+    usermod -aG sudo "${NON_ROOT_USER}"; \
+    echo "${NON_ROOT_USER}  ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${NON_ROOT_USER}"; \
     # dismiss sudo welcome message \
-    sudo -u "${USER}" sudo true
+    sudo -u "${NON_ROOT_USER}" sudo true
 
 
 # use non-root user with sudo when needed
-USER "${USER}"
+USER "${NON_ROOT_USER}:${NON_ROOT_USER}"
 
 WORKDIR "${AGENT_WORKDIR}"
 
@@ -169,11 +169,11 @@ RUN \
     ${SUDO_APT_GET} autoremove -yq; \
     ${SUDO_CLEAN_APT}; \
     # setup docker \
-    sudo usermod -aG docker "${USER}"; \
+    sudo usermod -aG docker "${NON_ROOT_USER}"; \
     # setup buildx \
     version=$(${CURL} https://api.github.com/repos/docker/buildx/releases/latest | jq .tag_name -er); \
-    ${CURL} --create-dirs -o "$HOME/.docker/cli-plugins/docker-buildx" "https://github.com/docker/buildx/releases/download/${version}/buildx-${version}.$(uname -s)-amd64"; \
-    chmod a+x "$HOME/.docker/cli-plugins/docker-buildx"; \
+    ${CURL} --create-dirs -o "${HOME}/.docker/cli-plugins/docker-buildx" "https://github.com/docker/buildx/releases/download/${version}/buildx-${version}.$(uname -s)-amd64"; \
+    chmod a+x "${HOME}/.docker/cli-plugins/docker-buildx"; \
     docker buildx install; \
     ## setup docker-switch (docker-compose v1 compatibility) \
     version=$(${CURL} https://api.github.com/repos/docker/compose-switch/releases/latest | jq .tag_name -er); \
@@ -242,7 +242,7 @@ RUN \
     sudo chown root:root /usr/local/bin/fixuid;\
     sudo chmod 4755 /usr/local/bin/fixuid; \
     sudo mkdir -p /etc/fixuid; \
-    printf '%s\n' "user: ${USER}" "group: ${USER}" "paths:" "  - /" "  - ${AGENT_WORKDIR}" | sudo tee /etc/fixuid/config.yml
+    printf '%s\n' "user: ${NON_ROOT_USER}" "group: ${NON_ROOT_USER}" "paths:" "  - /" "  - ${AGENT_WORKDIR}" | sudo tee /etc/fixuid/config.yml
 
 COPY --from=rootfs / /
 
