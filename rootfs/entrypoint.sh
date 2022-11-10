@@ -12,7 +12,7 @@ uid="$(id -u)"
 if [[ "${uid}" -eq 0 ]]; then
     # If running as root, simply execute s6-overlay
     export USER="root"
-    cmd=(/init)
+    cmd=(/init_as_root)
 else
     # Otherwise, fix uid and gid, run s6-overlay as root and then drop
     # privileges back to the user

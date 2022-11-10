@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+# shellcheck shell=bash
+
+set -eu
+
+echo "[sshd] starting service" >&2
+exec s6-notifyoncheck -c \
+    "ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null jenkins@localhost true" \
+    /usr/sbin/sshd -D -e
