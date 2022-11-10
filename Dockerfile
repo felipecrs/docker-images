@@ -163,7 +163,8 @@ RUN \
         net-tools \
         iputils-ping \
         traceroute \
-        dnsutils; \
+        dnsutils \
+        netcat; \
     # install docker \
     ${CURL} https://get.docker.com | sudo sh; \
     ${SUDO_APT_GET} autoremove -yq; \
