@@ -43,16 +43,16 @@ apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: jnlp
-    image: ghcr.io/felipecrs/jenkins-agent-dind:latest
-    imagePullPolicy: Always
-    securityContext:
-      privileged: true
-    workingDir: /home/jenkins/agent
-    volumeMounts:
-      - mountPath: /home/jenkins/agent
-        name: workspace-volume
-    terminationMessagePolicy: FallbackToLogsOnError
+    - name: jnlp
+      image: ghcr.io/felipecrs/jenkins-agent-dind:latest
+      imagePullPolicy: Always
+      securityContext:
+        privileged: true
+      workingDir: /home/jenkins/agent
+      volumeMounts:
+        - mountPath: /home/jenkins/agent
+          name: workspace-volume
+      terminationMessagePolicy: FallbackToLogsOnError
   hostNetwork: false
   automountServiceAccountToken: false
   enableServiceLinks: false
@@ -93,3 +93,9 @@ pipeline {
   }
 }
 ```
+
+### Accessing the image through SSH
+
+The image comes with SSHD installed and configured, but it does not start by default. To enable it, you need to add the `SSHD_ENABLED=true` environment variable when running the container.
+
+The SSHD server will run on port `22` and you can use the `jenkins` user to login, without any password.

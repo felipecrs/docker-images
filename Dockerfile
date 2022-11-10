@@ -76,7 +76,7 @@ RUN group="${NON_ROOT_USER}"; \
     uid="1000"; \
     gid="${uid}"; \
     groupadd -g "${gid}" "${group}"; \
-    useradd -l -c "Jenkins user" -d "${HOME}" -u "${uid}" -g "${gid}" -m "${NON_ROOT_USER}" -s /bin/bash; \
+    useradd -l -c "Jenkins user" -d "${HOME}" -u "${uid}" -g "${gid}" -m "${NON_ROOT_USER}" -s /bin/bash -p ""; \
     # install sudo and locales\
     ${APT_GET} update; \
     ${APT_GET_INSTALL} \
@@ -164,7 +164,8 @@ RUN \
         iputils-ping \
         traceroute \
         dnsutils \
-        netcat; \
+        netcat \
+        openssh-server; \
     # install docker \
     ${CURL} https://get.docker.com | sudo sh; \
     ${SUDO_APT_GET} autoremove -yq; \
@@ -238,6 +239,8 @@ RUN \
     chmod +x /tmp/s6-overlay-installer; \
     sudo /tmp/s6-overlay-installer /; \
     rm -f /tmp/s6-overlay-installer; \
+    # fix sshd not starting \
+    sudo mkdir -p /run/sshd; \
     # install fixuid \
     curl -fsSL https://github.com/boxboat/fixuid/releases/download/v0.5.1/fixuid-0.5.1-linux-amd64.tar.gz | sudo tar -C /usr/local/bin -xzf -; \
     sudo chown root:root /usr/local/bin/fixuid;\

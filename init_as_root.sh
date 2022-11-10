@@ -5,4 +5,10 @@
 #
 # /init: s6-overlay
 
+set -eu
+
+if [[ "${SSHD_ENABLED:-false}" == true ]]; then
+    mv -f /etc/optional-services.d/sshd /etc/services.d/sshd
+fi
+
 exec -- /init "$@"
