@@ -99,3 +99,134 @@ pipeline {
 The image comes with SSHD installed and configured, but it does not start by default. To enable it, you need to add the `SSHD_ENABLED=true` environment variable when running the container.
 
 The SSHD server will run on port `22` and you can use the `jenkins` user to login, without any password.
+
+#### Automatically expose SSH access for all builds
+
+The image comes with a convenience script at `/ssh-command/get.sh` that will output the SSH command to connect to the container, which you can use to connect to the container through SSH. Example:
+
+![Example of SSH command](https://user-images.githubusercontent.com/29582865/203834385-1fb78d1d-5725-4074-8308-83a7b0ec818b.png)
+
+##### Using Kubernetes Plugin
+
+You can use a Kubernetes Pod Template to automatically expose SSH access for all builds.
+
+First you'll need to have [`dynamic-hostports`](https://github.com/felipecrs/dynamic-hostports-k8s) installed in your cluster. You can install it with the following command:
+
+```sh
+kubectl apply -f https://raw.githubusercontent.com/felipecrs/jenkins-agent-dind/master/dynamic-hostports.yaml
+```
+
+Then you can use the following Pod Template:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    dynamic-hostports: "22"
+spec:
+  containers:
+    - name: jnlp
+      image: ghcr.io/felipecrs/jenkins-agent-dind:{{ $agentTag }}
+      imagePullPolicy: Always
+      env:
+        - name: SSHD_ENABLED
+          value: "true"
+      ports:
+        - containerPort: 22
+      securityContext:
+        privileged: true
+      workingDir: /home/jenkins/agent
+      volumeMounts:
+        - mountPath: /home/jenkins/agent
+          name: workspace-volume
+        - name: podinfo
+          mountPath: /ssh-command/podinfo
+      terminationMessagePolicy: FallbackToLogsOnError
+  hostNetwork: false
+  automountServiceAccountToken: false
+  enableServiceLinks: false
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 30
+  volumes:
+    - name: workspace-volume
+      emptyDir: {}
+    - name: podinfo
+      downwardAPI:
+        items:
+          - path: "sshd-port"
+            fieldRef:
+              fieldPath: metadata.annotations['dynamic-hostports.k8s/22']
+          - path: "node-fqdn"
+            fieldRef:
+              fieldPath: metadata.annotations['dynamic-hostports.k8s/node-fqdn']
+```
+
+And here is an example of a Jenkinsfile:
+
+```groovy
+pipeline {
+  agent any
+  options {
+    ansiColor('xterm')
+  }
+  stages {
+    stage ('Get SSH command') {
+      steps {
+        sh '/ssh-command/get.sh'
+      }
+    }
+  }
+}
+```
+
+It also works if you use a nested Docker agent:
+
+```groovy
+pipeline {
+  agent {
+    docker {
+      image 'felipecrs/fixdockergid:latest'
+      args '--volume=/ssh-command:/ssh-command --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker'
+    }
+  }
+  options {
+    ansiColor('xterm')
+  }
+  stages {
+    stage ('Get SSH command') {
+      steps {
+        sh '/ssh-command/get.sh'
+      }
+    }
+  }
+}
+```
+
+##### Using as a Jenkinsfile docker agent
+
+```groovy
+// Generate an "unique" port for SSHD
+env.SSHD_PORT = new Random(env.BUILD_TAG.hashCode()).nextInt(23000 - 22000) + 22000
+
+pipeline {
+  agent {
+    agent {
+      docker {
+        image 'ghcr.io/felipecrs/jenkins-agent-dind:latest'
+        args "--privileged --group-add=docker --env=SSHD_ENABLED=true --publish=${env.SSHD_PORT}:22"
+      }
+    }
+  }
+  options {
+    ansiColor('xterm')
+  }
+  stages {
+    stage ('Get SSH command') {
+      steps {
+        sh '/ssh-command/get.sh'
+      }
+    }
+  }
+}
+```
