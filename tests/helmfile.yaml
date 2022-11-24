@@ -8,6 +8,8 @@ helmDefaults:
   wait: true
   waitForJobs: true
 
+# {{ $agentTag := env "TAG" | default "latest" }}
+
 releases:
   # TODO: Make K3D ingress work
   # - name: ingress-nginx
@@ -25,10 +27,53 @@ releases:
     values:
       - agent:
           image: ghcr.io/felipecrs/jenkins-agent-dind
-          tag: latest
+          tag: "{{ $agentTag }}"
           alwaysPullImage: true
-          privileged: true
           args: ""
+          connectTimeout: 500
+          yamlTemplate: |
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              labels:
+                dynamic-hostports: "22"
+            spec:
+              containers:
+                - name: jnlp
+                  image: ghcr.io/felipecrs/jenkins-agent-dind:{{ $agentTag }}
+                  imagePullPolicy: Always
+                  env:
+                    - name: SSHD_ENABLED
+                      value: "true"
+                  ports:
+                    - containerPort: 22
+                  securityContext:
+                    privileged: true
+                  workingDir: /home/jenkins/agent
+                  volumeMounts:
+                    - mountPath: /home/jenkins/agent
+                      name: workspace-volume
+                    - name: podinfo
+                      mountPath: /ssh-command/podinfo
+                  terminationMessagePolicy: FallbackToLogsOnError
+              hostNetwork: false
+              automountServiceAccountToken: false
+              enableServiceLinks: false
+              # dnsPolicy: Default
+              restartPolicy: Never
+              terminationGracePeriodSeconds: 30
+              volumes:
+                - name: workspace-volume
+                  emptyDir: {}
+                - name: podinfo
+                  downwardAPI:
+                    items:
+                      - path: "sshd-port"
+                        fieldRef:
+                          fieldPath: metadata.annotations['dynamic-hostports.k8s/22']
+                      - path: "node-fqdn"
+                        fieldRef:
+                          fieldPath: metadata.annotations['dynamic-hostports.k8s/node-fqdn']
         controller:
           adminPassword: "admin"
           # jenkinsUriPrefix: "/jenkins"
@@ -37,6 +82,8 @@ releases:
           additionalPlugins:
             - job-dsl:1.81
             - docker-workflow:528.v7c193a_0b_e67c
+            - ansicolor:1.0.2
+            - pipeline-graph-view:143.v33ca_60725f13
           JCasC:
             configScripts:
               jobs: |
@@ -46,30 +93,64 @@ releases:
                         definition {
                           cps {
                             sandbox()
-                            script("""\
+                            script('''\
+                              // Generate an "unique" port for SSHD
+                              env.SSHD_PORT = new Random(env.BUILD_TAG.hashCode()).nextInt(23000 - 22000) + 22000
                               pipeline {
                                 agent any
+                                options {
+                                  ansiColor('xterm')
+                                }
                                 stages {
-                                  stage ('docker') {
-                                    steps {
-                                      sh 'docker version'
-                                    }
-                                  }
-                                  stage ('docker on docker') {
-                                    agent {
-                                      docker {
-                                        reuseNode true
-                                        image 'felipecrs/fixdockergid:latest'
-                                        args '--mount=source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind --group-add=docker'
+                                  stage('parallel') {
+                                    parallel {
+                                      stage ('docker') {
+                                        steps {
+                                          sh 'printenv | sort'
+                                          sh 'docker version'
+                                          sh '/ssh-command/get.sh'
+                                          sh 'DOMAIN=localdev /ssh-command/get.sh'
+                                        }
                                       }
-                                    }
-                                    steps {
-                                      sh 'docker version'
+                                      stage ('docker on docker') {
+                                        agent {
+                                          docker {
+                                            reuseNode true
+                                            image 'felipecrs/fixdockergid:latest'
+                                            args '--volume=/ssh-command:/ssh-command --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker'
+                                          }
+                                        }
+                                        steps {
+                                          sh 'printenv | sort'
+                                          sh 'docker version'
+                                          sh '/ssh-command/get.sh'
+                                        }
+                                      }
+                                      stage ('nested') {
+                                        agent {
+                                          docker {
+                                            reuseNode true
+                                            image 'ghcr.io/felipecrs/jenkins-agent-dind:{{ $agentTag }}'
+                                            args "--privileged --group-add=docker --env=SSHD_ENABLED=true --publish=^${env.SSHD_PORT}:22"
+                                          }
+                                        }
+                                        steps {
+                                          sh 'printenv | sort'
+                                          sh 'docker version'
+                                          sh '/ssh-command/get.sh'
+                                          sh 'DOMAIN=localdev /ssh-command/get.sh'
+                                        }
+                                      }
                                     }
                                   }
                                 }
+                                post {
+                                  failure {
+                                    sh 'sleep 5m'
+                                  }
+                                }
                               }
-                              """.stripIndent())
+                              '''.stripIndent())
                           }
                         }
                       }
