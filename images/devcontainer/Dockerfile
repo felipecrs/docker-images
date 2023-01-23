@@ -32,11 +32,11 @@ ARG SCRIPT_LIBRARY_URL=https://raw.githubusercontent.com/microsoft/vscode-dev-co
 RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/docker-debian.sh")" -- true "/var/run/docker-host.sock" "/var/run/docker.sock" automatic false; \
     sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/kubectl-helm-debian.sh")"; \
     # Install kind \
-    version="$(curl -fsSL https://api.github.com/repos/kubernetes-sigs/kind/releases/latest | jq .tag_name -er)"; \
+    version=$(basename "$(curl -fsSL -o /dev/null -w "%{url_effective}" https://github.com/kubernetes-sigs/kind/releases/latest)"); \
     sudo curl -fsSL -o /usr/local/bin/kind "https://github.com/kubernetes-sigs/kind/releases/download/${version}/kind-linux-amd64"; \
     sudo chmod +x /usr/local/bin/kind; \
     # Install tini \
-    version=$(curl -fsSL https://api.github.com/repos/krallin/tini/releases/latest | jq .tag_name -er); \
+    version=$(basename "$(curl -fsSL -o /dev/null -w "%{url_effective}" https://github.com/krallin/tini/releases/latest)"); \
     sudo curl -fsSL -o /init "https://github.com/krallin/tini/releases/download/${version}/tini"; \
     sudo chmod +x /init; \
     # Clean up
