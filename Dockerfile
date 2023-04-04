@@ -172,11 +172,6 @@ RUN \
     ${SUDO_CLEAN_APT}; \
     # setup docker \
     sudo usermod -aG docker "${NON_ROOT_USER}"; \
-    # setup buildx \
-    version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" https://github.com/docker/buildx/releases/latest)"); \
-    ${CURL} --create-dirs -o "${HOME}/.docker/cli-plugins/docker-buildx" "https://github.com/docker/buildx/releases/download/${version}/buildx-${version}.$(uname -s)-amd64"; \
-    chmod a+x "${HOME}/.docker/cli-plugins/docker-buildx"; \
-    docker buildx install; \
     ## setup docker-switch (docker-compose v1 compatibility) \
     version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" https://github.com/docker/compose-switch/releases/latest)"); \
     sudo ${CURL} --create-dirs -o "/usr/local/bin/docker-compose" "https://github.com/docker/compose-switch/releases/download/${version}/docker-compose-$(uname -s)-amd64"; \
