@@ -68,6 +68,8 @@ ENV AGENT_WORKDIR="${HOME}/agent" \
     LANGUAGE="en_US:en" \
     LC_ALL="en_US.UTF-8" \
     ## Entrypoint related \
+    # Fails if cont-init and fix-attrs fails \
+    S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
     # Wait for dind before running CMD \
     S6_CMD_WAIT_FOR_SERVICES=1
 
