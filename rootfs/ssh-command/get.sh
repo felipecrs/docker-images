@@ -52,6 +52,15 @@ function error() {
     exit 1
 }
 
+function handle_exit() {
+    if [[ "$?" -ne 0 ]]; then
+        log_manual_action "Exiting with success code as this step is not very important, but if you need the SSH command, check the logs for the possible root cause."
+        exit 0
+    fi
+}
+
+trap handle_exit EXIT
+
 readonly podinfo_dir="/ssh-command/podinfo"
 
 if [[ -d "${podinfo_dir}" ]]; then
