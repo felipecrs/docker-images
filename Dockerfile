@@ -133,7 +133,16 @@ RUN \
     ${CURL} https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo -E bash -; \
     # nodejs \
     ${CURL} https://deb.nodesource.com/setup_lts.x | sudo -E bash -; \
+    # docker \
+    sudo install -m 0755 -d /etc/apt/keyrings; \
+    ${CURL} https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg; \
+    sudo chmod a+r /etc/apt/keyrings/docker.gpg; \
+    echo \
+        "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+        "$(. /etc/os-release && echo "${VERSION_CODENAME}")" stable" | \
+        sudo tee /etc/apt/sources.list.d/docker.list; \
     # install apt packages \
+    ${SUDO_APT_GET} update; \
     ${SUDO_APT_GET_INSTALL} \
         git \
         git-lfs \
@@ -167,9 +176,17 @@ RUN \
         traceroute \
         dnsutils \
         netcat \
-        openssh-server; \
-    # install docker \
-    ${CURL} https://get.docker.com | sudo sh; \
+        openssh-server \
+        # docker pre-requisites \
+        ca-certificates \
+        curl \
+        gnupg \
+        # docker \
+        docker-ce \
+        docker-ce-cli \
+        containerd.io \
+        docker-buildx-plugin \
+        docker-compose-plugin; \
     ${SUDO_APT_GET} autoremove -yq; \
     ${SUDO_CLEAN_APT}; \
     # setup docker \
