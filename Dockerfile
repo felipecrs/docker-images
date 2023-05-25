@@ -182,8 +182,9 @@ RUN \
         curl \
         gnupg \
         # docker \
-        docker-ce \
-        docker-ce-cli \
+        # Pinning docker to v23 because of https://github.com/docker/buildx/issues/1836 \
+        docker-ce=5:23.0.6-1~ubuntu.20.04~focal \
+        docker-ce-cli=5:23.0.6-1~ubuntu.20.04~focal \
         containerd.io \
         docker-buildx-plugin \
         docker-compose-plugin; \
