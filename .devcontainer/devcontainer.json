@@ -1,20 +1,20 @@
 {
-	"initializeCommand": "docker build --file=./images/devcontainer/Dockerfile --target=github --cache-from=ghcr.io/felipecrs/devcontainer:github ./images/devcontainer/",
-	"build": {
-		"dockerfile": "../images/devcontainer/Dockerfile",
-		"target": "github"
-	},
-	"mounts": [
-		"source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind"
-	],
-	"remoteEnv": {
-		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
-	},
-	"overrideCommand": false,
-	"settings": {
-		"terminal.integrated.defaultProfile.linux": "zsh",
-	},
-	"extensions": [
-		"ms-azuretools.vscode-docker"
-	],
+  "build": {
+    "dockerfile": "../images/devcontainer/Dockerfile",
+    "context": "../images/devcontainer",
+    "target": "github",
+    "cacheFrom": "ghcr.io/felipecrs/devcontainer:github"
+  },
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind"
+  ],
+  "overrideCommand": false,
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      },
+      "extensions": ["ms-azuretools.vscode-docker"]
+    }
+  }
 }
