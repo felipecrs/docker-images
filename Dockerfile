@@ -186,8 +186,7 @@ RUN \
         docker-ce-cli \
         containerd.io \
         docker-buildx-plugin \
-        # docker compose version pinned because of https://github.com/docker/compose/issues/10751 \
-        docker-compose-plugin=2.18.1-"*"; \
+        docker-compose-plugin; \
     ${SUDO_APT_GET} autoremove -yq; \
     ${SUDO_CLEAN_APT}; \
     # setup docker \
