@@ -7,6 +7,8 @@ FROM buildpack-deps:focal AS base
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 
+FROM ghcr.io/felipecrs/skopeo-bin:latest AS skopeo-bin
+
 # Build the init_as_root
 FROM base AS init_as_root
 
@@ -21,26 +23,11 @@ RUN shc -S -r -f /init_as_root.sh -o /init_as_root; \
     chmod 4755 /init_as_root
 
 
-# Build skopeo from source because of https://github.com/containers/skopeo/issues/1648
-FROM golang:1.18 AS skopeo
-
-WORKDIR /usr/src/skopeo
-
-ARG SKOPEO_VERSION="1.8.0"
-RUN curl -fsSL "https://github.com/containers/skopeo/archive/v${SKOPEO_VERSION}.tar.gz" \
-  | tar -xzf - --strip-components=1
-
-RUN CGO_ENABLED=0 DISABLE_DOCS=1 make BUILDTAGS=containers_image_openpgp GO_DYN_FLAGS=
-
-RUN ./bin/skopeo --version
-
-
 FROM scratch AS rootfs
 
 COPY --from=init_as_root /init_as_root /
 COPY rootfs /
-COPY --from=skopeo /usr/src/skopeo/bin/skopeo /usr/local/bin/
-COPY --from=skopeo /usr/src/skopeo/default-policy.json /etc/containers/policy.json
+COPY --from=skopeo-bin / /usr/local/bin/
 
 
 FROM base
