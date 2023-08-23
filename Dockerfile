@@ -255,7 +255,9 @@ RUN \
     # fix sshd not starting \
     sudo mkdir -p /run/sshd; \
     # install fixuid \
-    curl -fsSL https://github.com/boxboat/fixuid/releases/download/v0.5.1/fixuid-0.5.1-linux-amd64.tar.gz | sudo tar -C /usr/local/bin -xzf -; \
+    # https://github.com/boxboat/fixuid/releases \
+    version="0.6.0" ; \
+    curl -fsSL "https://github.com/boxboat/fixuid/releases/download/v${version}/fixuid-${version}-linux-amd64.tar.gz" | sudo tar -C /usr/local/bin -xzf -; \
     sudo chown root:root /usr/local/bin/fixuid;\
     sudo chmod 4755 /usr/local/bin/fixuid; \
     sudo mkdir -p /etc/fixuid; \
