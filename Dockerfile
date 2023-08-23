@@ -67,6 +67,8 @@ ENV AGENT_WORKDIR="${HOME}/agent" \
     LANG="en_US.UTF-8" \
     LANGUAGE="en_US:en" \
     LC_ALL="en_US.UTF-8" \
+    # from jenkins/docker-agent \
+    TZ="Etc/UTC" \
     ## Entrypoint related \
     # Fails if cont-init and fix-attrs fails \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
@@ -166,6 +168,14 @@ RUN \
         zip \
         unzip \
         time \
+        # from jenkins/docker-agent \
+        openssh-client \
+        patch \
+        tzdata \
+        netbase \
+        less \
+        fontconfig \
+        ca-certificates \
         # required for docker in docker \
         iptables \
         xz-utils \
@@ -207,9 +217,9 @@ RUN \
     sudo ${CURL} -o /usr/local/bin/dind "https://raw.githubusercontent.com/moby/moby/${version}/hack/dind"; \
     sudo chmod +x /usr/local/bin/dind; \
     # install jenkins-agent \
-    base_url="https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting"; \
-    version=$(curl -fsS ${base_url}/maven-metadata.xml | grep "<latest>.*</latest>" | sed -e "s#\(.*\)\(<latest>\)\(.*\)\(</latest>\)\(.*\)#\3#g"); \
-    sudo curl --create-dirs -fsSLo /usr/share/jenkins/agent.jar "${base_url}/${version}/remoting-${version}.jar"; \
+    # the same version as being used in the official agent image \
+    version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" https://github.com/jenkinsci/docker-agent/releases/latest)" |  cut -d'-' -f1) ; \
+    sudo curl --create-dirs -fsSLo /usr/share/jenkins/agent.jar "https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${version}/remoting-${version}.jar"; \
     sudo chmod 755 /usr/share/jenkins; \
     sudo chmod +x /usr/share/jenkins/agent.jar; \
     sudo ln -sf /usr/share/jenkins/agent.jar /usr/share/jenkins/slave.jar; \
