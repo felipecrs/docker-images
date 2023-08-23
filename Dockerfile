@@ -54,8 +54,7 @@ ARG APT_GET="apt-get"
 ARG APT_GET_INSTALL="${APT_GET} install -yq --no-install-recommends"
 ARG SUDO_APT_GET="sudo ${APT_GET}"
 ARG SUDO_APT_GET_INSTALL="sudo DEBIANFRONTEND=noninteractive ${APT_GET_INSTALL}"
-ARG CLEAN_APT="rm -rf /var/lib/apt/lists/*"
-ARG SUDO_CLEAN_APT="sudo ${CLEAN_APT}"
+ARG CLEAN_DATA="rm -rf /tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*"
 ARG CURL="curl -fsSL"
 ARG NPM_PREFIX="${HOME}/.npm"
 
@@ -86,8 +85,8 @@ RUN group="${NON_ROOT_USER}"; \
     ${APT_GET_INSTALL} \
         sudo \
         locales; \
-    # clean apt cache \
-    ${CLEAN_APT}; \
+    # clean not needed data \
+    ${CLEAN_DATA}; \
     # setup locale \
     sudo sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen; \
     sudo locale-gen; \
@@ -118,6 +117,8 @@ RUN \
     # adoptium openjdk \
     ${CURL} https://packages.adoptium.net/artifactory/api/gpg/key/public | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "https://packages.adoptium.net/artifactory/deb"; \
+    # jdk installation expects this folder but we deleted during cleanup; \
+    sudo mkdir -p /usr/share/man/man1; \
     # kubernetes \
     ${CURL} https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "deb https://apt.kubernetes.io/ kubernetes-xenial main"; \
@@ -198,7 +199,7 @@ RUN \
         docker-buildx-plugin \
         docker-compose-plugin; \
     ${SUDO_APT_GET} autoremove -yq; \
-    ${SUDO_CLEAN_APT}; \
+    sudo ${CLEAN_DATA}; \
     # setup docker \
     sudo usermod -aG docker "${NON_ROOT_USER}"; \
     ## setup docker-switch (docker-compose v1 compatibility) \
