@@ -213,7 +213,7 @@ RUN \
     echo 'dockremap:165536:65536' | sudo tee -a /etc/subgid; \
     # install dind hack \
     # https://github.com/moby/moby/commits/master/hack/dind \
-    version="1f32e3c95d72a29b3eaacba156ed675dba976cb5"; \
+    version="d58df1fc6c866447ce2cd129af10e5b507705624"; \
     sudo ${CURL} -o /usr/local/bin/dind "https://raw.githubusercontent.com/moby/moby/${version}/hack/dind"; \
     sudo chmod +x /usr/local/bin/dind; \
     # install jenkins-agent \
