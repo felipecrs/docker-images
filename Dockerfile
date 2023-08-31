@@ -7,20 +7,21 @@ FROM buildpack-deps:focal AS base
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 
-FROM ghcr.io/felipecrs/skopeo-bin:latest AS skopeo-bin
-
 # Build the init_as_root
 FROM base AS init_as_root
 
 # Install shc
 RUN apt-get update; \
-    apt-get install -y shc; \
+    apt-get install -y --no-install-recommends shc; \
     rm -rf /var/lib/apt/lists/*
 
 COPY init_as_root.sh /
 RUN shc -S -r -f /init_as_root.sh -o /init_as_root; \
     chown root:root /init_as_root; \
     chmod 4755 /init_as_root
+
+
+FROM ghcr.io/felipecrs/skopeo-bin:latest AS skopeo-bin
 
 
 FROM scratch AS rootfs
