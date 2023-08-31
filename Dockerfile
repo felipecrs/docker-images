@@ -247,6 +247,10 @@ RUN \
     sudo chmod +x /usr/local/bin/hadolint; \
     # install helm 3 \
     ${CURL} https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sudo -E bash -; \
+    # install retry \
+    version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" "https://github.com/kadwanev/retry/releases/latest")"); \
+    ${CURL} "https://github.com/kadwanev/retry/releases/download/${version}/retry-${version}.tar.gz" | \
+        sudo tar -C /usr/local/bin -xzf -; \
     # install s6-overlay \
     ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer; \
     chmod +x /tmp/s6-overlay-installer; \

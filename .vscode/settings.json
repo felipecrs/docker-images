@@ -1,11 +1,10 @@
 {
     "[dockerfile]": {
         "editor.defaultFormatter": "ms-azuretools.vscode-docker",
-        // https://github.com/rcjsuen/dockerfile-utils/issues/62
-        "editor.formatOnSave": false,
     },
     "[shellscript]": {
         "editor.defaultFormatter": "foxundermoon.shell-format",
         "editor.formatOnSave": true,
-    }
+    },
+    "docker.languageserver.formatter.ignoreMultilineInstructions": true
 }
