@@ -36,6 +36,10 @@ RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/docker-debian.sh")" -- true 
     version=$(basename "$(curl -fsSL -o /dev/null -w "%{url_effective}" https://github.com/kubernetes-sigs/kind/releases/latest)"); \
     sudo curl -fsSL -o /usr/local/bin/kind "https://github.com/kubernetes-sigs/kind/releases/download/${version}/kind-linux-amd64"; \
     sudo chmod +x /usr/local/bin/kind; \
+    # Install retry \
+    version=$(basename "$(curl -fsSL -o /dev/null -w "%{url_effective}" "https://github.com/kadwanev/retry/releases/latest")"); \
+    curl -fsSL "https://github.com/kadwanev/retry/releases/download/${version}/retry-${version}.tar.gz" | \
+        sudo tar -C /usr/local/bin -xzf -; \
     # Install tini \
     version=$(basename "$(curl -fsSL -o /dev/null -w "%{url_effective}" https://github.com/krallin/tini/releases/latest)"); \
     sudo curl -fsSL -o /init "https://github.com/krallin/tini/releases/download/${version}/tini"; \
@@ -57,6 +61,7 @@ CMD [ "sleep", "infinity" ]
 # Install pyenv
 ENV PYENV_ROOT="${HOME}/.pyenv"
 ENV PATH="${PYENV_ROOT}/bin:${PYENV_ROOT}/shims:${PATH}"
+# hadolint ignore=SC2016
 RUN bash -c "$(curl -fsSL https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer)"; \
     printf '%s\n' 'eval "$(pyenv init -)"' | sudo tee -a /etc/bash.bashrc /etc/zsh/zshrc; \
     git clone --depth 1 https://github.com/momo-lab/xxenv-latest.git "$(pyenv root)/plugins/xxenv-latest"
