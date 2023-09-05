@@ -49,9 +49,9 @@ RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/docker-debian.sh")" -- true 
 
 # Install dond-shim (https://github.com/felipecrs/docker-on-docker-shim)
 ARG DOCKER_PATH="/usr/bin/docker"
-ARG DOND_SHIM_REVISION="v0.4.0"
+ARG DOND_SHIM_REVISION="HEAD"
 RUN sudo mv -f "${DOCKER_PATH}" "${DOCKER_PATH}.orig" && \
-    sudo curl -fsSL "https://github.com/felipecrs/docker-on-docker-shim/raw/${DOND_SHIM_REVISION}/docker" \
+    sudo curl -fsSL "https://github.com/felipecrs/docker-on-docker-shim/raw/${DOND_SHIM_REVISION}/dond" \
     --output "${DOCKER_PATH}" && \
     sudo chmod +x "${DOCKER_PATH}"
 
