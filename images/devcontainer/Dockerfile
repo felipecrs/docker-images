@@ -29,7 +29,7 @@ ARG SCRIPT_LIBRARY_VERSION=HEAD
 ARG SCRIPT_LIBRARY_URL=https://raw.githubusercontent.com/microsoft/vscode-dev-containers/${SCRIPT_LIBRARY_VERSION}/script-library
 
 # Install docker cli, kubectl, helm and kind
-RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/docker-debian.sh")" -- true "/var/run/docker-host.sock" "/var/run/docker.sock" automatic false; \
+RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/docker-debian.sh")" -- true "/var/run/docker-host.sock" "/var/run/docker.sock" automatic false latest v2; \
     sudo apt-get install -y docker-buildx-plugin; \
     sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/kubectl-helm-debian.sh")"; \
     # Install kind \
