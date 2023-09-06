@@ -73,13 +73,17 @@ RUN bash -c "$(curl -fsSL https://get.volta.sh)" -- --skip-setup
 
 # Install SDKMAN!
 ENV SDKMAN_DIR="/opt/sdkman"
-ENV PATH="${SDKMAN_DIR}/bin:${SDKMAN_DIR}/candidates/java/current/bin:${PATH}"
+ENV JAVA_HOME="${SDKMAN_DIR}/candidates/java/current"
+ENV PATH="${SDKMAN_DIR}/bin:${SDKMAN_DIR}/candidates/java/current/bin:${SDKMAN_DIR}/candidates/gradle/current/bin:${SDKMAN_DIR}/candidates/maven/current/bin:${SDKMAN_DIR}/candidates/ant/current/bin:${PATH}"
 RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/java-debian.sh")" -- none "${SDKMAN_DIR}"; \
-    # Clean up
+    # Add sdk shim \
+    printf '%s\n' '#!/bin/bash' \
+        '. ${SDKMAN_DIR?}/bin/sdkman-init.sh ' \
+        'sdk "$@"' \
+        | sudo tee /usr/local/bin/sdk; \
+    sudo chmod +x /usr/local/bin/sdk; \
+    # Clean up \
     sudo apt-get autoremove -y && sudo apt-get clean -y && sudo rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
-
-# https://github.com/microsoft/vscode-remote-release/issues/4281
-# SHELL [ "/bin/bash", "-ic"]
 
 FROM base as github
 
