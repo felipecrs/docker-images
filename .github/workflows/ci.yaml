@@ -38,10 +38,9 @@ jobs:
           pull: true
           no-cache: true
           push: ${{ ! startsWith(github.ref, 'refs/pull/') }}
-      - name: devcontainer - update Docker Hub description
+      - name: Update Docker Hub description
         uses: peter-evans/dockerhub-description@v3
         with:
           username: ${{ env.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: ${{ env.DOCKERHUB_USERNAME }}/devcontainer
-          readme-filepath: ./images/devcontainer/README.md

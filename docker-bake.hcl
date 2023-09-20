@@ -8,28 +8,24 @@ function "create_tags" {
     )
 }
 
-group "default" {
-	targets = ["devcontainer"]
-}
-
-variable "DEVCONTAINER_IMAGE_NAME" {
+variable "IMAGE_NAME" {
 	default = "felipecrs/devcontainer"
 }
 
-group "devcontainer" {
-	targets = ["devcontainer-base", "devcontainer-github"]
+group "default" {
+	targets = ["base", "github"]
 }
 
-target "devcontainer-base" {
-    context = "images/devcontainer"
+target "base" {
+    context = "."
 	dockerfile = "Dockerfile"
     target = "base"
-	tags = create_tags("${DEVCONTAINER_IMAGE_NAME}", "latest", "base")
+	tags = create_tags("${IMAGE_NAME}", "latest", "base")
     cache-to = ["type=inline"]
 }
 
-target "devcontainer-github" {
-    inherits = ["devcontainer-base"]
+target "github" {
+    inherits = ["base"]
     target = "github"
-	tags = create_tags("${DEVCONTAINER_IMAGE_NAME}", "github")
+    tags = create_tags("${IMAGE_NAME}", "github")
 }
