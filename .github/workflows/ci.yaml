@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Docker meta (base)
         id: docker-meta-base
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
@@ -38,7 +38,7 @@ jobs:
           bake-target: base
       - name: Docker meta (github)
         id: docker-meta-github
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ env.DOCKERHUB_USERNAME }}/${{ env.IMAGE_NAME }}
