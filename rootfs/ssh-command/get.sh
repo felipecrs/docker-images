@@ -132,7 +132,7 @@ log_info "The SSH host is: ${ssh_host}"
 echo
 
 log_tip "Copy the following command and paste in your terminal to access the build container:"
-log_c "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR ssh://${ssh_host} -t 'cd ${PWD}; exec bash -l'"
+log_c "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR ssh://${ssh_host} -t 'cd ${PWD}; exec \$0'"
 echo
 
 log_tip "You can also open the build container in VS Code (via the Remote - SSH extension) by opening the following link in your browser:"
