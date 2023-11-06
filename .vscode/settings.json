@@ -7,5 +7,6 @@
     "[shellscript]": {
         "editor.defaultFormatter": "foxundermoon.shell-format",
         "editor.formatOnSave": true,
-    }
+    },
+    "docker.languageserver.formatter.ignoreMultilineInstructions": true
 }

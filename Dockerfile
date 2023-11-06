@@ -59,8 +59,6 @@ ENV AGENT_WORKDIR="${HOME}/agent" \
     # Fails if cont-init and fix-attrs fails \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
     # Wait for services before running CMD \
-    # Apparent bug in s6-overlay: \
-    # https://github.com/just-containers/s6-overlay/issues/546 \
     S6_CMD_WAIT_FOR_SERVICES=1 \
     # Give 15s for services to start \
     S6_CMD_WAIT_FOR_SERVICES_MAXTIME=15000 \
@@ -256,7 +254,7 @@ RUN \
     # install helm 3 \
     ${CURL} https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | sudo -E bash -; \
     # install s6-overlay \
-    version="3.1.5.0"; \
+    version="3.1.6.0"; \
     ${CURL} https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-noarch.tar.xz | sudo tar -C / -Jxpf -; \
     ${CURL} https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-x86_64.tar.xz | sudo tar -C / -Jxpf -; \
     # fix sshd not starting \
@@ -273,5 +271,4 @@ RUN \
 COPY --from=rootfs / /
 
 ENTRYPOINT [ "/entrypoint.sh" ]
-# TODO: with-contenv
 CMD [ "jenkins-agent" ]
