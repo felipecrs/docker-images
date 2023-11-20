@@ -7,6 +7,8 @@
 
 set -eu
 
+# This can probably be improved:
+# https://github.com/just-containers/s6-overlay/issues/394#issuecomment-1690769622
 if [[ "${SSHD_ENABLED:-false}" == true ]]; then
     mv -f /etc/optional-services.d/sshd /etc/services.d/sshd
 fi
