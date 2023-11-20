@@ -150,7 +150,7 @@ RUN \
         rsync \
         sshpass \
         python3-pip \
-        temurin-11-jdk=11.0.19.0.0+7 \
+        temurin-11-jdk \
         nodejs \
         yarn \
         kubectl \
