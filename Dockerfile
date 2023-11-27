@@ -59,8 +59,14 @@ ENV AGENT_WORKDIR="${HOME}/agent" \
     ## Entrypoint related \
     # Fails if cont-init and fix-attrs fails \
     S6_BEHAVIOUR_IF_STAGE2_FAILS=2 \
-    # Wait for dind before running CMD \
-    S6_CMD_WAIT_FOR_SERVICES=1
+    # Wait for services before running CMD \
+    S6_CMD_WAIT_FOR_SERVICES=1 \
+    # Give 15s for services to start \
+    S6_CMD_WAIT_FOR_SERVICES_MAXTIME=15000 \
+    # Give 15s for services to stop \
+    S6_SERVICES_GRACETIME=15000 \
+    # Honor container env on CMD \
+    S6_KEEP_ENV=1
 
 # create non-root user
 RUN group="${NON_ROOT_USER}"; \
@@ -253,10 +259,9 @@ RUN \
     ${CURL} "https://github.com/kadwanev/retry/releases/download/${version}/retry-${version}.tar.gz" | \
         sudo tar -C /usr/local/bin -xzf -; \
     # install s6-overlay \
-    ${CURL} -o /tmp/s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.1/s6-overlay-amd64-installer; \
-    chmod +x /tmp/s6-overlay-installer; \
-    sudo /tmp/s6-overlay-installer /; \
-    rm -f /tmp/s6-overlay-installer; \
+    version="3.1.6.2"; \
+    ${CURL} https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-noarch.tar.xz | sudo tar -C / -Jxpf -; \
+    ${CURL} https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-x86_64.tar.xz | sudo tar -C / -Jxpf -; \
     # fix sshd not starting \
     sudo mkdir -p /run/sshd; \
     # install fixuid \

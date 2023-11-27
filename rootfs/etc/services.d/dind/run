@@ -1,7 +1,6 @@
-#!/usr/bin/with-contenv bash
-# shellcheck shell=bash
+#!/bin/bash
 
 set -eu
 
 echo "[dind] starting service" >&2
-exec s6-notifyoncheck -c "docker version" dind dockerd
+exec s6-notifyoncheck -c /etc/services.d/dind/check_readiness.sh dind dockerd
