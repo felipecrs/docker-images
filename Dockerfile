@@ -108,6 +108,7 @@ RUN \
     # install add-apt-repository \
     ${SUDO_APT_GET_INSTALL} software-properties-common; \
     ## apt repositories \
+    sudo install -m 0755 -d /etc/apt/keyrings; \
     # adoptium openjdk \
     ${CURL} https://packages.adoptium.net/artifactory/api/gpg/key/public | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "https://packages.adoptium.net/artifactory/deb"; \
@@ -129,9 +130,10 @@ RUN \
     # git-lfs \
     ${CURL} https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo -E bash -; \
     # nodejs \
-    ${CURL} https://deb.nodesource.com/setup_lts.x | sudo -E bash -; \
+    ${CURL} https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+    sudo chmod a+r /etc/apt/keyrings/nodesource.gpg; \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_18.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list; \
     # docker \
-    sudo install -m 0755 -d /etc/apt/keyrings; \
     ${CURL} https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg; \
     sudo chmod a+r /etc/apt/keyrings/docker.gpg; \
     echo \
