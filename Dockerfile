@@ -1,4 +1,4 @@
-FROM buildpack-deps:focal AS base
+FROM buildpack-deps:jammy AS base
 
 # set bash as the default interpreter for the build with:
 # -e: exits on error, so we can use colon as line separator

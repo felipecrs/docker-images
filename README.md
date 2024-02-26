@@ -11,7 +11,7 @@ A full fledged Docker in Docker image to act as a Jenkins Agent. Based on [build
 
 ## Features
 
-- Based on **Ubuntu 20.04 Focal Fossa**: a more common OS to run your builds.
+- Based on **Ubuntu 22.04 Jammy Jellyfish**: a more common OS to run your builds.
 - From `buildpack-deps`: a image with many common dependencies installed, run your builds without hassle.
 - Fully working Docker in Docker: run your `docker build` commands with no intervention and share of resources between the host.
 - Act just as a Jenkins Agent out-of-the-box: run ephemeral build containers by using Docker Plugin (or Kubernetes Plugin) for Jenkins. Works as the official `jnlp`/`inbound-agent`.
