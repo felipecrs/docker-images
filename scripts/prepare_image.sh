@@ -144,7 +144,7 @@ packages=(
     # required for docker in docker
     iptables
     xz-utils
-    btrfs-progs
+    pigz
     # network
     net-tools
     iputils-ping
@@ -168,14 +168,14 @@ ${CURL} -o /usr/local/bin/docker-compose "https://github.com/docker/compose-swit
 chmod +x /usr/local/bin/docker-compose
 
 ## dind
-# set up subuid/subgid so that "--userns-remap=default" works out-of-the-box
+# https://github.com/docker-library/docker/blob/9ee39bafc3844108938e3469b262738a5b0e804b/Dockerfile-dind.template#L47
 addgroup --system dockremap
 adduser --system --ingroup dockremap dockremap
 echo 'dockremap:165536:65536' | tee -a /etc/subuid
 echo 'dockremap:165536:65536' | tee -a /etc/subgid
 # install dind hack
 # https://github.com/moby/moby/commits/master/hack/dind
-version="d58df1fc6c866447ce2cd129af10e5b507705624"
+version="65cfcc28ab37cb75e1560e4b4738719c07c6618e"
 ${CURL} -o /usr/local/bin/dind "https://raw.githubusercontent.com/moby/moby/${version}/hack/dind"
 chmod +x /usr/local/bin/dind
 
