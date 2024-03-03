@@ -139,6 +139,7 @@ spec:
           name: workspace-volume
         - name: podinfo
           mountPath: /ssh-command/podinfo
+          readonly: true
       terminationMessagePolicy: FallbackToLogsOnError
   hostNetwork: false
   automountServiceAccountToken: false
