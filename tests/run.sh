@@ -21,7 +21,8 @@ script_dir=$(dirname "${0}")
 
 cd "${script_dir}/.."
 
-docker buildx build . --load --tag localhost/jenkins-agent-dind:latest
+docker buildx build . --load --platform linux/amd64 \
+    --tag localhost/jenkins-agent-dind:latest
 
 k3d image import --cluster jenkins-agent-dind-test --mode direct \
     localhost/jenkins-agent-dind:latest
