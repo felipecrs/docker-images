@@ -1,0 +1,58 @@
+// Generate an "unique" port for SSHD
+env.SSHD_PORT = new Random(env.BUILD_TAG.hashCode()).nextInt(23000 - 22000) + 22000
+pipeline {
+    agent any
+    options {
+        ansiColor('xterm')
+    }
+    stages {
+        stage('parallel') {
+            parallel {
+                stage ('docker') {
+                    steps {
+                        sh 'printenv | sort'
+                        sh 'docker version'
+                        sh '/ssh-command/get.sh'
+                        sh 'DOMAIN=localdev /ssh-command/get.sh'
+                    }
+                }
+                stage ('docker on docker') {
+                    agent {
+                        docker {
+                            reuseNode true
+                            image 'felipecrs/fixdockergid:latest'
+                            args '--volume=/ssh-command:/ssh-command --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker'
+                        }
+                    }
+                    steps {
+                        sh 'printenv | sort'
+                        sh 'docker version'
+                        sh '/ssh-command/get.sh'
+                    }
+                }
+                stage ('nested') {
+                    agent {
+                        docker {
+                            reuseNode true
+                            // This is not using the image that was built, but for now it's ok.
+                            image 'ghcr.io/felipecrs/jenkins-agent-dind:latest'
+                            args "--privileged --group-add=docker --env=SSHD_ENABLED=true --publish=^${env.SSHD_PORT}:22"
+                        }
+                    }
+                    steps {
+                        sh 'printenv | sort'
+                        sh 'sleep 5s'
+                        sh 'docker version'
+                        sh '/ssh-command/get.sh'
+                        sh 'DOMAIN=localdev /ssh-command/get.sh'
+                    }
+                }
+            }
+        }
+    }
+    // post {
+    //     failure {
+    //         sh 'sleep 5m'
+    //     }
+    // }
+}
