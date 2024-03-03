@@ -4,7 +4,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/felipecrs/jenkins-agent-dind)](https://hub.docker.com/r/felipecrs/jenkins-agent-dind)
 [![Docker Image Size](https://img.shields.io/docker/image-size/felipecrs/jenkins-agent-dind/latest)](https://hub.docker.com/r/felipecrs/jenkins-agent-dind)
 
-A full fledged Docker in Docker image to act as a Jenkins Agent. Based on [buildpack-deps:focal](https://github.com/docker-library/buildpack-deps/blob/master/focal/Dockerfile), it is a mashup of [jenkins/inbound-agent](https://github.com/jenkinsci/docker-inbound-agent) with [docker:dind](https://github.com/docker-library/docker).
+A full fledged Docker in Docker image to act as a Jenkins Agent. Based on [buildpack-deps:jammy](https://github.com/docker-library/buildpack-deps/blob/master/ubuntu/jammy/Dockerfile), it is a mashup of [jenkins/inbound-agent](https://github.com/jenkinsci/docker-inbound-agent) with [docker:dind](https://github.com/docker-library/docker).
 
 - Source code: <https://github.com/felipecrs/jenkins-agent-dind>
 - Docker image: <https://hub.docker.com/r/felipecrs/jenkins-agent-dind>
@@ -14,7 +14,7 @@ A full fledged Docker in Docker image to act as a Jenkins Agent. Based on [build
 - Based on **Ubuntu 22.04 Jammy Jellyfish**: a more common OS to run your builds.
 - From `buildpack-deps`: a image with many common dependencies installed, run your builds without hassle.
 - Fully working Docker in Docker: run your `docker build` commands with no intervention and share of resources between the host.
-- Act just as a Jenkins Agent out-of-the-box: run ephemeral build containers by using Docker Plugin (or Kubernetes Plugin) for Jenkins. Works as the official `jnlp`/`inbound-agent`.
+- Act just as a Jenkins Agent out-of-the-box: run ephemeral build containers by using Docker Plugin (or Kubernetes Plugin) on Jenkins. Works as the official `jnlp`/`inbound-agent`.
 
 ## Usage
 
@@ -112,7 +112,7 @@ You can use a Kubernetes Pod Template to automatically expose SSH access for all
 First you'll need to have [`dynamic-hostports`](https://github.com/felipecrs/dynamic-hostports-k8s) installed in your cluster. You can install it with the following command:
 
 ```sh
-kubectl apply -f https://raw.githubusercontent.com/felipecrs/jenkins-agent-dind/master/dynamic-hostports.yaml
+kubectl apply -f https://github.com/felipecrs/dynamic-hostports-k8s/raw/master/deploy.yaml
 ```
 
 Then you can use the following Pod Template:
