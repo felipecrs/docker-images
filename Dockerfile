@@ -1,5 +1,6 @@
 FROM ubuntu:22.04 AS base
 
+FROM jenkins/inbound-agent:latest AS jenkins-agent
 
 # Build the init_as_root
 FROM base AS init_as_root
@@ -17,6 +18,9 @@ RUN --mount=type=bind,source=scripts/init_as_root.sh,target=/init_as_root.sh \
 
 FROM scratch AS rootfs
 
+COPY --from=jenkins-agent /usr/local/bin/jenkins-agent /usr/local/bin/jenkins-slave /usr/local/bin/
+COPY --from=jenkins-agent /usr/share/jenkins /usr/share/jenkins
+COPY --from=jenkins-agent /opt/java/openjdk /opt/java/openjdk
 COPY --from=init_as_root /init_as_root /
 COPY rootfs /
 
@@ -27,8 +31,7 @@ ENV NON_ROOT_USER="jenkins"
 ARG NON_ROOT_UID="1000"
 ARG NON_ROOT_HOME="/home/${NON_ROOT_USER}"
 
-ENV PATH="${NON_ROOT_HOME}/.local/bin:${PATH}"
-ENV JAVA_HOME="/usr/lib/jvm/temurin-11-jdk-amd64"
+ENV PATH="${NON_ROOT_HOME}/.local/bin:${PATH}:/opt/java/openjdk/bin"
 ENV AGENT_WORKDIR="${NON_ROOT_HOME}/agent"
 
 # locale and encoding
