@@ -47,25 +47,25 @@ mkdir -p /etc/apt/keyrings
 chmod 755 /etc/apt/keyrings
 
 VERSION_CODENAME=$(lsb_release -cs)
-APT_ARCH=$(dpkg --print-architecture)
-readonly VERSION_CODENAME APT_ARCH
+DPKG_ARCH=$(dpkg --print-architecture)
+readonly VERSION_CODENAME DPKG_ARCH
 
 # git
 ${CURL} "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xE1DD270288B4E6030699E45FA1715D88E1DF1F24" |
     gpg --dearmor -o /etc/apt/keyrings/git-core-ppa.gpg
-echo "deb [arch=${APT_ARCH} signed-by=/etc/apt/keyrings/git-core-ppa.gpg] http://ppa.launchpad.net/git-core/ppa/ubuntu ${VERSION_CODENAME} main" |
+echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/git-core-ppa.gpg] http://ppa.launchpad.net/git-core/ppa/ubuntu ${VERSION_CODENAME} main" |
     tee /etc/apt/sources.list.d/git-core-ppa.list
 
 # git-lfs
 ${CURL} https://packagecloud.io/github/git-lfs/gpgkey |
     gpg --dearmor -o /etc/apt/keyrings/git-lfs.gpg
-echo "deb [arch=${APT_ARCH} signed-by=/etc/apt/keyrings/git-lfs.gpg] https://packagecloud.io/github/git-lfs/ubuntu/ ${VERSION_CODENAME} main" |
+echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/git-lfs.gpg] https://packagecloud.io/github/git-lfs/ubuntu/ ${VERSION_CODENAME} main" |
     tee /etc/apt/sources.list.d/git-lfs.list
 
 # docker
 ${CURL} https://download.docker.com/linux/ubuntu/gpg |
     gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-echo "deb [arch=${APT_ARCH} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu ${VERSION_CODENAME} stable" |
+echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu ${VERSION_CODENAME} stable" |
     tee /etc/apt/sources.list.d/docker.list
 
 # install apt packages
@@ -115,7 +115,7 @@ usermod -aG docker "${NON_ROOT_USER}"
 
 # setup docker-switch (docker-compose v1 compatibility)
 version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" https://github.com/docker/compose-switch/releases/latest)")
-${CURL} -o /usr/local/bin/docker-compose "https://github.com/docker/compose-switch/releases/download/${version}/docker-compose-$(uname -s)-amd64"
+${CURL} -o /usr/local/bin/docker-compose "https://github.com/docker/compose-switch/releases/download/${version}/docker-compose-linux-${DPKG_ARCH}"
 chmod +x /usr/local/bin/docker-compose
 
 ## dind
@@ -144,7 +144,7 @@ ${CURL} "https://github.com/pkgxdev/pkgx/releases/download/v${version}/pkgx-${ve
 version="3.1.6.2"
 ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-noarch.tar.xz" |
     tar -C / -Jxpf -
-${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-x86_64.tar.xz" |
+${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-$(uname -m).tar.xz" |
     tar -C / -Jxpf -
 
 # fix sshd not starting
@@ -153,7 +153,7 @@ mkdir -p /run/sshd
 # install fixuid
 # https://github.com/boxboat/fixuid/releases
 version="0.6.0"
-curl -fsSL "https://github.com/boxboat/fixuid/releases/download/v${version}/fixuid-${version}-linux-amd64.tar.gz" |
+curl -fsSL "https://github.com/boxboat/fixuid/releases/download/v${version}/fixuid-${version}-linux-${DPKG_ARCH}.tar.gz" |
     tar -C /usr/local/bin -xzf -
 chown root:root /usr/local/bin/fixuid
 chmod 4755 /usr/local/bin/fixuid
