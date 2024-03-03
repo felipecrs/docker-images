@@ -16,7 +16,7 @@ if [[ "${uid}" -eq 0 ]]; then
 else
     # Otherwise, fix uid and gid, run s6-overlay as root and then drop
     # privileges back to the user
-    export USER="${NON_ROOT_USER?}"
+    export USER="${NON_ROOT_USER}"
     cmd=(fixuid -q -- /init_as_root s6-setuidgid "${NON_ROOT_USER}")
 fi
 
