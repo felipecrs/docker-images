@@ -84,6 +84,7 @@ packages=(
     time
     openssl
     openssh-server
+    nano
     # from jenkins/docker-agent
     openssh-client
     patch
@@ -161,6 +162,15 @@ mkdir -p /etc/fixuid
 printf '%s\n' "user: ${NON_ROOT_USER}" "group: ${NON_ROOT_USER}" "paths:" "  - /" "  - ${AGENT_WORKDIR}" |
     tee /etc/fixuid/config.yml
 
-# cleanup and reduce image size
+# setup oh my bash, useful when debugging the container
+curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh |
+    bash -s -- --prefix=/opt/oh-my-bash --unattended
+
+cp -f /opt/oh-my-bash/share/oh-my-bash/bashrc "${NON_ROOT_HOME}/.bashrc"
+
+# Set nano as default editor when running interactive shell
+echo 'EDITOR="nano"' | tee -a "${NON_ROOT_HOME}/.bashrc"
+
+# cleanup
 shopt -s nullglob dotglob
-rm -rf /tmp/* /var/cache/* /usr/share/doc/* /usr/share/man/* /var/lib/apt/lists/*
+rm -rf /tmp/* /var/cache/* /var/lib/apt/lists/*
