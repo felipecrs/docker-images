@@ -32,8 +32,8 @@ sudo -u "${NON_ROOT_USER}" true
 
 # ensure jenkins-agent directory exists
 mkdir -p "${AGENT_WORKDIR}"
-# and is owned by the jenkins user
 chown -R "${NON_ROOT_USER}:${NON_ROOT_USER}" "${AGENT_WORKDIR}"
+chmod 755 "${AGENT_WORKDIR}"
 
 ## apt repositories
 ${APT_GET_INSTALL} \
@@ -143,7 +143,7 @@ chmod +x /usr/local/bin/dind
 docker_agent_version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" https://github.com/jenkinsci/docker-agent/releases/latest)")
 version=$(echo "${docker_agent_version}" | cut -d'-' -f1)
 mkdir -p /usr/share/jenkins
-chmod 0755 /usr/share/jenkins
+chmod 755 /usr/share/jenkins
 ${CURL} -o /usr/share/jenkins/agent.jar "https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${version}/remoting-${version}.jar"
 chmod +x /usr/share/jenkins/agent.jar
 ln -sf /usr/share/jenkins/agent.jar /usr/share/jenkins/slave.jar
