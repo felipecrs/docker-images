@@ -27,8 +27,7 @@ ENV NON_ROOT_USER="jenkins"
 ARG NON_ROOT_UID="1000"
 ARG NON_ROOT_HOME="/home/${NON_ROOT_USER}"
 
-ARG NPM_PREFIX="${NON_ROOT_HOME}/.npm"
-ENV PATH="${NPM_PREFIX}/bin:${NON_ROOT_HOME}/.local/bin:${PATH}"
+ENV PATH="${NON_ROOT_HOME}/.local/bin:${PATH}"
 ENV JAVA_HOME="/usr/lib/jvm/temurin-11-jdk-amd64"
 ENV AGENT_WORKDIR="${NON_ROOT_HOME}/agent"
 
