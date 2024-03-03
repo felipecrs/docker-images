@@ -148,17 +148,18 @@ ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${vers
 ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-$(uname -m).tar.xz" |
     tar -C / -Jxpf -
 
+# init_as_root.sh puts files in this folder
+mkdir -p /etc/services.d
+
 # fix sshd not starting
 mkdir -p /run/sshd
 
-# install fixuid
-# https://github.com/boxboat/fixuid/releases
-version="0.6.0"
-curl -fsSL "https://github.com/boxboat/fixuid/releases/download/v${version}/fixuid-${version}-linux-${DPKG_ARCH}.tar.gz" |
-    tar -C /usr/local/bin -xzf -
-chown root:root /usr/local/bin/fixuid
-chmod 4755 /usr/local/bin/fixuid
-mkdir -p /etc/fixuid
+# install fixdockergid
+export FIXDOCKERGID_VERSION="0.7.0"
+curl -fsSL "https://github.com/felipecrs/fixdockergid/raw/v${FIXDOCKERGID_VERSION}/install.sh" |
+    USERNAME="${NON_ROOT_USER}" sh -
+
+# set fixuid to update AGENT_WORKDIR permissions
 printf '%s\n' "user: ${NON_ROOT_USER}" "group: ${NON_ROOT_USER}" "paths:" "  - /" "  - ${AGENT_WORKDIR}" |
     tee /etc/fixuid/config.yml
 

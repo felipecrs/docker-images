@@ -19,11 +19,11 @@ releases:
           args: ""
           resources:
             requests:
-              cpu: "3.5"
-              memory: "7Gi"
+              cpu: "3"
+              memory: "6Gi"
             limits:
-              cpu: "3.5"
-              memory: "7Gi"
+              cpu: "3"
+              memory: "6Gi"
           yamlTemplate: |
             apiVersion: v1
             kind: Pod
