@@ -4,7 +4,7 @@
 [![Docker Pulls](https://img.shields.io/docker/pulls/felipecrs/jenkins-agent-dind)](https://hub.docker.com/r/felipecrs/jenkins-agent-dind)
 [![Docker Image Size](https://img.shields.io/docker/image-size/felipecrs/jenkins-agent-dind/latest)](https://hub.docker.com/r/felipecrs/jenkins-agent-dind)
 
-A full fledged Docker in Docker image to act as a Jenkins Agent. Based on [buildpack-deps:jammy](https://github.com/docker-library/buildpack-deps/blob/master/ubuntu/jammy/Dockerfile), it is a mashup of [jenkins/inbound-agent](https://github.com/jenkinsci/docker-inbound-agent) with [docker:dind](https://github.com/docker-library/docker).
+A full fledged Docker in Docker image to act as a Jenkins Agent. Based on `ubuntu`, it is a mashup of [jenkins/inbound-agent](https://github.com/jenkinsci/docker-inbound-agent) with [docker:dind](https://github.com/docker-library/docker).
 
 - Source code: <https://github.com/felipecrs/jenkins-agent-dind>
 - Docker image: <https://hub.docker.com/r/felipecrs/jenkins-agent-dind>
@@ -12,9 +12,9 @@ A full fledged Docker in Docker image to act as a Jenkins Agent. Based on [build
 ## Features
 
 - Based on **Ubuntu 22.04 Jammy Jellyfish**: a more common OS to run your builds.
-- From `buildpack-deps`: a image with many common dependencies installed, run your builds without hassle.
-- Fully working Docker in Docker: run your `docker build` commands with no intervention and share of resources between the host.
-- Act just as a Jenkins Agent out-of-the-box: run ephemeral build containers by using Docker Plugin (or Kubernetes Plugin) on Jenkins. Works as the official `jnlp`/`inbound-agent`.
+- Several common packages installed: run your builds without hassle.
+- Fully working Docker in Docker: run your `docker build` commands isolated from the host Docker daemon.
+- Act just as a Jenkins Agent out-of-the-box: run ephemeral build containers by using the Docker Plugin or Kubernetes Plugin on Jenkins. Works as the official `inbound-agent`.
 
 ## Usage
 
