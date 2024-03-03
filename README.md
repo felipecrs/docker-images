@@ -1,13 +1,11 @@
 # Jenkins Agent with Docker in Docker
 
 [![CI](https://github.com/felipecrs/jenkins-agent-dind/workflows/ci/badge.svg?branch=master&event=push)](https://github.com/felipecrs/jenkins-agent-dind/actions?query=workflow%3Aci+branch%3Amaster+event%3Apush)
-[![Docker Pulls](https://img.shields.io/docker/pulls/felipecrs/jenkins-agent-dind)](https://hub.docker.com/r/felipecrs/jenkins-agent-dind)
-[![Docker Image Size](https://img.shields.io/docker/image-size/felipecrs/jenkins-agent-dind/latest)](https://hub.docker.com/r/felipecrs/jenkins-agent-dind)
+[![Docker Image Size](https://ghcr-badge.egpl.dev/felipecrs/jenkins-agent-dind/size)](https://github.com/felipecrs/jenkins-agent-dind/pkgs/container/jenkins-agent-dind)
 
-A full fledged Docker in Docker image to act as a Jenkins Agent. Based on `ubuntu`, it is a mashup of [jenkins/inbound-agent](https://github.com/jenkinsci/docker-inbound-agent) with [docker:dind](https://github.com/docker-library/docker).
+A full fledged Docker in Docker image to act as a Jenkins Agent. Based on `ubuntu`, it is a mashup of [`jenkins/inbound-agent`](https://github.com/jenkinsci/docker-inbound-agent) with [`docker:dind`](https://github.com/docker-library/docker).
 
-- Source code: <https://github.com/felipecrs/jenkins-agent-dind>
-- Docker image: <https://hub.docker.com/r/felipecrs/jenkins-agent-dind>
+- Docker image: [`ghcr.io/felipecrs/jenkins-agent-dind`](https://github.com/felipecrs/jenkins-agent-dind/pkgs/container/jenkins-agent-dind)
 
 ## Features
 
