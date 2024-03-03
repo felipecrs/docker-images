@@ -13,6 +13,8 @@ A full fledged Docker in Docker image to act as a Jenkins Agent. Based on `ubunt
 - Several common packages installed: run your builds without hassle.
 - Fully working Docker in Docker: run your `docker build` commands isolated from the host Docker daemon.
 - Act just as a Jenkins Agent out-of-the-box: run ephemeral build containers by using the Docker Plugin or Kubernetes Plugin on Jenkins. Works as the official `inbound-agent`.
+- Includes [`pkgx`](https://pkgx.sh), a convenient package manager that allows you to easily install the necessary tools for your project. For example, you can use `pkgx install node@18` to install Node.js version 18.
+- Facilitates debugging by providing an opt-in SSH server for your builds. Read more about it [here](#accessing-the-image-through-ssh).
 
 ## Usage
 
@@ -28,6 +30,9 @@ docker run -it --rm --privileged ghcr.io/felipecrs/jenkins-agent-dind bash
 ```
 
 ### Agent Template in Docker Cloud configuration on Jenkins
+
+> [!WARNING]  
+> The image tag in this screenshot is outdated. The updated tag is `ghcr.io/felipecrs/jenkins-agent-dind:latest`.
 
 ![Sample Agent Template configuration](https://user-images.githubusercontent.com/29582865/106769145-66379180-661b-11eb-93e3-5a7742eb46c0.png)
 
