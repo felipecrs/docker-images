@@ -22,7 +22,7 @@ ${APT_GET_INSTALL} \
     tzdata
 
 # setup locale
-sed --in-place '/en_US.UTF-8/s/^# //g' /etc/locale.gen
+sed --in-place "/${LANG}/s/^# //g" /etc/locale.gen
 locale-gen
 
 # setup sudo
@@ -49,12 +49,6 @@ chmod 755 /etc/apt/keyrings
 VERSION_CODENAME=$(lsb_release -cs)
 APT_ARCH=$(dpkg --print-architecture)
 readonly VERSION_CODENAME APT_ARCH
-
-# adoptium openjdk
-${CURL} https://packages.adoptium.net/artifactory/api/gpg/key/public |
-    gpg --dearmor -o /etc/apt/keyrings/adoptium.gpg
-echo "deb [arch=${APT_ARCH} signed-by=/etc/apt/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb ${VERSION_CODENAME} main" |
-    tee /etc/apt/sources.list.d/adoptium.list
 
 # git
 ${CURL} "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xE1DD270288B4E6030699E45FA1715D88E1DF1F24" |
@@ -90,8 +84,6 @@ packages=(
     time
     openssl
     openssh-server
-    # for jenkins-agent
-    temurin-11-jdk
     # from jenkins/docker-agent
     openssh-client
     patch
@@ -137,23 +129,6 @@ echo 'dockremap:165536:65536' | tee -a /etc/subgid
 version="65cfcc28ab37cb75e1560e4b4738719c07c6618e"
 ${CURL} -o /usr/local/bin/dind "https://raw.githubusercontent.com/moby/moby/${version}/hack/dind"
 chmod +x /usr/local/bin/dind
-
-# install jenkins-agent
-# the same version as being used in the official agent image
-docker_agent_version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" https://github.com/jenkinsci/docker-agent/releases/latest)")
-version=$(echo "${docker_agent_version}" | cut -d'-' -f1)
-mkdir -p /usr/share/jenkins
-chmod 755 /usr/share/jenkins
-${CURL} -o /usr/share/jenkins/agent.jar "https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${version}/remoting-${version}.jar"
-chmod +x /usr/share/jenkins/agent.jar
-ln -sf /usr/share/jenkins/agent.jar /usr/share/jenkins/slave.jar
-
-# install jenkins-agent wrapper from inbound-agent
-version="${docker_agent_version}"
-unset docker_agent_version
-${CURL} -o /usr/local/bin/jenkins-agent "https://github.com/jenkinsci/docker-agent/raw/${version}/jenkins-agent"
-chmod +x /usr/local/bin/jenkins-agent
-ln -sf /usr/local/bin/jenkins-agent /usr/local/bin/jenkins-slave
 
 # install retry
 version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" "https://github.com/kadwanev/retry/releases/latest")")
