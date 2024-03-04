@@ -3,21 +3,23 @@
 [![CI](https://github.com/felipecrs/jenkins-agent-dind/workflows/ci/badge.svg?branch=master&event=push)](https://github.com/felipecrs/jenkins-agent-dind/actions?query=workflow%3Aci+branch%3Amaster+event%3Apush)
 [![Docker Image Size](https://ghcr-badge.egpl.dev/felipecrs/jenkins-agent-dind/size)](https://github.com/felipecrs/jenkins-agent-dind/pkgs/container/jenkins-agent-dind)
 
-A full fledged Docker in Docker image to act as a Jenkins Agent. Based on `ubuntu`, it is a mashup of [`jenkins/inbound-agent`](https://github.com/jenkinsci/docker-agent/blob/HEAD/README_inbound-agent.md) with [`docker:dind`](https://github.com/docker-library/docker).
+A full-fledged Docker in Docker image to act as a Jenkins Agent or Devcontainer.
 
-- Docker image: [`ghcr.io/felipecrs/jenkins-agent-dind`](https://github.com/felipecrs/jenkins-agent-dind/pkgs/container/jenkins-agent-dind)
+- Image tags: [`ghcr.io/felipecrs/jenkins-agent-dind`](https://github.com/felipecrs/jenkins-agent-dind/pkgs/container/jenkins-agent-dind)
 
 > [!IMPORTANT]
 > This image used to be uploaded to Docker Hub as `felipecrs/jenkins-agent` but it no longer is. Please update to the new tag `ghcr.io/felipecrs/jenkins-agent-dind`.
 
 ## Features
 
-- Based on **Ubuntu 22.04 Jammy Jellyfish**: a more common OS to run your builds.
-- Several common packages installed: run your builds without hassle.
-- Fully working Docker in Docker: run your `docker build` commands isolated from the host Docker daemon.
-- Act just as a Jenkins Agent out-of-the-box: run ephemeral build containers by using the Docker Plugin or Kubernetes Plugin on Jenkins. Works as the official `inbound-agent`.
-- Includes [`pkgx`](https://pkgx.sh), a convenient package manager that allows you to easily install the necessary tools for your project. For example, you can use `pkgx install node@18` to install Node.js version 18.
-- Facilitates debugging by providing an opt-in SSH server for your builds. Read more about it [here](#accessing-the-container-through-ssh).
+- **Based on Ubuntu 22.04 Jammy Jellyfish**: a more common distribution to run your workload on.
+- Fully functional **Docker in Docker**: run `docker` commands isolated from the host Docker daemon.
+- Also supports **Docker on Docker**: you can choose to share the host's Docker daemon to avoid the overhead of running a nested Docker daemon.
+- Works as a Jenkins Agent out-of-the-box: run ephemeral build containers by using the Docker Plugin or Kubernetes Plugin on Jenkins. Works as the official [`jenkins/inbound-agent`](https://github.com/jenkinsci/docker-agent/blob/master/README_inbound-agent.md).
+- Several common packages installed: run your generic workflow without needing to install additional packages.
+- Bundles [**`pkgx`**](https://pkgx.sh), a convenient package manager that allows you to **easily and quickly install the necessary tools for your project**. Example: `pkgx install node@18 npm@10`.
+- Facilitates debugging by providing an **opt-in SSH server** for your builds. Read more about it [here](#accessing-the-container-through-ssh).
+- Can also be used as a [**devcontainer**](https://containers.dev/), ensuring **both your development environment and your CI/CD environment are the same**. Read more about it [here](#devcontainer).
 
 ## Usage
 
@@ -29,14 +31,16 @@ Spin this image in your terminal, if you want to play with it:
 # -it: allows to interact with the container
 # --rm: removes the container and its volumes after exiting
 # --privileged: needed for running Docker in Docker
-docker run -it --rm --privileged ghcr.io/felipecrs/jenkins-agent-dind bash
+docker run -it --rm --privileged ghcr.io/felipecrs/jenkins-agent-dind
 ```
 
 Alternatively, you can use the Docker on Docker mode:
 
 ```sh
 # --volume: shares the host's Docker socket with the container
-docker run -it --rm --volume=/var/run/docker.sock:/var/run/docker.sock ghcr.io/felipecrs/jenkins-agent-dind bash
+# --network=host: allows to access ports from other containers running on the host
+docker run -it --rm --volume=/var/run/docker.sock:/var/run/docker.sock --network=host \
+  ghcr.io/felipecrs/jenkins-agent-dind
 ```
 
 ### Agent template with the [Docker Plugin](https://plugins.jenkins.io/docker-plugin/) on Jenkins
@@ -100,6 +104,7 @@ This ensures file permissions are correct when running as a `Jenkinsfile` docker
 To run in Docker in Docker mode:
 
 ```groovy
+// Jenkinsfile
 pipeline {
   agent {
     docker {
@@ -123,12 +128,13 @@ pipeline {
 Alternatively, you can use the Docker on Docker mode:
 
 ```groovy
+// Jenkinsfile
 pipeline {
   agent {
     docker {
       image 'ghcr.io/felipecrs/jenkins-agent-dind'
       alwaysPull true
-      args '--volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker'
+      args '--volume=/var/run/docker.sock:/var/run/docker.sock --network=host --group-add=docker'
     }
   }
   stages {
@@ -233,6 +239,7 @@ spec:
 And here is an example of a Jenkinsfile:
 
 ```groovy
+// Jenkinsfile
 pipeline {
   agent any
   options {
@@ -251,11 +258,13 @@ pipeline {
 It also works if you use a nested Docker agent:
 
 ```groovy
+// Jenkinsfile
 pipeline {
   agent {
     docker {
-      image 'felipecrs/fixdockergid:latest'
-      args '--volume=/ssh-command:/ssh-command --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker'
+      image 'ghcr.io/felipecrs/jenkins-agent-dind'
+      alwaysPull true
+      args '--volume=/ssh-command:/ssh-command --volume=/var/run/docker.sock:/var/run/docker.sock --network=host --group-add=docker'
     }
   }
   options {
@@ -279,6 +288,8 @@ pipeline {
   <summary>Click here to show</summary>
 
 ```groovy
+// Jenkinsfile
+
 // Generate an "unique" port for SSHD
 env.SSHD_PORT = new Random(env.BUILD_TAG.hashCode()).nextInt(23000 - 22000) + 22000
 
@@ -305,3 +316,34 @@ pipeline {
 ```
 
 </details>
+
+### Devcontainer
+
+It is a good practice to run your development environment in a container, so you can have a consistent environment across your team.
+
+It is even better if you can run the same container in your CI/CD pipeline, so you can be sure that your build will behave the same way as your development environment.
+
+As a Docker in Docker devcontainer:
+
+```jsonc
+// .devcontainer/devcontainer.json
+{
+  "image": "ghcr.io/felipecrs/jenkins-agent-dind",
+  "overrideCommand": false,
+  "privileged": true
+}
+```
+
+As a Docker on Docker devcontainer:
+
+```jsonc
+// .devcontainer/devcontainer.json
+{
+  "image": "ghcr.io/felipecrs/jenkins-agent-dind",
+  "overrideCommand": false,
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+  "runArgs": ["--network=host"]
+}
+```

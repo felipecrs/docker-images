@@ -43,11 +43,7 @@ jobs:
       - name: Setup test dependencies
         uses: pkgxdev/setup@v2
         with:
-          +: >
-            k3d
-            helmfile
-            werf
-            kubectl
+          +: k3d helmfile werf kubectl
 
       - name: Build
         uses: docker/build-push-action@v5
