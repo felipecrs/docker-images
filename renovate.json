@@ -3,12 +3,6 @@
   "extends": [
     "config:recommended"
   ],
-  "packageRules": [
-    {
-      "matchPackageNames": ["jenkins/inbound-agent"],
-      "versioning": "loose"
-    }
-  ],
   "customManagers": [
     {
       "customType": "regex",
