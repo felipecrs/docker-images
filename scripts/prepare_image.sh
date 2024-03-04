@@ -144,7 +144,7 @@ ${CURL} "https://github.com/kadwanev/retry/releases/download/${RETRY_VERSION}/re
 
 # install pkgx
 # renovate: datasource=github-releases depName=pkgxdev/pkgx
-PKGX_VERSION="1.1.5"
+PKGX_VERSION="1.1.6"
 ${CURL} "https://github.com/pkgxdev/pkgx/releases/download/v${PKGX_VERSION}/pkgx-${PKGX_VERSION}+linux+$(uname -m | sed 's/_/-/g').tar.xz" |
     tar -C /usr/local/bin -xJf - pkgx
 
@@ -174,7 +174,7 @@ printf '%s\n' "user: ${NON_ROOT_USER}" "group: ${NON_ROOT_USER}" "paths:" "  - /
 
 # install docker-on-docker-shim
 # renovate: datasource=github-releases depName=felipecrs/docker-on-docker-shim
-DOND_SHIM_VERSION="0.6.0"
+DOND_SHIM_VERSION="0.6.1"
 ${CURL} "https://github.com/felipecrs/docker-on-docker-shim/raw/v${DOND_SHIM_VERSION}/dond" \
     -o /usr/local/bin/dond
 chmod +x /usr/local/bin/dond

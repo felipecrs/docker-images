@@ -45,7 +45,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Setup test dependencies
-        uses: pkgxdev/setup@v1
+        uses: pkgxdev/setup@v2
         with:
           +: >
             k3d
