@@ -44,15 +44,13 @@ ENV LANGUAGE="en_US:en"
 ENV LC_ALL="en_US.UTF-8"
 ENV TZ="Etc/UTC"
 
-ENV CI="true"
-
 RUN --mount=type=bind,source=scripts/prepare_image.sh,target=/prepare_image.sh \
     /prepare_image.sh
 
 COPY --from=rootfs / /
 
 # use non-root user with sudo when needed
-USER "${NON_ROOT_USER}:${NON_ROOT_USER}"
+USER "${NON_ROOT_USER}"
 
 WORKDIR "${AGENT_WORKDIR}"
 
@@ -70,4 +68,4 @@ ENV S6_SERVICES_GRACETIME="15000"
 ENV S6_KEEP_ENV="1"
 
 ENTRYPOINT [ "/entrypoint.sh" ]
-CMD [ "jenkins-agent" ]
+CMD []

@@ -4,6 +4,8 @@
     "ms-azuretools.vscode-docker",
     "exiasr.hadolint",
     "foxundermoon.shell-format",
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "github.vscode-github-actions",
+    "ms-kubernetes-tools.vscode-kubernetes-tools"
   ]
 }
