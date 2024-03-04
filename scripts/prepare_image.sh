@@ -11,8 +11,8 @@ readonly CURL="curl -fsSL"
 export DEBIANFRONTEND="noninteractive"
 
 # create non-root user
-groupadd -g "${NON_ROOT_UID}" "${NON_ROOT_USER}"
-useradd -l -c "Jenkins user" -d "${NON_ROOT_HOME}" -u "${NON_ROOT_UID}" -g "${NON_ROOT_UID}" -m "${NON_ROOT_USER}" -s /bin/bash -p ""
+groupadd -g "${NON_ROOT_UID?}" "${NON_ROOT_USER?}"
+useradd -l -c "Jenkins user" -d "${NON_ROOT_HOME?}" -u "${NON_ROOT_UID}" -g "${NON_ROOT_UID}" -m "${NON_ROOT_USER}" -s /bin/bash -p ""
 
 # install sudo and locales
 ${APT_GET} update
@@ -31,7 +31,7 @@ echo "${NON_ROOT_USER} ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${NON_ROOT_
 sudo -u "${NON_ROOT_USER}" true
 
 # ensure jenkins-agent directory exists
-mkdir -p "${AGENT_WORKDIR}"
+mkdir -p "${AGENT_WORKDIR?}"
 chown -R "${NON_ROOT_USER}:${NON_ROOT_USER}" "${AGENT_WORKDIR}"
 chmod 755 "${AGENT_WORKDIR}"
 
@@ -145,8 +145,8 @@ ${CURL} "https://github.com/kadwanev/retry/releases/download/${RETRY_VERSION}/re
 # install pkgx
 # renovate: datasource=github-releases depName=pkgxdev/pkgx
 PKGX_VERSION="1.1.6"
-${CURL} "https://github.com/pkgxdev/pkgx/releases/download/v${PKGX_VERSION}/pkgx-${PKGX_VERSION}+linux+$(uname -m | sed 's/_/-/g').tar.xz" |
-    tar -C /usr/local/bin -xJf - pkgx
+${CURL} "https://github.com/pkgxdev/pkgx/releases/download/v${PKGX_VERSION}/pkgx-${PKGX_VERSION}+linux+${UNAME_ARCH//_/-}.tar.xz"
+tar -C /usr/local/bin -xJf - pkgx
 
 # install s6-overlay
 # renovate: datasource=github-releases depName=just-containers/s6-overlay

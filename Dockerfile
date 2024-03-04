@@ -9,6 +9,7 @@ FROM jenkins/inbound-agent:${JENKINS_AGENT_VERSION}-jdk17 AS jenkins-agent
 FROM base AS init_as_root
 
 # Install shc
+# hadolint ignore=DL3008
 RUN apt-get update; \
     apt-get install -y --no-install-recommends shc build-essential; \
     rm -rf /var/lib/apt/lists/*

@@ -7,6 +7,9 @@ A full fledged Docker in Docker image to act as a Jenkins Agent. Based on `ubunt
 
 - Docker image: [`ghcr.io/felipecrs/jenkins-agent-dind`](https://github.com/felipecrs/jenkins-agent-dind/pkgs/container/jenkins-agent-dind)
 
+> [!IMPORTANT]
+> This image used to be uploaded to Docker Hub as `felipecrs/jenkins-agent` but it no longer is. Please update to the new tag `ghcr.io/felipecrs/jenkins-agent-dind:latest`.
+
 ## Features
 
 - Based on **Ubuntu 22.04 Jammy Jellyfish**: a more common OS to run your builds.
@@ -31,7 +34,7 @@ docker run -it --rm --privileged ghcr.io/felipecrs/jenkins-agent-dind bash
 
 ### Agent Template in Docker Cloud configuration on Jenkins
 
-> [!WARNING]  
+> [!WARNING]
 > The image tag in this screenshot is outdated. The updated tag is `ghcr.io/felipecrs/jenkins-agent-dind:latest`.
 
 ![Sample Agent Template configuration](https://user-images.githubusercontent.com/29582865/106769145-66379180-661b-11eb-93e3-5a7742eb46c0.png)
