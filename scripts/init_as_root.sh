@@ -14,7 +14,14 @@ if [[ "${SSHD_ENABLED:-false}" == true ]]; then
 fi
 
 # check if docker socket is mounted, meaning we are running in docker on docker mode
-if [[ ! -S "/var/run/docker.sock" ]]; then
+if [[ -S "/var/run/docker.sock" ]]; then
+    # setup docker-on-docker-shim by default when running in docker on docker mode
+    docker_path=$(command -v docker)
+    mv -f "${docker_path}" "${docker_path}.orig"
+    dond_path=$(command -v dond)
+    mv -f "${dond_path}" "${docker_path}"
+    unset docker_path dond_path
+else
     mv -f /etc/optional-services.d/dind /etc/services.d/dind
 fi
 
