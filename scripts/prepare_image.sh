@@ -71,6 +71,16 @@ echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/docker.gpg] https://dow
 
 # install apt packages
 ${APT_GET} update
+
+# renovate: datasource=github-releases depName=moby/moby
+DOCKER_VERSION="25.0.3"
+# renovate: datasource=github-releases depName=containerd/containerd
+CONTAINERD_VERSION="1.6.28"
+# renovate: datasource=github-releases depName=docker/buildx
+DOCKER_BUILDX_VERSION="0.12.1"
+# renovate: datasource=github-releases depName=docker/compose
+DOCKER_COMPOSE_VERSION="2.24.6"
+
 packages=(
     build-essential
     git
@@ -104,12 +114,13 @@ packages=(
     dnsutils
     netcat
     # docker
-    docker-ce
-    docker-ce-cli
-    containerd.io
-    docker-buildx-plugin
-    docker-compose-plugin
+    "docker-ce=5:${DOCKER_VERSION}-*"
+    "docker-ce-cli=5:${DOCKER_VERSION}-*"
+    "containerd.io=${CONTAINERD_VERSION}-*"
+    "docker-buildx-plugin=${DOCKER_BUILDX_VERSION}-*"
+    "docker-compose-plugin=${DOCKER_COMPOSE_VERSION}-*"
 )
+
 ${APT_GET_INSTALL} "${packages[@]}"
 
 # setup docker
