@@ -3,7 +3,7 @@
 [![CI](https://github.com/felipecrs/jenkins-agent-dind/workflows/ci/badge.svg?branch=master&event=push)](https://github.com/felipecrs/jenkins-agent-dind/actions?query=workflow%3Aci+branch%3Amaster+event%3Apush)
 [![Docker Image Size](https://ghcr-badge.egpl.dev/felipecrs/jenkins-agent-dind/size)](https://github.com/felipecrs/jenkins-agent-dind/pkgs/container/jenkins-agent-dind)
 
-A full fledged Docker in Docker image to act as a Jenkins Agent. Based on `ubuntu`, it is a mashup of [`jenkins/inbound-agent`](https://github.com/jenkinsci/docker-inbound-agent) with [`docker:dind`](https://github.com/docker-library/docker).
+A full fledged Docker in Docker image to act as a Jenkins Agent. Based on `ubuntu`, it is a mashup of [`jenkins/inbound-agent`](https://github.com/jenkinsci/docker-agent/blob/HEAD/README_inbound-agent.md) with [`docker:dind`](https://github.com/docker-library/docker).
 
 - Docker image: [`ghcr.io/felipecrs/jenkins-agent-dind`](https://github.com/felipecrs/jenkins-agent-dind/pkgs/container/jenkins-agent-dind)
 

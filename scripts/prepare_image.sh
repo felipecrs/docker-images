@@ -116,8 +116,9 @@ ${APT_GET_INSTALL} "${packages[@]}"
 usermod -aG docker "${NON_ROOT_USER}"
 
 # setup docker-switch (docker-compose v1 compatibility)
-DOCKER_COMPOSE_SWITCH_VERSION=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" https://github.com/docker/compose-switch/releases/latest)")
-${CURL} "https://github.com/docker/compose-switch/releases/download/${DOCKER_COMPOSE_SWITCH_VERSION}/docker-compose-linux-${DPKG_ARCH}" \
+# renovate: datasource=github-releases depName=docker/compose-switch
+DOCKER_COMPOSE_SWITCH_VERSION="1.0.5"
+${CURL} "https://github.com/docker/compose-switch/releases/download/v${DOCKER_COMPOSE_SWITCH_VERSION}/docker-compose-linux-${DPKG_ARCH}" \
     -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
@@ -136,16 +137,19 @@ ${CURL} "https://github.com/moby/moby/raw/${DIND_COMMIT}/hack/dind" \
 chmod +x /usr/local/bin/dind
 
 # install retry
-RETRY_VERSION=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" "https://github.com/kadwanev/retry/releases/latest")")
+# renovate: datasource=github-releases depName=kadwanev/retry
+RETRY_VERSION="1.0.2"
 ${CURL} "https://github.com/kadwanev/retry/releases/download/${RETRY_VERSION}/retry-${RETRY_VERSION}.tar.gz" |
     tar -C /usr/local/bin -xzf - retry
 
 # install pkgx
-PKGX_VERSION=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" "https://github.com/pkgxdev/pkgx/releases/latest")" | sed 's/^v//')
+# renovate: datasource=github-releases depName=pkgxdev/pkgx
+PKGX_VERSION="1.1.6"
 ${CURL} "https://github.com/pkgxdev/pkgx/releases/download/v${PKGX_VERSION}/pkgx-${PKGX_VERSION}+linux+$(uname -m | sed 's/_/-/g').tar.xz" |
     tar -C /usr/local/bin -xJf - pkgx
 
 # install s6-overlay
+# renovate: datasource=github-releases depName=just-containers/s6-overlay
 S6_OVERLAY_VERSION="3.1.6.2"
 ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" |
     tar -C / -Jxpf -
@@ -159,16 +163,18 @@ mkdir -p /etc/services.d
 mkdir -p /run/sshd
 
 # install fixdockergid
-export FIXDOCKERGID_VERSION="0.7.0"
+# renovate: datasource=github-releases depName=felipecrs/fixdockergid
+FIXDOCKERGID_VERSION="0.7.0"
 ${CURL} "https://github.com/felipecrs/fixdockergid/raw/v${FIXDOCKERGID_VERSION}/install.sh" |
-    USERNAME="${NON_ROOT_USER}" sh -
+    FIXDOCKERGID_VERSION="${FIXDOCKERGID_VERSION}" USERNAME="${NON_ROOT_USER}" sh -
 
 # set fixuid to update AGENT_WORKDIR permissions
 printf '%s\n' "user: ${NON_ROOT_USER}" "group: ${NON_ROOT_USER}" "paths:" "  - /" "  - ${AGENT_WORKDIR}" |
     tee /etc/fixuid/config.yml
 
 # install docker-on-docker-shim
-DOND_SHIM_VERSION="0.6.0"
+# renovate: datasource=github-releases depName=felipecrs/docker-on-docker-shim
+DOND_SHIM_VERSION="0.6.1"
 ${CURL} "https://github.com/felipecrs/docker-on-docker-shim/raw/v${DOND_SHIM_VERSION}/dond" \
     -o /usr/local/bin/dond
 chmod +x /usr/local/bin/dond
@@ -180,7 +186,7 @@ ${CURL} https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/insta
 cp -f /opt/oh-my-bash/share/oh-my-bash/bashrc "${NON_ROOT_HOME}/.bashrc"
 
 # Set nano as default editor when running interactive shell
-echo 'EDITOR="nano"' | tee -a "${NON_ROOT_HOME}/.bashrc"
+printf '\n%s\n' 'export EDITOR="nano"' | tee -a "${NON_ROOT_HOME}/.bashrc"
 
 # cleanup
 shopt -s nullglob dotglob

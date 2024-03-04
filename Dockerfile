@@ -1,6 +1,9 @@
-FROM ubuntu:22.04 AS base
+# renovate: datasource=github-releases depName=jenkinsci/docker-agent versioning=loose
+ARG JENKINS_AGENT_VERSION="3206.vb_15dcf73f6a_9-4"
 
-FROM jenkins/inbound-agent:latest AS jenkins-agent
+FROM ubuntu:jammy-20240212 AS base
+
+FROM jenkins/inbound-agent:${JENKINS_AGENT_VERSION}-jdk17 AS jenkins-agent
 
 # Build the init_as_root
 FROM base AS init_as_root
