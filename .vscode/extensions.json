@@ -1,8 +1,8 @@
 {
-    "recommendations": [
-        "timonwong.shellcheck",
-        "ms-azuretools.vscode-docker",
-        "exiasr.hadolint",
-        "foxundermoon.shell-format"
-    ]
+  "recommendations": [
+    "timonwong.shellcheck",
+    "ms-azuretools.vscode-docker",
+    "exiasr.hadolint",
+    "foxundermoon.shell-format"
+  ]
 }
