@@ -48,7 +48,8 @@ chmod 755 /etc/apt/keyrings
 
 VERSION_CODENAME=$(lsb_release -cs)
 DPKG_ARCH=$(dpkg --print-architecture)
-readonly VERSION_CODENAME DPKG_ARCH
+UNAME_ARCH=$(uname -m)
+readonly VERSION_CODENAME DPKG_ARCH UNAME_ARCH
 
 # git
 ${CURL} "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xE1DD270288B4E6030699E45FA1715D88E1DF1F24" |
@@ -115,8 +116,9 @@ ${APT_GET_INSTALL} "${packages[@]}"
 usermod -aG docker "${NON_ROOT_USER}"
 
 # setup docker-switch (docker-compose v1 compatibility)
-version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" https://github.com/docker/compose-switch/releases/latest)")
-${CURL} -o /usr/local/bin/docker-compose "https://github.com/docker/compose-switch/releases/download/${version}/docker-compose-linux-${DPKG_ARCH}"
+DOCKER_COMPOSE_SWITCH_VERSION=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" https://github.com/docker/compose-switch/releases/latest)")
+${CURL} "https://github.com/docker/compose-switch/releases/download/${DOCKER_COMPOSE_SWITCH_VERSION}/docker-compose-linux-${DPKG_ARCH}" \
+    -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
 ## dind
@@ -125,27 +127,29 @@ addgroup --system dockremap
 adduser --system --ingroup dockremap dockremap
 echo 'dockremap:165536:65536' | tee -a /etc/subuid
 echo 'dockremap:165536:65536' | tee -a /etc/subgid
+
 # install dind hack
 # https://github.com/moby/moby/commits/master/hack/dind
-version="65cfcc28ab37cb75e1560e4b4738719c07c6618e"
-${CURL} -o /usr/local/bin/dind "https://raw.githubusercontent.com/moby/moby/${version}/hack/dind"
+DIND_COMMIT="65cfcc28ab37cb75e1560e4b4738719c07c6618e"
+${CURL} "https://github.com/moby/moby/raw/${DIND_COMMIT}/hack/dind" \
+    -o /usr/local/bin/dind
 chmod +x /usr/local/bin/dind
 
 # install retry
-version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" "https://github.com/kadwanev/retry/releases/latest")")
-${CURL} "https://github.com/kadwanev/retry/releases/download/${version}/retry-${version}.tar.gz" |
+RETRY_VERSION=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" "https://github.com/kadwanev/retry/releases/latest")")
+${CURL} "https://github.com/kadwanev/retry/releases/download/${RETRY_VERSION}/retry-${RETRY_VERSION}.tar.gz" |
     tar -C /usr/local/bin -xzf - retry
 
 # install pkgx
-version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" "https://github.com/pkgxdev/pkgx/releases/latest")" | sed 's/^v//')
-${CURL} "https://github.com/pkgxdev/pkgx/releases/download/v${version}/pkgx-${version}+linux+$(uname -m | sed 's/_/-/g').tar.xz" |
+PKGX_VERSION=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" "https://github.com/pkgxdev/pkgx/releases/latest")" | sed 's/^v//')
+${CURL} "https://github.com/pkgxdev/pkgx/releases/download/v${PKGX_VERSION}/pkgx-${PKGX_VERSION}+linux+$(uname -m | sed 's/_/-/g').tar.xz" |
     tar -C /usr/local/bin -xJf - pkgx
 
 # install s6-overlay
-version="3.1.6.2"
-${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-noarch.tar.xz" |
+S6_OVERLAY_VERSION="3.1.6.2"
+${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" |
     tar -C / -Jxpf -
-${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-$(uname -m).tar.xz" |
+${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${UNAME_ARCH}.tar.xz" |
     tar -C / -Jxpf -
 
 # init_as_root.sh puts files in this folder
@@ -156,15 +160,21 @@ mkdir -p /run/sshd
 
 # install fixdockergid
 export FIXDOCKERGID_VERSION="0.7.0"
-curl -fsSL "https://github.com/felipecrs/fixdockergid/raw/v${FIXDOCKERGID_VERSION}/install.sh" |
+${CURL} "https://github.com/felipecrs/fixdockergid/raw/v${FIXDOCKERGID_VERSION}/install.sh" |
     USERNAME="${NON_ROOT_USER}" sh -
 
 # set fixuid to update AGENT_WORKDIR permissions
 printf '%s\n' "user: ${NON_ROOT_USER}" "group: ${NON_ROOT_USER}" "paths:" "  - /" "  - ${AGENT_WORKDIR}" |
     tee /etc/fixuid/config.yml
 
+# install docker-on-docker-shim
+DOND_SHIM_VERSION="0.6.0"
+${CURL} "https://github.com/felipecrs/docker-on-docker-shim/raw/v${DOND_SHIM_VERSION}/dond" \
+    -o /usr/local/bin/dond
+chmod +x /usr/local/bin/dond
+
 # setup oh my bash, useful when debugging the container
-curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh |
+${CURL} https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh |
     bash -s -- --prefix=/opt/oh-my-bash --unattended
 
 cp -f /opt/oh-my-bash/share/oh-my-bash/bashrc "${NON_ROOT_HOME}/.bashrc"
