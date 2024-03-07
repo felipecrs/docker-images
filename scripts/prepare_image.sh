@@ -175,7 +175,7 @@ mkdir -p /run/sshd
 
 # install fixdockergid
 # renovate: datasource=github-releases depName=felipecrs/fixdockergid
-FIXDOCKERGID_VERSION="0.7.0"
+FIXDOCKERGID_VERSION="0.7.1"
 ${CURL} "https://github.com/felipecrs/fixdockergid/raw/v${FIXDOCKERGID_VERSION}/install.sh" |
     FIXDOCKERGID_VERSION="${FIXDOCKERGID_VERSION}" USERNAME="${NON_ROOT_USER}" sh -
 
