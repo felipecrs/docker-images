@@ -8,6 +8,8 @@ FROM jenkins/inbound-agent:${JENKINS_AGENT_VERSION}-jdk17 AS jenkins-agent
 # Build the init_as_root
 FROM base AS init_as_root
 
+SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
+
 # Install shc
 # hadolint ignore=DL3008
 RUN apt-get update; \
