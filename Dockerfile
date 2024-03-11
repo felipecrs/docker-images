@@ -62,8 +62,8 @@ VOLUME "${AGENT_WORKDIR}"
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2"
 # Waits for all services to start before running CMD
 ENV S6_CMD_WAIT_FOR_SERVICES="1"
-# Gives 15s for all services to start
-ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME="15000"
+# Honors the timeout-up for each service
+ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME="0"
 # Honors container's environment variables on CMD
 ENV S6_KEEP_ENV="1"
 # Applies services conditions to decide which services should start
