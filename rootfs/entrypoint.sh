@@ -1,10 +1,11 @@
 #!/bin/bash
 #
-# This entrypoint first executes fixuid to fix the uid and gid of the user
-# within the to match the user which the container was executed as. Then,
-# executes init_as_root.sh, which operates as root to execute s6-overlay, drops
-# the permissions to the regular user which started the container and executes
-# the passed in CMD.
+# This entrypoint first decides what is the best CMD to run by default when
+# none is provided based on some conditions.
+#
+# Then, it ensures s6-overlay is always executed as root, also ensuring that
+# when the container is being executed as a non-root user, fixdockergid is
+# called and CMD is executed as the non-root user.
 
 set -eu
 
@@ -26,7 +27,7 @@ uid="$(id -u)"
 if [[ "${uid}" -eq 0 ]]; then
     # If running as root, simply execute s6-overlay
     export USER="root"
-    set -- /init_as_root "$@"
+    set -- /init "$@"
 else
     # Otherwise, fix uid and gid, run s6-overlay as root and then drop
     # privileges back to the user

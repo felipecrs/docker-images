@@ -58,16 +58,16 @@ WORKDIR "${AGENT_WORKDIR}"
 
 VOLUME "${AGENT_WORKDIR}"
 
-# Fails if cont-init and fix-attrs fails
+# Fails the container if any service fails to start
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS="2"
-# Wait for services before running CMD
+# Waits for all services to start before running CMD
 ENV S6_CMD_WAIT_FOR_SERVICES="1"
-# Give 15s for services to start
+# Gives 15s for all services to start
 ENV S6_CMD_WAIT_FOR_SERVICES_MAXTIME="15000"
-# Give 15s for services to stop
-ENV S6_SERVICES_GRACETIME="15000"
-# Honor container env on CMD
+# Honors container's environment variables on CMD
 ENV S6_KEEP_ENV="1"
+# Applies services conditions to decide which services should start
+ENV S6_STAGE2_HOOK="/apply_services_conditions.sh"
 
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD []
