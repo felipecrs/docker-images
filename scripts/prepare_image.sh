@@ -167,9 +167,6 @@ ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_O
 ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${UNAME_ARCH}.tar.xz" |
     tar -C / -Jxpf -
 
-# init_as_root.sh puts files in this folder
-mkdir -p /etc/services.d
-
 # fix sshd not starting
 mkdir -p /run/sshd
 
