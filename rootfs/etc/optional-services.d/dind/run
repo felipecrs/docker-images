@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -eu
-
-echo "[dind] starting service" >&2
-exec s6-notifyoncheck -c /etc/services.d/dind/check_readiness.sh dind dockerd

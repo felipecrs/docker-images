@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -eu
-
-echo "[sshd] starting service" >&2
-exec s6-notifyoncheck -c /etc/services.d/sshd/check_readiness.sh /usr/sbin/sshd -D -e
