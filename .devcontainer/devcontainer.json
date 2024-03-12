@@ -1,14 +1,13 @@
 {
   "build": {
-    "context": "..",
-    "dockerfile": "../Dockerfile"
+    "context": "../devcontainer",
+    "dockerfile": "../devcontainer/Dockerfile"
   },
-  "overrideCommand": false,
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ],
   "runArgs": ["--network=host"],
-  "postCreateCommand": "pkgx install hadolint k3d helmfile werf kubectl",
+  "postCreateCommand": [".devcontainer/post_create.sh"],
   "customizations": {
     "vscode": {
       "extensions": [

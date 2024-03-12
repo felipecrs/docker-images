@@ -9,19 +9,11 @@
 
 set -eu
 
-# Handle when no CMD is provided
-if [[ $# -eq 0 ]]; then
-    # If JENKINS_URL is preset, assume we are running as a Kubernetes Pod template agent
-    if [[ -n "${JENKINS_URL:-}" ]]; then
-        set -- jenkins-agent
-    # Otherwise, if attached to a terminal, start a shell
-    elif [[ -t 0 ]]; then
-        set -- bash
-    # Otherwise, just keep the container running
-    else
-        set -- sleep infinity
-    fi
-fi
+shopt -s nullglob
+for file in /entrypoint.d/*; do
+    # shellcheck disable=SC1090
+    source "${file}"
+done
 
 uid="$(id -u)"
 if [[ "${uid}" -eq 0 ]]; then
