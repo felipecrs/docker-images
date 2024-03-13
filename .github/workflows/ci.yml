@@ -21,6 +21,7 @@ jobs:
         id: docker-meta-devcontainer
         uses: docker/metadata-action@v5
         with:
+          bake-target: devcontainer
           images: |
             ghcr.io/${{ github.repository_owner }}/devcontainer
           flavor: |
@@ -36,6 +37,7 @@ jobs:
         id: docker-meta-jenkins-agent-dind
         uses: docker/metadata-action@v5
         with:
+          bake-target: jenkins-agent-dind
           images: |
             ghcr.io/${{ github.repository_owner }}/jenkins-agent-dind
           flavor: |
