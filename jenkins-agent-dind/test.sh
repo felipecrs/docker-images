@@ -1,13 +1,17 @@
 #!/bin/bash
 
-set -euxo pipefail
+set -euo pipefail
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+
+set -x
 
 if ! k3d cluster get jenkins-agent-dind-test; then
     k3d cluster create jenkins-agent-dind-test
 fi
 
 function cleanup() {
-    if [[ "${CI:-}" == "true" ]]; then
+    if [[ "${CI:-}" == true ]]; then
         k3d cluster delete jenkins-agent-dind-test
     else
         echo "To cleanup, run:" >&2
@@ -17,17 +21,14 @@ function cleanup() {
 
 trap cleanup EXIT
 
-script_dir=$(dirname "${0}")
-
 cd "${script_dir}/.."
 
-docker buildx build . --load --platform linux/amd64 \
-    --tag localhost/jenkins-agent-dind:latest
+docker buildx bake jenkins-agent-dind --load
+
+cd "${script_dir}/test-fixtures"
 
 k3d image import --cluster jenkins-agent-dind-test --mode direct \
     localhost/jenkins-agent-dind:latest
-
-cd tests
 
 kubectl apply -f https://raw.githubusercontent.com/felipecrs/dynamic-hostports-k8s/master/deploy.yaml
 

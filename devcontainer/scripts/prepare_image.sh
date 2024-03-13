@@ -10,10 +10,6 @@ readonly CURL="curl -fsSL"
 
 export DEBIANFRONTEND="noninteractive"
 
-# create non-root user
-groupadd -g "${NON_ROOT_UID?}" "${NON_ROOT_USER?}"
-useradd -l -c "Jenkins user" -d "${NON_ROOT_HOME?}" -u "${NON_ROOT_UID}" -g "${NON_ROOT_UID}" -m "${NON_ROOT_USER}" -s /bin/bash -p ""
-
 # install sudo and locales
 ${APT_GET} update
 ${APT_GET_INSTALL} \
@@ -25,16 +21,6 @@ ${APT_GET_INSTALL} \
 sed --in-place "/${LANG}/s/^# //g" /etc/locale.gen
 locale-gen
 
-# setup sudo
-echo "${NON_ROOT_USER} ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${NON_ROOT_USER}"
-# dismiss welcome message
-sudo -u "${NON_ROOT_USER}" true
-
-# ensure jenkins-agent directory exists
-mkdir -p "${AGENT_WORKDIR?}"
-chown -R "${NON_ROOT_USER}:${NON_ROOT_USER}" "${AGENT_WORKDIR}"
-chmod 755 "${AGENT_WORKDIR}"
-
 ## apt repositories
 ${APT_GET_INSTALL} \
     apt-transport-https \
@@ -42,9 +28,6 @@ ${APT_GET_INSTALL} \
     curl \
     gnupg \
     lsb-release
-
-mkdir -p /etc/apt/keyrings
-chmod 755 /etc/apt/keyrings
 
 VERSION_CODENAME=$(lsb_release -cs)
 DPKG_ARCH=$(dpkg --print-architecture)
@@ -123,9 +106,6 @@ packages=(
 
 ${APT_GET_INSTALL} "${packages[@]}"
 
-# setup docker
-usermod -aG docker "${NON_ROOT_USER}"
-
 # setup docker-switch (docker-compose v1 compatibility)
 # renovate: datasource=github-releases depName=docker/compose-switch
 DOCKER_COMPOSE_SWITCH_VERSION="1.0.5"
@@ -167,21 +147,8 @@ ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_O
 ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${UNAME_ARCH}.tar.xz" |
     tar -C / -Jxpf -
 
-# init_as_root.sh puts files in this folder
-mkdir -p /etc/services.d
-
 # fix sshd not starting
 mkdir -p /run/sshd
-
-# install fixdockergid
-# renovate: datasource=github-releases depName=felipecrs/fixdockergid
-FIXDOCKERGID_VERSION="0.7.1"
-${CURL} "https://github.com/felipecrs/fixdockergid/raw/v${FIXDOCKERGID_VERSION}/install.sh" |
-    FIXDOCKERGID_VERSION="${FIXDOCKERGID_VERSION}" USERNAME="${NON_ROOT_USER}" sh -
-
-# set fixuid to update AGENT_WORKDIR permissions
-printf '%s\n' "user: ${NON_ROOT_USER}" "group: ${NON_ROOT_USER}" "paths:" "  - /" "  - ${AGENT_WORKDIR}" |
-    tee /etc/fixuid/config.yml
 
 # install docker-on-docker-shim
 # renovate: datasource=github-releases depName=felipecrs/docker-on-docker-shim
@@ -193,11 +160,6 @@ chmod +x /usr/local/bin/dond
 # setup oh my bash, useful when debugging the container
 ${CURL} https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh |
     bash -s -- --prefix=/opt/oh-my-bash --unattended
-
-cp -f /opt/oh-my-bash/share/oh-my-bash/bashrc "${NON_ROOT_HOME}/.bashrc"
-
-# Set nano as default editor when running interactive shell
-printf '\n%s\n' 'export EDITOR="nano"' | tee -a "${NON_ROOT_HOME}/.bashrc"
 
 # cleanup
 shopt -s nullglob dotglob
