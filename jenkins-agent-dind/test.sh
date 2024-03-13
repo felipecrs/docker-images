@@ -23,7 +23,8 @@ trap cleanup EXIT
 
 cd "${script_dir}/.."
 
-docker buildx bake jenkins-agent-dind --load
+docker buildx bake jenkins-agent-dind --load \
+    --set jenkins-agent-dind.tags=localhost/jenkins-agent-dind:latest
 
 cd "${script_dir}/test-fixtures"
 
