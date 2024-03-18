@@ -1,5 +1,5 @@
 # renovate: datasource=github-releases depName=jenkinsci/docker-agent versioning=loose
-ARG JENKINS_AGENT_VERSION="3206.vb_15dcf73f6a_9-6"
+ARG JENKINS_AGENT_VERSION="3206.vb_15dcf73f6a_9-7"
 
 
 FROM jenkins/inbound-agent:${JENKINS_AGENT_VERSION}-jdk17 AS jenkins-agent
