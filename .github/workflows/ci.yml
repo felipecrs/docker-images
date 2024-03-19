@@ -77,6 +77,10 @@ jobs:
             ${{ steps.docker-meta-jenkins-agent-dind.outputs.bake-file }}
           set: |
             *.platform=linux/amd64,linux/arm64
+            devcontainer.cache-from=type=gha,scope=cached-stage-devcontainer
+            devcontainer.cache-to=type=gha,scope=cached-stage-devcontainer,mode=max
+            jenkins-agent-dind.cache-from=type=gha,scope=cached-stage-jenkins-agent-dind
+            jenkins-agent-dind.cache-to=type=gha,scope=cached-stage-jenkins-agent-dind,mode=max
 
       - name: Test
         run: |
