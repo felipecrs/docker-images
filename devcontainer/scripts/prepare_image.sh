@@ -58,7 +58,7 @@ ${APT_GET} update
 # renovate: datasource=github-releases depName=moby/moby
 DOCKER_VERSION="25.0.5"
 # renovate: datasource=github-releases depName=containerd/containerd
-CONTAINERD_VERSION="1.6.28"
+CONTAINERD_VERSION="1.7.14"
 # renovate: datasource=github-releases depName=docker/buildx
 DOCKER_BUILDX_VERSION="0.13.1"
 # renovate: datasource=github-releases depName=docker/compose
