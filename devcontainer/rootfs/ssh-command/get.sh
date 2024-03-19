@@ -61,7 +61,10 @@ function handle_exit() {
 
 trap handle_exit EXIT
 
-readonly podinfo_dir="/ssh-command/podinfo"
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+readonly script_dir
+
+readonly podinfo_dir="${script_dir}/podinfo"
 
 if [[ -d "${podinfo_dir}" ]]; then
     readonly as_pod="true"
@@ -123,20 +126,22 @@ else
     log_manual_action "Inferred node hostname does not seem to be a fully qualified domain name and the DOMAIN env var is not set. The SSH command may not work."
 fi
 
-# User is hardcoded because this script may get called from within another container which will not have access to the NON_ROOT_USER environment variable.
-readonly user="jenkins"
+user="$(cat "${script_dir}/user")"
+readonly user
 
 readonly ssh_host="${user}@${node_fqdn}:${sshd_port}"
 
 log_info "The SSH host is: ${ssh_host}"
 echo
 
-log_tip "Copy the following command and paste in your terminal to access the build container:"
-log_c "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR ssh://${ssh_host} -t 'cd ${PWD}; exec \$0'"
+log_tip "Copy the following command and paste in your terminal to access the container:"
+log_c "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o LogLevel=ERROR ssh://${ssh_host} -t 'cd ${PWD} && exec \$0'"
 echo
 
 log_tip "You can also open the build container in VS Code (via the Remote - SSH extension) by opening the following link in your browser:"
 log_c "vscode://vscode-remote/ssh-remote+${ssh_host}${PWD}"
 echo
 
-log_manual_action "Don't forget that the container will be automatically deleted once the build is finished." >&2
+if [[ -n "${BUILD_URL:-}" ]]; then
+    log_manual_action "Don't forget that the container will be automatically deleted once the build is finished." >&2
+fi
