@@ -15,7 +15,7 @@
       "fileMatch": [
         "^jenkins-agent-dind/Dockerfile$",
         "^devcontainer/scripts/prepare_image.sh$",
-        "^devcontainer/scripts/prepare_non_root_user.sh$"
+        "^devcontainer/scripts/prepare_user.sh$"
       ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s(?:ENV |ARG )?.+?_VERSION[ =]\"?(?<currentValue>.+?)\"?\\s"

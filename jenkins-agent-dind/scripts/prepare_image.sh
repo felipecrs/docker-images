@@ -5,7 +5,7 @@ set -euxo pipefail
 shopt -s inherit_errexit
 
 mkdir -p "${AGENT_WORKDIR?}"
-chown -R "${NON_ROOT_USER?}:${NON_ROOT_USER}" "${AGENT_WORKDIR}"
+chown -R "${USER?}:${USER}" "${AGENT_WORKDIR}"
 
 new_json=$(jq --arg d "${AGENT_WORKDIR}/docker" '.["data-root"] = $d' /etc/docker/daemon.json)
 echo "${new_json}" | tee /etc/docker/daemon.json

@@ -16,7 +16,8 @@ COPY rootfs /
 # hadolint ignore=DL3006
 FROM devcontainer-jenkins-agent-dind
 
-ENV AGENT_WORKDIR="${NON_ROOT_HOME}/agent"
+ENV AGENT_WORKDIR="${HOME}/agent"
+# Keep java at the end of the PATH so that users can install their own if they want
 ENV PATH="${PATH}:/opt/java/openjdk/bin"
 
 COPY --from=rootfs / /
@@ -24,7 +25,7 @@ COPY --from=rootfs / /
 RUN --mount=type=bind,source=scripts/prepare_image.sh,target=/prepare_image.sh \
     /prepare_image.sh
 
-USER "${NON_ROOT_USER}"
+USER "${USER}"
 
 WORKDIR "${AGENT_WORKDIR}"
 

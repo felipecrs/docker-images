@@ -15,8 +15,8 @@ target "jenkins-agent-dind" {
 
 target "devcontainer-jenkins-agent-dind" {
     context = "devcontainer"
-    target = "non-root-user"
+    target = "user"
     args = {
-        "NON_ROOT_USER" = "jenkins"
+        USER = "jenkins"
     }
 }

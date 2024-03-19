@@ -51,23 +51,27 @@ ENTRYPOINT [ "/entrypoint.sh" ]
 CMD []
 
 
-FROM base AS non-root-user
+FROM base AS user
 
-ARG NON_ROOT_USER="devcontainer"
-ENV NON_ROOT_USER="${NON_ROOT_USER}"
-ARG NON_ROOT_UID="1000"
-ENV NON_ROOT_HOME="/home/${NON_ROOT_USER}"
-ENV PATH="${NON_ROOT_HOME}/.local/bin:${PATH}"
+ARG USER="devcontainer"
+ARG USER_ID="1000"
+# Setting these as environment variables are very useful since they will still be present
+# when running commands in the container with docker exec. For the eventual case where the
+# image is ran as root, these vars will be corrected only when using docker run, but the
+# drawback still pays off as running this image as root is a corner case.
+ENV USER="${USER}"
+ENV HOME="/home/${USER}"
+ENV PATH="${HOME}/.local/bin:${PATH}"
 
-RUN --mount=type=bind,source=scripts/prepare_non_root_user.sh,target=/prepare_non_root_user.sh \
-    /prepare_non_root_user.sh
+RUN --mount=type=bind,source=scripts/prepare_user.sh,target=/prepare_user.sh \
+    /prepare_user.sh
 
 
-FROM non-root-user
+FROM user
 
-USER "${NON_ROOT_USER}"
+USER "${USER}"
 
-WORKDIR "${NON_ROOT_HOME}"
+WORKDIR "${HOME}"
 
 VOLUME [ "/var/lib/docker" ]
 
