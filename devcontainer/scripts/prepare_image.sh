@@ -57,12 +57,6 @@ ${APT_GET} update
 
 # renovate: datasource=github-releases depName=moby/moby
 DOCKER_VERSION="25.0.5"
-# renovate: datasource=github-releases depName=containerd/containerd
-CONTAINERD_VERSION="1.6.28"
-# renovate: datasource=github-releases depName=docker/buildx
-DOCKER_BUILDX_VERSION="0.13.1"
-# renovate: datasource=github-releases depName=docker/compose
-DOCKER_COMPOSE_VERSION="2.25.0"
 
 packages=(
     build-essential
@@ -99,9 +93,9 @@ packages=(
     # docker
     "docker-ce=5:${DOCKER_VERSION}-*"
     "docker-ce-cli=5:${DOCKER_VERSION}-*"
-    "containerd.io=${CONTAINERD_VERSION}-*"
-    "docker-buildx-plugin=${DOCKER_BUILDX_VERSION}-*"
-    "docker-compose-plugin=${DOCKER_COMPOSE_VERSION}-*"
+    containerd.io
+    docker-buildx-plugin
+    docker-compose-plugin
 )
 
 ${APT_GET_INSTALL} "${packages[@]}"
