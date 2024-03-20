@@ -7,7 +7,8 @@ script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 set -x
 
 if ! k3d cluster get jenkins-agent-dind-test; then
-    k3d cluster create jenkins-agent-dind-test --registry-create jenkins-agent-dind-test-registry:0.0.0.0:15432
+    k3d cluster create jenkins-agent-dind-test \
+        --registry-create jenkins-agent-dind-test-registry:0.0.0.0:15432
 fi
 
 function cleanup() {
@@ -30,6 +31,8 @@ kubectl run --rm -i --privileged --image jenkins-agent-dind-test-registry:5000/j
 
 cd "${script_dir}/test-fixtures"
 
+docker buildx build . --tag localhost:15432/jenkins:latest --push
+
 kubectl apply -f https://raw.githubusercontent.com/felipecrs/dynamic-hostports-k8s/master/deploy.yaml
 
 helmfile sync --enable-live-output
@@ -39,6 +42,6 @@ set -euxo pipefail
 
 curl -fsSL http://127.0.0.1:8080/jnlpJars/jenkins-cli.jar -o /tmp/jenkins-cli.jar
 
-exec java -jar /tmp/jenkins-cli.jar -s http://127.0.0.1:8080 -auth admin:admin \
+exec java -jar /tmp/jenkins-cli.jar -s http://127.0.0.1:8080 \
     build test-agent -s -v -f
 EOF

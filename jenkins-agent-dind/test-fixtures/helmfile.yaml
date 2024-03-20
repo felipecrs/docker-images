@@ -68,14 +68,19 @@ releases:
                         fieldRef:
                           fieldPath: metadata.annotations['dynamic-hostports.k8s/node-fqdn']
         controller:
-          admin:
-            password: "admin"
-          additionalPlugins:
-            - job-dsl
-            - docker-workflow
-            - ansicolor
-            - pipeline-graph-view
+          image:
+            registry: jenkins-agent-dind-test-registry:5000
+            repository: jenkins
+            tag: latest
+          installPlugins: false
+          sidecars:
+            configAutoReload:
+              enabled: false
           JCasC:
+            authorizationStrategy: unsecured
+            securityRealm: |
+              local:
+                allowsSignup: false
             configScripts:
               jobs: |
                 jobs:
