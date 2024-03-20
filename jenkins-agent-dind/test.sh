@@ -27,7 +27,7 @@ cd "${script_dir}/.."
 docker buildx bake jenkins-agent-dind --push \
     --set jenkins-agent-dind.tags=localhost:15432/jenkins-agent-dind:latest
 
-kubectl run --rm -i --privileged --image jenkins-agent-dind-test-registry:5000/jenkins-agent-dind:latest test -- docker version
+retry --verbose --tries=3 --sleep=3 -- kubectl run --rm -i --privileged --image jenkins-agent-dind-test-registry:5000/jenkins-agent-dind:latest test -- docker version
 
 cd "${script_dir}/test-fixtures"
 
