@@ -15,3 +15,6 @@ container_id=$(devcontainer up --workspace-folder . | tee /dev/stderr | jq -r .c
 trap 'docker rm -f "${container_id}"' EXIT
 
 devcontainer exec --workspace-folder . docker version
+
+# shellcheck disable=SC2016
+devcontainer exec --workspace-folder . printenv | sort | tee /dev/stderr | grep ^USER=

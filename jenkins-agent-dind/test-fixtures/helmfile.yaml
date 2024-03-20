@@ -13,7 +13,7 @@ releases:
           enabled: true
         agent:
           image:
-            repository: localhost/jenkins-agent-dind
+            repository: jenkins-agent-dind-test-registry:5000/jenkins-agent-dind
             tag: latest
           alwaysPullImage: false
           args: ""
@@ -34,6 +34,7 @@ releases:
               hostNetwork: false
               automountServiceAccountToken: false
               enableServiceLinks: false
+              # the agent will connect to jenkins using the k8s svc name
               # dnsPolicy: Default
               restartPolicy: Never
               terminationGracePeriodSeconds: 30

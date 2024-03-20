@@ -7,7 +7,7 @@ script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 set -x
 
 if ! k3d cluster get jenkins-agent-dind-test; then
-    k3d cluster create jenkins-agent-dind-test
+    k3d cluster create jenkins-agent-dind-test --registry-create jenkins-agent-dind-test-registry:0.0.0.0:15432
 fi
 
 function cleanup() {
@@ -23,13 +23,12 @@ trap cleanup EXIT
 
 cd "${script_dir}/.."
 
-docker buildx bake jenkins-agent-dind --load \
-    --set jenkins-agent-dind.tags=localhost/jenkins-agent-dind:latest
+docker buildx bake jenkins-agent-dind --push \
+    --set jenkins-agent-dind.tags=localhost:15432/jenkins-agent-dind:latest
+
+kubectl run --rm -i --privileged --image jenkins-agent-dind-test-registry:5000/jenkins-agent-dind:latest test -- docker version
 
 cd "${script_dir}/test-fixtures"
-
-k3d image import --cluster jenkins-agent-dind-test --mode direct \
-    localhost/jenkins-agent-dind:latest
 
 kubectl apply -f https://raw.githubusercontent.com/felipecrs/dynamic-hostports-k8s/master/deploy.yaml
 
