@@ -74,5 +74,3 @@ USER "${USER}"
 WORKDIR "${HOME}"
 
 VOLUME [ "/var/lib/docker" ]
-
-LABEL devcontainer.metadata='{"overrideCommand":false}'

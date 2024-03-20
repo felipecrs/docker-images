@@ -1,10 +1,5 @@
 #!/bin/bash
 
 echo "[sshd] starting service" >&2
-
-# Needed for situations like:
-#   docker run --rm -v /ssh-command:/ssh-command ubuntu /ssh-command/get.sh
-echo "${USER?}" >/ssh-command/user
-
 exec s6-notifyoncheck -c /etc/s6-overlay/s6-rc.d/sshd/check_readiness.sh \
     /usr/sbin/sshd -D -e

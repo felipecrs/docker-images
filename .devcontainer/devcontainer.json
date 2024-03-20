@@ -3,6 +3,7 @@
     "context": "../devcontainer",
     "dockerfile": "../devcontainer/Dockerfile"
   },
+  "overrideCommand": false,
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ],
