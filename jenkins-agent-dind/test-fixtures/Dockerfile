@@ -1,4 +1,4 @@
-FROM jenkins/jenkins:2.440.1-alpine
+FROM jenkins/jenkins:2.440.2-alpine
 
 RUN jenkins-plugin-cli --plugins \
     kubernetes \
