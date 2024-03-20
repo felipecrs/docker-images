@@ -5,7 +5,9 @@
   },
   "overrideCommand": false,
   "mounts": [
-    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
+    // This allows sharing the build cache when running in GitHub Actions
+    "source=${localEnv:HOME}/.docker/buildx,target=/home/devcontainer/.docker/buildx,type=bind"
   ],
   "runArgs": ["--network=host"],
   "postCreateCommand": [".devcontainer/post_create.sh"],
