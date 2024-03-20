@@ -24,7 +24,7 @@ pipeline {
             parallel {
                 stage ('docker') {
                     steps {
-                        sh 'printenv | sort | tee /dev/stderr | grep ^USER='
+                        sh 'printenv | sort | tee /dev/stderr | grep -q ^USER='
                         sh 'docker version'
                         sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
                         sh 'IGNORE_FAILURE=false DOMAIN=localdev /ssh-command/get.sh'
@@ -39,7 +39,7 @@ pipeline {
                         }
                     }
                     steps {
-                        sh 'printenv | sort | tee /dev/stderr | grep ^USER='
+                        sh 'printenv | sort | tee /dev/stderr | grep -q ^USER='
                         sh 'docker version'
                         sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
                     }
@@ -53,7 +53,7 @@ pipeline {
                         }
                     }
                     steps {
-                        sh 'printenv | sort | tee /dev/stderr | grep ^USER='
+                        sh 'printenv | sort | tee /dev/stderr | grep -q ^USER='
                         retry(3) {
                             sh 'docker version'
                         }

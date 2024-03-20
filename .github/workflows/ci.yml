@@ -62,14 +62,27 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
-          driver-opts: |
-            network=host
+          driver-opts: network=host
 
       - name: Install pkgx
         uses: pkgxdev/setup@v2
 
       - name: Install test dependencies
         run: .devcontainer/post_create.sh
+
+      # Build devcontainer first otherwise docker bake will start building devcontainer twice
+      # as jenkins-agent-dind depends on it.
+      - name: Build (devcontainer only)
+        uses: docker/bake-action@v4
+        with:
+          targets: devcontainer
+          files: |
+            ./docker-bake.hcl
+            ${{ steps.docker-meta-devcontainer.outputs.bake-file }}
+          set: |
+            *.platform=linux/amd64,linux/arm64
+            devcontainer.cache-from=type=gha,scope=cached-stage-devcontainer
+            devcontainer.cache-to=type=gha,scope=cached-stage-devcontainer,mode=max
 
       - name: Build
         uses: docker/bake-action@v4
@@ -81,13 +94,17 @@ jobs:
           set: |
             *.platform=linux/amd64,linux/arm64
             devcontainer.cache-from=type=gha,scope=cached-stage-devcontainer
-            devcontainer.cache-to=type=gha,scope=cached-stage-devcontainer,mode=max
             jenkins-agent-dind.cache-from=type=gha,scope=cached-stage-jenkins-agent-dind
+            devcontainer-jenkins-agent-dind.cache-from=type=gha,scope=cached-stage-devcontainer-jenkins-agent-dind
+            devcontainer.cache-to=type=gha,scope=cached-stage-devcontainer,mode=max
             jenkins-agent-dind.cache-to=type=gha,scope=cached-stage-jenkins-agent-dind,mode=max
+            devcontainer-jenkins-agent-dind.cache-to=type=gha,scope=cached-stage-devcontainer-jenkins-agent-dind,mode=max
+            *.cache-to=type=inline
 
       - name: Test
-        run: |
-          ./test.sh
+        env:
+          GITHUB_ACTIONS: "true"
+        run: ./test.sh
 
       - name: Push
         uses: docker/bake-action@v4

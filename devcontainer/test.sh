@@ -16,5 +16,7 @@ trap 'docker rm -f "${container_id}"' EXIT
 
 devcontainer exec --workspace-folder . docker version
 
-# shellcheck disable=SC2016
-devcontainer exec --workspace-folder . printenv | sort | tee /dev/stderr | grep ^USER=
+devcontainer exec --workspace-folder . printenv | sort | tee /dev/stderr | grep -q ^USER=
+
+# check if dond shim is setup correctly
+devcontainer exec --workspace-folder . bash -c 'DOND_SHIM_PRINT_COMMAND=true docker version' | tee /dev/stderr | grep -q '^docker.orig version$'

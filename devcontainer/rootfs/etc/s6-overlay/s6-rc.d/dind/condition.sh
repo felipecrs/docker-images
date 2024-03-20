@@ -13,3 +13,5 @@ if mountpoint --quiet "/var/run/docker.sock"; then
 
     exit 1
 fi
+
+exit 0

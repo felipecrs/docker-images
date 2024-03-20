@@ -68,6 +68,7 @@ To use it as a **Docker on Docker** devcontainer:
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "overrideCommand": false,
   "runArgs": [
     "--volume=/var/run/docker.sock:target=/var/run/docker.sock",
     "--network=host"
@@ -83,6 +84,7 @@ Or, to use it as a **Docker in Docker** devcontainer:
   "build": {
     "dockerfile": "Dockerfile"
   },
+  "overrideCommand": false,
   "privileged": true
 }
 ```
