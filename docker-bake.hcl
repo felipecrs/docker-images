@@ -2,21 +2,16 @@ group "default" {
 	targets = ["devcontainer", "jenkins-agent-dind"]
 }
 
+target "base" {
+    context = "."
+}
+
 target "devcontainer" {
-    context = "devcontainer"
+    inherit = "base"
+    target = "devcontainer"
 }
 
 target "jenkins-agent-dind" {
-    context = "jenkins-agent-dind"
-    contexts = {
-        devcontainer-jenkins-agent-dind = "target:devcontainer-jenkins-agent-dind"
-    }
-}
-
-target "devcontainer-jenkins-agent-dind" {
-    context = "devcontainer"
-    target = "user"
-    args = {
-        USER = "jenkins"
-    }
+    inherit = "base"
+    target = "jenkins-agent-dind"
 }
