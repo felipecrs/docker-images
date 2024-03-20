@@ -105,11 +105,16 @@ jobs:
       - name: Docker meta (devcontainer)
         id: docker-meta-devcontainer
         uses: docker/metadata-action@v5
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: index
         with:
           bake-target: devcontainer
           images: |
             ghcr.io/${{ github.repository_owner }}/devcontainer
           labels: |
+            org.opencontainers.image.title=Devcontainer
+            org.opencontainers.image.description=A multi-purpose Docker on Docker or Docker in Docker image to be used as a Devcontainer.
+          annotations: |
             org.opencontainers.image.title=Devcontainer
             org.opencontainers.image.description=A multi-purpose Docker on Docker or Docker in Docker image to be used as a Devcontainer.
           flavor: |
@@ -124,11 +129,16 @@ jobs:
       - name: Docker meta (jenkins-agent-dind)
         id: docker-meta-jenkins-agent-dind
         uses: docker/metadata-action@v5
+        env:
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: index
         with:
           bake-target: jenkins-agent-dind
           images: |
             ghcr.io/${{ github.repository_owner }}/jenkins-agent-dind
           labels: |
+            org.opencontainers.image.title=Jenkins Agent with Docker in Docker
+            org.opencontainers.image.description=A Docker in Docker image to provide fully ephemeral Jenkins agents.
+          annotations: |
             org.opencontainers.image.title=Jenkins Agent with Docker in Docker
             org.opencontainers.image.description=A Docker in Docker image to provide fully ephemeral Jenkins agents.
           flavor: |
@@ -153,7 +163,9 @@ jobs:
           files: |
             ./docker-bake.hcl
             ${{ steps.docker-meta-devcontainer.outputs.bake-file }}
+            ${{ steps.docker-meta-devcontainer.outputs.bake-file-annotations }}
             ${{ steps.docker-meta-jenkins-agent-dind.outputs.bake-file }}
+            ${{ steps.docker-meta-jenkins-agent-dind.outputs.bake-file-annotations }}
           set: |
             devcontainer.platform=linux/amd64,linux/arm64
             jenkins-agent-dind.platform=linux/amd64,linux/arm64
