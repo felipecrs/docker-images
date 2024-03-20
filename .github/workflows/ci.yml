@@ -147,6 +147,24 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Build to import amd64 cache
+        uses: docker/bake-action@v4
+        with:
+          set: |
+            devcontainer.cache-from=type=gha,scope=devcontainer-amd64
+            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-amd64
+          load: true
+
+      - name: Build to import arm64 cache
+        uses: docker/bake-action@v4
+        with:
+          set: |
+            devcontainer.platform=linux/arm64
+            jenkins-agent-dind.platform=linux/arm64
+            devcontainer.cache-from=type=gha,scope=devcontainer-arm64
+            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-arm64
+          load: true
+
       - name: Push
         uses: docker/bake-action@v4
         with:
@@ -157,8 +175,4 @@ jobs:
           set: |
             devcontainer.platform=linux/amd64,linux/arm64
             jenkins-agent-dind.platform=linux/amd64,linux/arm64
-            devcontainer.cache-from=type=gha,scope=devcontainer-amd64
-            devcontainer.cache-from=type=gha,scope=devcontainer-arm64
-            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-amd64
-            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-arm64
           push: true
