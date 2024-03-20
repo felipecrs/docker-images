@@ -6,45 +6,59 @@ pipeline {
         ansiColor('xterm')
     }
     stages {
+        stage ('prepare') {
+            steps {
+                // docker can only pull from insecure registries at localhost by default
+                sh 'docker run --name socat -d --network=host alpine/socat tcp-listen:15432,reuseaddr,fork tcp:jenkins-agent-dind-test-registry:5000'
+                retry(3) {
+                    sh 'docker pull localhost:15432/jenkins-agent-dind:latest'
+                }
+            }
+            post {
+                failure {
+                    sh 'docker logs socat'
+                }
+            }
+        }
         stage('parallel') {
             parallel {
                 stage ('docker') {
                     steps {
-                        sh 'printenv | sort'
+                        sh 'printenv | sort | tee /dev/stderr | grep ^USER='
                         sh 'docker version'
-                        sh '/ssh-command/get.sh'
-                        sh 'DOMAIN=localdev /ssh-command/get.sh'
+                        sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
+                        sh 'IGNORE_FAILURE=false DOMAIN=localdev /ssh-command/get.sh'
                     }
                 }
-                stage ('docker on docker') {
+                stage ('nested dond') {
                     agent {
                         docker {
                             reuseNode true
-                            image 'felipecrs/fixdockergid:latest'
+                            image 'localhost:15432/jenkins-agent-dind:latest'
                             args '--volume=/ssh-command:/ssh-command --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker'
                         }
                     }
                     steps {
-                        sh 'printenv | sort'
+                        sh 'printenv | sort | tee /dev/stderr | grep ^USER='
                         sh 'docker version'
-                        sh '/ssh-command/get.sh'
+                        sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
                     }
                 }
-                stage ('nested') {
+                stage ('nested dind') {
                     agent {
                         docker {
                             reuseNode true
                             // This is not using the image that was built, but for now it's ok.
-                            image 'ghcr.io/felipecrs/jenkins-agent-dind:latest'
+                            image 'localhost:15432/jenkins-agent-dind:latest'
                             args "--privileged --group-add=docker --env=SSHD_ENABLED=true --publish=^${env.SSHD_PORT}:22"
                         }
                     }
                     steps {
-                        sh 'printenv | sort'
+                        sh 'printenv | sort | tee /dev/stderr | grep ^USER='
                         sh 'sleep 5s'
                         sh 'docker version'
-                        sh '/ssh-command/get.sh'
-                        sh 'DOMAIN=localdev /ssh-command/get.sh'
+                        sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
+                        sh 'IGNORE_FAILURE=false DOMAIN=localdev /ssh-command/get.sh'
                     }
                 }
             }

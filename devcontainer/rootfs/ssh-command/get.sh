@@ -53,7 +53,7 @@ function error() {
 }
 
 function handle_exit() {
-    if [[ "$?" -ne 0 ]]; then
+    if [[ "$?" -ne 0 && "${IGNORE_FAILURE:-true}" == true ]]; then
         log_manual_action "Exiting with success code as this step is not very important, but if you need the SSH command, check the logs for the possible root cause."
         exit 0
     fi
