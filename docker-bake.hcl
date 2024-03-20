@@ -9,11 +9,11 @@ target "devcontainer" {
 target "jenkins-agent-dind" {
     context = "jenkins-agent-dind"
     contexts = {
-        devcontainer-jenkins-agent-dind = "target:devcontainer-jenkins-agent-dind"
+        jenkins-agent-dind-base = "target:jenkins-agent-dind-base"
     }
 }
 
-target "devcontainer-jenkins-agent-dind" {
+target "jenkins-agent-dind-base" {
     context = "devcontainer"
     target = "user"
     args = {

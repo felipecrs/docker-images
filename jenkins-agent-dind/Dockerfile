@@ -13,8 +13,9 @@ COPY --from=jenkins-agent /opt/java/openjdk /opt/java/openjdk
 COPY rootfs /
 
 
+# injected by bake
 # hadolint ignore=DL3006
-FROM devcontainer-jenkins-agent-dind
+FROM jenkins-agent-dind-base
 
 ENV AGENT_WORKDIR="${HOME}/agent"
 # Keep java at the end of the PATH so that users can install their own if they want

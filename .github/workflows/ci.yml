@@ -29,8 +29,10 @@ jobs:
         with:
           set: |
             devcontainer.cache-from=type=gha,scope=devcontainer-amd64
+            jenkins-agent-dind-base.cache-from=type=gha,scope=jenkins-agent-dind-base-amd64
             jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-amd64
             devcontainer.cache-to=type=gha,scope=devcontainer-amd64,mode=max
+            jenkins-agent-dind-base.cache-to=type=gha,scope=jenkins-agent-dind-base-amd64,mode=max
             jenkins-agent-dind.cache-to=type=gha,scope=jenkins-agent-dind-amd64,mode=max
 
   build-arm64:
@@ -53,8 +55,10 @@ jobs:
             devcontainer.platform=linux/arm64
             jenkins-agent-dind.platform=linux/arm64
             devcontainer.cache-from=type=gha,scope=devcontainer-arm64
+            jenkins-agent-dind-base.cache-from=type=gha,scope=jenkins-agent-dind-base-arm64
             jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-arm64
             devcontainer.cache-to=type=gha,scope=devcontainer-arm64,mode=max
+            jenkins-agent-dind-base.cache-to=type=gha,scope=jenkins-agent-dind-base-arm64,mode=max
             jenkins-agent-dind.cache-to=type=gha,scope=jenkins-agent-dind-arm64,mode=max
 
   test:
@@ -77,6 +81,7 @@ jobs:
         with:
           set: |
             devcontainer.cache-from=type=gha,scope=devcontainer-amd64
+            jenkins-agent-dind-base.cache-from=type=gha,scope=jenkins-agent-dind-base-amd64
             jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-amd64
           load: true
 
@@ -155,10 +160,11 @@ jobs:
             ${{ steps.docker-meta-devcontainer.outputs.bake-file }}
             ${{ steps.docker-meta-jenkins-agent-dind.outputs.bake-file }}
           set: |
-            devcontainer.platform=linux/amd64,linux/arm64
-            jenkins-agent-dind.platform=linux/amd64,linux/arm64
+            *.platform=linux/amd64,linux/arm64
             devcontainer.cache-from=type=gha,scope=devcontainer-amd64
             devcontainer.cache-from=type=gha,scope=devcontainer-arm64
+            jenkins-agent-dind-base.cache-from=type=gha,scope=jenkins-agent-dind-base-amd64
+            jenkins-agent-dind-base.cache-from=type=gha,scope=jenkins-agent-dind-base-arm64
             jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-amd64
             jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-arm64
           push: true
