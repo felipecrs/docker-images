@@ -24,6 +24,9 @@ jobs:
           bake-target: devcontainer
           images: |
             ghcr.io/${{ github.repository_owner }}/devcontainer
+          labels: |
+            org.opencontainers.image.title=Devcontainer
+            org.opencontainers.image.description=A multi-purpose Docker on Docker or Docker in Docker image to be used as a Devcontainer.
           flavor: |
             latest=false
           tags: |
@@ -40,6 +43,9 @@ jobs:
           bake-target: jenkins-agent-dind
           images: |
             ghcr.io/${{ github.repository_owner }}/jenkins-agent-dind
+          labels: |
+            org.opencontainers.image.title=Jenkins Agent with Docker in Docker
+            org.opencontainers.image.description=A Docker in Docker image to provide fully ephemeral Jenkins agents.
           flavor: |
             latest=false
           tags: |
