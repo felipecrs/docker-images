@@ -1,0 +1,16 @@
+{
+  "build": {
+    "context": "../../..",
+    "dockerfile": "../../../Dockerfile",
+    "target": "devcontainer"
+  },
+  "overrideCommand": false,
+  "privileged": true,
+  "containerEnv": {
+    "SSHD_ENABLED": "true",
+    "SSHD_PORT": "2222",
+    "NODE_NAME": "localhost"
+  },
+  "runArgs": ["--publish=2222:22"],
+  "postCreateCommand": [".devcontainer/post_create.sh"]
+}
