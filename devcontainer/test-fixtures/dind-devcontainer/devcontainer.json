@@ -1,0 +1,20 @@
+{
+  "build": {
+    "context": "../../..",
+    "dockerfile": "../../../Dockerfile",
+    "target": "devcontainer"
+  },
+  "overrideCommand": false,
+  "privileged": true,
+  "mounts": [
+    // This allows sharing the build cache when running in GitHub Actions
+    "source=${localEnv:HOME}/.docker/buildx,target=/home/devcontainer/.docker/buildx,type=bind"
+  ],
+  "containerEnv": {
+    "SSHD_ENABLED": "true",
+    "SSHD_PORT": "2222",
+    "NODE_NAME": "localhost"
+  },
+  "runArgs": ["--publish=2222:22"],
+  "postCreateCommand": [".devcontainer/post_create.sh"]
+}
