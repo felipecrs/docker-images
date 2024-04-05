@@ -2,7 +2,8 @@
 
 set -euo pipefail
 
-script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+export SCRIPT_DIR
 
 set -x
 
@@ -22,26 +23,50 @@ function cleanup() {
 
 trap cleanup EXIT
 
-cd "${script_dir}/.."
+function prepare_agent() {
+    set -eux
 
-docker buildx bake jenkins-agent-dind --push \
-    --set jenkins-agent-dind.tags=localhost:15432/jenkins-agent-dind:latest
+    cd "${SCRIPT_DIR}/.."
 
-retry --verbose --tries=3 --sleep=3 -- kubectl run --rm -i --privileged --image jenkins-agent-dind-test-registry:5000/jenkins-agent-dind:latest test -- docker version
+    docker buildx bake jenkins-agent-dind --push \
+        --set jenkins-agent-dind.tags=localhost:15432/jenkins-agent-dind:latest
 
-cd "${script_dir}/test-fixtures"
+    retry --tries=3 --sleep=3 -- \
+        kubectl run --attach --restart=Never --rm --privileged --image jenkins-agent-dind-test-registry:5000/jenkins-agent-dind:latest test -- \
+        docker version
 
-docker buildx build . --tag localhost:15432/jenkins:latest --push
+    kubectl apply -f https://raw.githubusercontent.com/felipecrs/dynamic-hostports-k8s/master/deploy.yaml
+}
 
-kubectl apply -f https://raw.githubusercontent.com/felipecrs/dynamic-hostports-k8s/master/deploy.yaml
+function prepare_jenkins() {
+    set -eux
 
-helmfile sync --enable-live-output
+    cd "${SCRIPT_DIR}/test-fixtures"
 
-kubectl exec -it jenkins-0 -- bash <<EOF
-set -euxo pipefail
+    docker buildx build . --tag localhost:15432/jenkins:latest --push
 
-curl -fsSL http://127.0.0.1:8080/jnlpJars/jenkins-cli.jar -o /tmp/jenkins-cli.jar
+    # retry because of https://github.com/werf/werf/issues/6048
+    retry --tries=2 --sleep=0 -- \
+        helmfile sync --enable-live-output
 
-exec java -jar /tmp/jenkins-cli.jar -s http://127.0.0.1:8080 \
-    build test-agent -s -v -f
-EOF
+    kubectl exec jenkins-0 --container=jenkins -- \
+        curl -fsSL http://127.0.0.1:8080/jnlpJars/jenkins-cli.jar --output /tmp/jenkins-cli.jar
+}
+
+function build_jenkins_job() {
+    set -eux
+
+    kubectl exec jenkins-0 --container=jenkins -- \
+        java -jar /tmp/jenkins-cli.jar -s http://127.0.0.1:8080 \
+        build "${1}" -s -v -f
+}
+
+export -f prepare_agent prepare_jenkins build_jenkins_job
+
+parallel_cmd=(parallel --line-buffer --tag --halt 'now,fail=1')
+
+"${parallel_cmd[@]}" ::: \
+    prepare_agent prepare_jenkins
+
+"${parallel_cmd[@]}" -- \
+    build_jenkins_job ::: test-agent-declarative test-agent-scripted

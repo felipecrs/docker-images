@@ -136,7 +136,7 @@ pipeline {
     docker {
       image 'ghcr.io/felipecrs/jenkins-agent-dind'
       alwaysPull true
-      args '--volume=/var/run/docker.sock:/var/run/docker.sock --network=host --group-add=docker'
+      args '--volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host'
     }
   }
   stages {
@@ -266,7 +266,7 @@ pipeline {
     docker {
       image 'ghcr.io/felipecrs/jenkins-agent-dind'
       alwaysPull true
-      args '--volume=/ssh-command:/ssh-command --volume=/var/run/docker.sock:/var/run/docker.sock --network=host --group-add=docker'
+      args '--volume=/ssh-command:/ssh-command --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host'
     }
   }
   options {

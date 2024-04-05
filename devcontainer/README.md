@@ -69,10 +69,10 @@ To use it as a **Docker on Docker** devcontainer:
     "dockerfile": "Dockerfile"
   },
   "overrideCommand": false,
-  "runArgs": [
-    "--volume=/var/run/docker.sock:target=/var/run/docker.sock",
-    "--network=host"
-  ]
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
+  "runArgs": ["--network=host"]
 }
 ```
 

@@ -1,0 +1,94 @@
+persistence:
+  enabled: true
+agent:
+  image:
+    repository: jenkins-agent-dind-test-registry:5000/jenkins-agent-dind
+    tag: latest
+  alwaysPullImage: false
+  args: ""
+  resources:
+    requests:
+      cpu: "2"
+      memory: "4G"
+    limits:
+      cpu: "2"
+      memory: "4G"
+  yamlTemplate: |
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      labels:
+        dynamic-hostports: "22"
+    spec:
+      hostNetwork: false
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      # the agent will connect to jenkins using the k8s svc name
+      # dnsPolicy: Default
+      restartPolicy: Never
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: jnlp
+          env:
+            - name: SSHD_ENABLED
+              value: "true"
+          ports:
+            - containerPort: 22
+          securityContext:
+            privileged: true
+          workingDir: /home/jenkins/agent
+          terminationMessagePolicy: FallbackToLogsOnError
+          volumeMounts:
+            - mountPath: /home/jenkins/agent
+              name: workspace-volume
+            - name: podinfo
+              mountPath: /ssh-command/podinfo
+              readonly: true
+      volumes:
+        - name: workspace-volume
+          emptyDir: {}
+        - name: podinfo
+          downwardAPI:
+            items:
+              - path: "sshd-port"
+                fieldRef:
+                  fieldPath: metadata.annotations['dynamic-hostports.k8s/22']
+              - path: "node-fqdn"
+                fieldRef:
+                  fieldPath: metadata.annotations['dynamic-hostports.k8s/node-fqdn']
+controller:
+  image:
+    registry: jenkins-agent-dind-test-registry:5000
+    repository: jenkins
+    tag: latest
+  installPlugins: false
+  sidecars:
+    configAutoReload:
+      enabled: false
+  JCasC:
+    authorizationStrategy: unsecured
+    configScripts:
+      jobs: |
+        jobs:
+          - script: >
+              pipelineJob('test-agent-declarative') {
+                definition {
+                  cps {
+                    sandbox()
+                    script('''\
+                      {{- readFile "jobs/test-agent-declarative/Jenkinsfile" | nindent 30 }}
+                      '''.stripIndent())
+                  }
+                }
+              }
+          - script: >
+              pipelineJob('test-agent-scripted') {
+                definition {
+                  cps {
+                    sandbox()
+                    script('''\
+                      {{- readFile "jobs/test-agent-scripted/Jenkinsfile" | nindent 30 }}
+                      '''.stripIndent())
+                  }
+                }
+              }
