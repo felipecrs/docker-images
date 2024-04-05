@@ -35,7 +35,7 @@ pipeline {
                         docker {
                             reuseNode true
                             image 'localhost:15432/jenkins-agent-dind:latest'
-                            args '--volume=/ssh-command:/ssh-command --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker'
+                            args '--volume=/ssh-command:/ssh-command --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host'
                         }
                     }
                     steps {
