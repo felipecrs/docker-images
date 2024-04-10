@@ -4,11 +4,10 @@ ARG JENKINS_AGENT_VERSION="3206.vb_15dcf73f6a_9-7"
 
 FROM ubuntu:jammy-20240227 AS ubuntu
 
+SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 # Build the init_as_root
 FROM ubuntu AS init-as-root
-
-SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
 # hadolint ignore=DL3008
 RUN apt-get update; \
