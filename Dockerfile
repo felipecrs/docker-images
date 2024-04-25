@@ -2,7 +2,7 @@
 ARG JENKINS_AGENT_VERSION="3206.vb_15dcf73f6a_9-7"
 
 
-FROM ubuntu:jammy-20240405 AS ubuntu
+FROM ubuntu:jammy-20240416 AS ubuntu
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
