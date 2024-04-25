@@ -12,7 +12,7 @@ A multi-purpose Docker on Docker or Docker in Docker image to be used as a Devco
 
 ## Features
 
-- **Based on Ubuntu 22.04 Jammy Jellyfish**: a more common distribution to run your development environment on.
+- **Based on Ubuntu 24.04 Noble Numbat**: a more common distribution to run your development environment on.
 - Fully functional **Docker on Docker**: shares the host's Docker daemon to avoid the overhead of running a nested Docker daemon. Comes with the [docker-on-docker-shim](https://github.com/felipecrs/docker-on-docker-shim) to provide a seamless experience.
 - Also supports **Docker in Docker**: you can choose not to share the host's Docker daemon, and therefore run `docker` from within the devcontainer in a fully isolated manner.
 - Several common packages installed: the common tools frequently needed are already baked in.

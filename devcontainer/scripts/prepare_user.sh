@@ -6,9 +6,14 @@ shopt -s inherit_errexit
 
 readonly CURL="curl -fsSL"
 
+# remove user if exists (ubuntu:noble onwards)
+if getent passwd ubuntu >/dev/null; then
+    userdel -r ubuntu
+fi
+
 # create non-root user
 groupadd -g "${USER_ID?}" "${USER?}"
-useradd -l -c "Jenkins user" -d "${HOME?}" -u "${USER_ID}" -g "${USER_ID}" -m "${USER}" -s /bin/bash -p ""
+useradd -l -d "${HOME?}" -u "${USER_ID}" -g "${USER_ID}" -m "${USER}" -s /bin/bash -p ""
 
 # setup sudo
 echo "${USER} ALL=(ALL) NOPASSWD:ALL" | tee "/etc/sudoers.d/${USER}"

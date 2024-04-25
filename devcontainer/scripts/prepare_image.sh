@@ -89,7 +89,7 @@ packages=(
     iputils-ping
     traceroute
     dnsutils
-    netcat
+    netcat-openbsd
     # docker
     "docker-ce=5:${DOCKER_VERSION}-*"
     "docker-ce-cli=5:${DOCKER_VERSION}-*"
