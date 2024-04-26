@@ -133,6 +133,9 @@ PKGX_VERSION="1.1.6"
 ${CURL} "https://github.com/pkgxdev/pkgx/releases/download/v${PKGX_VERSION}/pkgx-${PKGX_VERSION}+linux+${UNAME_ARCH//_/-}.tar.xz" |
     tar -C /usr/local/bin -xJf - pkgx
 
+# install volta stub (will be fully downloaded when it is used for the first time)
+pkgx install volta.sh
+
 # install s6-overlay
 # renovate: datasource=github-releases depName=just-containers/s6-overlay
 S6_OVERLAY_VERSION="3.1.6.2"
