@@ -65,6 +65,8 @@ packages=(
     tree
     jq
     parallel
+    python3
+    pipx
     rsync
     sshpass
     zip
