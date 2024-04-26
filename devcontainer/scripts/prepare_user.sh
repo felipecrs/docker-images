@@ -37,6 +37,13 @@ printf '\n%s\n' 'export EDITOR="nano"' | tee -a "${HOME}/.bashrc"
 
 chown "${USER}:${USER}" "${HOME}/.bashrc"
 
+# install volta stub (will be fully downloaded when it is used for the first time)
+# renovate: datasource=github-releases depName=volta-cli/volta
+VOLTA_VERSION="1.1.1"
+sudo -u "${USER}" pkgx install "volta.sh@${VOLTA_VERSION}"
+
 # cleanup
+sudo -u "${USER}" rm -rf "${HOME}/.pkgx" "${HOME}/.cache/pkgx"
+
 shopt -s nullglob dotglob
 rm -rf /tmp/* /var/cache/* /var/lib/apt/lists/*
