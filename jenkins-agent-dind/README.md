@@ -12,7 +12,7 @@ A Docker in Docker image to provide fully ephemeral Jenkins agents.
 
 ## Features
 
-- **Based on Ubuntu 22.04 Jammy Jellyfish**: a more common distribution to run your workload on.
+- **Based on Ubuntu 24.04 Noble Numbat**: a more common distribution to run your workload on.
 - Fully functional **Docker in Docker**: run `docker` commands isolated from the host Docker daemon.
 - Also supports **Docker on Docker**: you can choose to share the host's Docker daemon to avoid the overhead of running a nested Docker daemon.
 - Works as a Jenkins Agent out-of-the-box: run ephemeral build containers by using the Docker Plugin or Kubernetes Plugin on Jenkins. Works as the official [`jenkins/inbound-agent`](https://github.com/jenkinsci/docker-agent/blob/master/README_inbound-agent.md).
