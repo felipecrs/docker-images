@@ -112,14 +112,21 @@ else
     readonly node_host
 fi
 
+if [[ -f "${script_dir}/domain" ]]; then
+    domain="$(cat "${script_dir}/domain")"
+else
+    domain=""
+fi
+readonly domain
+
 # Check if node_host is a fully qualified domain name (have a dot)
 if [[ "${node_host}" == *.* ]]; then
     readonly node_fqdn="${node_host}"
-    if [[ -n "${DOMAIN:-}" ]]; then
+    if [[ -n "${domain}" ]]; then
         log_info "Ignoring the DOMAIN env var because the inferred node hostname seems to be a fully qualified domain name."
     fi
-elif [[ -n "${DOMAIN:-}" ]]; then
-    readonly node_fqdn="${node_host}.${DOMAIN}"
+elif [[ -n "${domain}" ]]; then
+    readonly node_fqdn="${node_host}.${domain}"
     log_info "Using the DOMAIN env var to build the node's fully qualified domain name."
 else
     readonly node_fqdn="${node_host}"
