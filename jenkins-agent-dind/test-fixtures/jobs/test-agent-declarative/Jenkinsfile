@@ -27,7 +27,6 @@ pipeline {
                         sh 'printenv | sort | tee /dev/stderr | grep -q ^USER='
                         sh 'docker version'
                         sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
-                        sh 'IGNORE_FAILURE=false DOMAIN=localdev /ssh-command/get.sh'
                     }
                 }
                 stage ('nested dond') {
@@ -49,7 +48,7 @@ pipeline {
                         docker {
                             reuseNode true
                             image 'localhost:15432/jenkins-agent-dind:latest'
-                            args "--privileged --group-add=docker --env=SSHD_ENABLED=true --publish=^${env.SSHD_PORT}:22"
+                            args "--privileged --group-add=docker --env=SSHD_ENABLED=true --publish=^${env.SSHD_PORT}:22 --env=DOMAIN=example.com"
                         }
                     }
                     steps {
