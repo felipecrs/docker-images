@@ -43,7 +43,7 @@ VOLTA_VERSION="1.1.1"
 sudo -u "${USER}" pkgx install "volta.sh@${VOLTA_VERSION}"
 
 # cleanup
-sudo -u "${USER}" rm -rf "${HOME}/.pkgx" "${HOME}/.cache/pkgx" "${HOME}/.local/share/pkgx"
+sudo -u "${USER}" rm -rf "${PKGX_DIR}" "${HOME}/.cache/pkgx" "${HOME}/.local/share/pkgx"
 
 shopt -s nullglob dotglob
 rm -rf /tmp/* /var/cache/* /var/lib/apt/lists/*

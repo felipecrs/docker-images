@@ -64,7 +64,9 @@ ARG USER_ID="1000"
 # drawback still pays off as running this image as root is a corner case.
 ENV USER="${USER}"
 ENV HOME="/home/${USER}"
-ENV PATH="${HOME}/.local/bin:${HOME}/.volta/bin:${PATH}"
+ENV VOLTA_HOME="/opt/volta"
+ENV PKGX_DIR="/opt/pkgx"
+ENV PATH="${VOLTA_HOME}/bin:${HOME}/.local/bin:${PATH}"
 
 RUN --mount=type=bind,source=devcontainer/scripts/prepare_user.sh,target=/prepare_user.sh \
     /prepare_user.sh
