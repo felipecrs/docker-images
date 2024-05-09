@@ -9,6 +9,8 @@ node {
 
         docker.image('localhost:15432/jenkins-agent-dind:latest')
             .inside('--volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host') {
+            // depending on the system, dond binary relocation can take some ms
+            sh 'sleep 1s'
             sh 'docker version'
         }
 

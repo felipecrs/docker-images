@@ -1,4 +1,5 @@
-FROM jenkins/jenkins:2.440.3-lts-alpine
+ARG JENKINS_VERSION
+FROM jenkins/jenkins:${JENKINS_VERSION}-alpine-jdk21
 
 RUN jenkins-plugin-cli --plugins \
     kubernetes \

@@ -95,7 +95,7 @@ RUN --mount=type=bind,source=devcontainer/scripts/prepare_user.sh,target=/prepar
     /prepare_user.sh
 
 
-FROM jenkins/inbound-agent:${JENKINS_AGENT_VERSION}-jdk17 AS jenkins-agent
+FROM jenkins/inbound-agent:${JENKINS_AGENT_VERSION}-jdk21 AS jenkins-agent
 
 
 FROM scratch AS jenkins-agent-dind-rootfs
