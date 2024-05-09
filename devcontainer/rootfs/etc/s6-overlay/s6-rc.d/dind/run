@@ -1,7 +1,13 @@
 #!/bin/bash
 
 echo "[dind] starting service" >&2
+
+set -- s6-notifyoncheck -c /etc/s6-overlay/s6-rc.d/dind/check_readiness.sh
+
+if grep -qw sysboxfs /proc/self/mountinfo; then
+    exec "${@}" dockerd
+fi
+
 # the sleep helps workaround the "sed: couldn't flush stdout: Device or resource busy"
 # error on first startup attempt
-exec s6-notifyoncheck -c /etc/s6-overlay/s6-rc.d/dind/check_readiness.sh \
-    bash -c 'sleep 0.5s && exec dind dockerd'
+exec "${@}" bash -c 'sleep 0.5s && exec dind dockerd'
