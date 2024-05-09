@@ -6,7 +6,6 @@ helmBinary: ./werf_as_helm.sh
 
 releases:
   - name: jenkins
-    # https://github.com/jenkinsci/helm-charts/releases
-    chart: https://github.com/jenkinsci/helm-charts/releases/download/jenkins-5.1.5/jenkins-5.1.5.tgz
+    chart: ./jenkins/
     values:
       - values.yaml.gotmpl
