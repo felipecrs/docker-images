@@ -65,6 +65,7 @@ packages=(
     tree
     jq
     parallel
+    wget
     python3
     pipx
     rsync
