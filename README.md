@@ -1,10 +1,3 @@
-> [!IMPORTANT]
-> ## Deprecation notice
->
-> This project is deprecated. I no longer intend to make any improvements to it. Instead, I have shifted my focus to [`jenkins-agent-dind`](https://github.com/felipecrs/jenkins-agent-dind), which is also very suitable for running as a devcontainer as well. It allows you to choose between docker in docker or docker on docker, comes with [pkgx](https://pkg.sh/) to install any other tool you need, while still being more lightweight.
->
-> **The nightly builds for this image is being deactivated, so I strongly recommend you to move to another image.**
-
 # felipecrs/devcontainer
 
 You can use this image in VS Code Remote - Containers.
