@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-22.04 AS base
+FROM mcr.microsoft.com/vscode/devcontainers/base:ubuntu-20.04 AS base
 
 SHELL [ "/bin/bash", "-euxo", "pipefail", "-c" ]
 
@@ -21,7 +21,7 @@ RUN sudo apt-get update; \
     # pyenv dependencies \
     build-essential libssl-dev zlib1g-dev libbz2-dev \
     libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
-    xz-utils tk-dev libffi-dev liblzma-dev python3-openssl git; \
+    xz-utils tk-dev libffi-dev liblzma-dev python-openssl git; \
     sudo rm -rf /var/lib/apt/lists/*;
 
 # script-library options
@@ -39,7 +39,7 @@ RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/docker-debian.sh")" -- true 
     # Install retry \
     version=$(basename "$(curl -fsSL -o /dev/null -w "%{url_effective}" "https://github.com/kadwanev/retry/releases/latest")"); \
     curl -fsSL "https://github.com/kadwanev/retry/releases/download/${version}/retry-${version}.tar.gz" | \
-    sudo tar -C /usr/local/bin -xzf -; \
+        sudo tar -C /usr/local/bin -xzf -; \
     # Install tini \
     version=$(basename "$(curl -fsSL -o /dev/null -w "%{url_effective}" https://github.com/krallin/tini/releases/latest)"); \
     sudo curl -fsSL -o /init "https://github.com/krallin/tini/releases/download/${version}/tini"; \
@@ -78,9 +78,9 @@ ENV PATH="${SDKMAN_DIR}/bin:${SDKMAN_DIR}/candidates/java/current/bin:${SDKMAN_D
 RUN sudo bash -c "$(curl -fsSL "$SCRIPT_LIBRARY_URL/java-debian.sh")" -- none "${SDKMAN_DIR}"; \
     # Add sdk shim \
     printf '%s\n' '#!/bin/bash' \
-    '. ${SDKMAN_DIR?}/bin/sdkman-init.sh ' \
-    'sdk "$@"' \
-    | sudo tee /usr/local/bin/sdk; \
+        '. ${SDKMAN_DIR?}/bin/sdkman-init.sh ' \
+        'sdk "$@"' \
+        | sudo tee /usr/local/bin/sdk; \
     sudo chmod +x /usr/local/bin/sdk; \
     # Clean up \
     sudo apt-get autoremove -y && sudo apt-get clean -y && sudo rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
