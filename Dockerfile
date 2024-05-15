@@ -114,9 +114,6 @@ RUN \
     sudo add-apt-repository --no-update -y "https://packages.adoptium.net/artifactory/deb"; \
     # jdk installation expects this folder but we deleted during cleanup; \
     sudo mkdir -p /usr/share/man/man1; \
-    # kubernetes \
-    ${CURL} https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -; \
-    sudo add-apt-repository --no-update -y "deb https://apt.kubernetes.io/ kubernetes-xenial main"; \
     # yarn \
     ${CURL} https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -; \
     sudo add-apt-repository --no-update -y "deb https://dl.yarnpkg.com/debian/ stable main"; \
@@ -155,7 +152,6 @@ RUN \
         temurin-11-jdk \
         nodejs \
         yarn \
-        kubectl \
         jfrog-cli \
         jfrog-cli-v2-jf \
         shellcheck \
@@ -246,6 +242,10 @@ RUN \
     # clean npm cache \
     sudo npm cache clean --force; \
     ## miscellaneous \
+    # install kubectl \
+    version="$(${CURL} https://dl.k8s.io/release/stable.txt)"; \
+    sudo ${CURL} -o /usr/local/bin/kubectl "https://dl.k8s.io/release/${version}/bin/linux/amd64/kubectl"; \
+    sudo chmod +x /usr/local/bin/kubectl; \
     # install kind \
     version=$(basename "$(${CURL} -o /dev/null -w "%{url_effective}" https://github.com/kubernetes-sigs/kind/releases/latest)"); \
     sudo ${CURL} -o /usr/local/bin/kind "https://github.com/kubernetes-sigs/kind/releases/download/${version}/kind-$(uname)-amd64"; \
