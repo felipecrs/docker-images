@@ -55,7 +55,7 @@ echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/docker.gpg] https://dow
 # install apt packages
 ${APT_GET} update
 
-# renovate: datasource=github-releases depName=moby/moby
+# renovate: datasource=github-releases depName=docker packageName=moby/moby
 DOCKER_VERSION="27.0.3"
 
 packages=(
@@ -137,7 +137,7 @@ ${CURL} "https://github.com/felipecrs/pkgx/releases/download/v${PKGX_VERSION}/pk
     tar -C /usr/local/bin -xJf - pkgx
 
 # install s6-overlay
-# renovate: datasource=github-releases depName=just-containers/s6-overlay
+# renovate: datasource=github-releases depName=s6-overlay packageName=just-containers/s6-overlay
 S6_OVERLAY_VERSION="3.1.6.2"
 ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" |
     tar -C / -Jxpf -
