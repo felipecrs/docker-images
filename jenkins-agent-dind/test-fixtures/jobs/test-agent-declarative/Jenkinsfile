@@ -59,6 +59,15 @@ pipeline {
                         sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
                     }
                 }
+                stage ('volta') {
+                    steps {
+                        retry(3) {
+                            sh 'volta install node@18.20.4 npm@9.9.3'
+                        }
+                        sh 'node --version | grep ^v18.20.4$'
+                        sh 'npm --version | grep ^9.9.3$'
+                    }
+                }
             }
         }
     }

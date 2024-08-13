@@ -89,7 +89,7 @@ ARG USER_ID="1000"
 # drawback still pays off as running this image as root is a corner case.
 ENV USER="${USER}"
 ENV HOME="/home/${USER}"
-ENV PATH="${HOME}/.local/bin:${PATH}"
+ENV PATH="${HOME}/.volta/bin:${HOME}/.local/bin:${PATH}"
 
 RUN --mount=type=bind,source=devcontainer/scripts/prepare_user.sh,target=/prepare_user.sh \
     /prepare_user.sh
