@@ -39,7 +39,7 @@ chown "${USER}:${USER}" "${HOME}/.bashrc"
 
 # install volta stub (will be fully downloaded when it is used for the first time)
 # renovate: datasource=github-releases depName=volta packageName=volta-cli/volta
-VOLTA_VERSION="2.0.0"
+VOLTA_VERSION="2.0.1"
 sudo -u "${USER}" pkgx install "volta.sh@${VOLTA_VERSION}"
 
 # cleanup
