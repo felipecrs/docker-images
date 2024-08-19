@@ -45,7 +45,7 @@ function prepare_jenkins() {
     cd "${SCRIPT_DIR}/test-fixtures"
 
     # renovate: datasource=github-releases depName=jenkinsci/helm-charts extractVersion=^jenkins-(?<version>.*)$
-    local jenkins_chart_version="5.5.7"
+    local jenkins_chart_version="5.5.8"
 
     rm -rf jenkins jenkins-*.tgz
     ./werf_as_helm.sh pull --untar \
