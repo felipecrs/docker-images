@@ -56,7 +56,7 @@ echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/docker.gpg] https://dow
 ${APT_GET} update
 
 # renovate: datasource=github-releases depName=docker packageName=moby/moby
-DOCKER_VERSION="27.2.1"
+DOCKER_VERSION="27.3.0"
 
 packages=(
     build-essential
