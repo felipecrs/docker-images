@@ -261,7 +261,7 @@ RUN \
     ${CURL} "https://github.com/kadwanev/retry/releases/download/${version}/retry-${version}.tar.gz" | \
         sudo tar -C /usr/local/bin -xzf -; \
     # install s6-overlay \
-    version="3.1.6.2"; \
+    version="3.2.0.2"; \
     ${CURL} https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-noarch.tar.xz | sudo tar -C / -Jxpf -; \
     ${CURL} https://github.com/just-containers/s6-overlay/releases/download/v${version}/s6-overlay-x86_64.tar.xz | sudo tar -C / -Jxpf -; \
     # fix sshd not starting \
