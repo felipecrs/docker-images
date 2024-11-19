@@ -156,7 +156,7 @@ chmod +x /usr/local/bin/dond
 
 # install cgroup-scripts
 # renovate: datasource=github-releases depName=felipecrs/cgroup-scripts
-CGROUP_SCRIPTS_VERSION="0.1.0"
+CGROUP_SCRIPTS_VERSION="0.2.0"
 mkdir -p /opt/cgroup-scripts
 ${CURL} "https://github.com/felipecrs/cgroup-scripts/raw/v${CGROUP_SCRIPTS_VERSION}/get_cpus.sh" \
     -o /opt/cgroup-scripts/get_cpus.sh
