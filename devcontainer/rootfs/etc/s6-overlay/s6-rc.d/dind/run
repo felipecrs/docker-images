@@ -8,6 +8,12 @@ if grep -qw sysboxfs /proc/self/mountinfo; then
     exec "${@}" dockerd
 fi
 
+if ! /opt/docker-scripts/is_privileged.sh; then
+    echo "[dind] the container must be running in privileged mode for dind to work" >&2
+    # an arbitrary exit code, used as a signal to ./finish to abort the startup
+    exit 111
+fi
+
 # the sleep helps workaround the "sed: couldn't flush stdout: Device or resource busy"
 # error on first startup attempt
 exec "${@}" bash -c 'sleep 0.5s && exec dind dockerd'
