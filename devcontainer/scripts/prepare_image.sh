@@ -149,7 +149,7 @@ mkdir -p /run/sshd
 
 # install docker-on-docker-shim
 # renovate: datasource=github-releases depName=felipecrs/docker-on-docker-shim
-DOND_SHIM_VERSION="0.7.0"
+DOND_SHIM_VERSION="0.7.1"
 ${CURL} "https://github.com/felipecrs/docker-on-docker-shim/raw/v${DOND_SHIM_VERSION}/dond" \
     -o /usr/local/bin/dond
 chmod +x /usr/local/bin/dond
