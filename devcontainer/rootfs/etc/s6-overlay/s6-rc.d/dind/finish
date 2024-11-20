@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# 111 is a signal from ./run
+if [[ "${1}" -eq 111 ]]; then
+    # 125 indicates a permanent failure to s6-overlay, which aborts the startup
+    exit 125
+fi

@@ -154,16 +154,12 @@ ${CURL} "https://github.com/felipecrs/docker-on-docker-shim/raw/v${DOND_SHIM_VER
     -o /usr/local/bin/dond
 chmod +x /usr/local/bin/dond
 
-# install cgroup-scripts
-# renovate: datasource=github-releases depName=felipecrs/cgroup-scripts
-CGROUP_SCRIPTS_VERSION="0.2.0"
-mkdir -p /opt/cgroup-scripts
-${CURL} "https://github.com/felipecrs/cgroup-scripts/raw/v${CGROUP_SCRIPTS_VERSION}/get_cpus.sh" \
-    -o /opt/cgroup-scripts/get_cpus.sh
-chmod +x /opt/cgroup-scripts/get_cpus.sh
-${CURL} "https://github.com/felipecrs/cgroup-scripts/raw/v${CGROUP_SCRIPTS_VERSION}/get_memory.sh" \
-    -o /opt/cgroup-scripts/get_memory.sh
-chmod +x /opt/cgroup-scripts/get_memory.sh
+# install docker-scripts
+# renovate: datasource=github-releases depName=felipecrs/docker-scripts
+DOCKER_SCRIPTS_VERSION="0.2.0"
+mkdir -p /opt/docker-scripts
+${CURL} "https://github.com/felipecrs/docker-scripts/archive/v${DOCKER_SCRIPTS_VERSION}.tar.gz" |
+    tar -C /opt/docker-scripts --strip-components=2 -xzf - --wildcards "docker-scripts-*/scripts"
 
 # setup oh my bash, useful when debugging the container
 ${CURL} https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh |
