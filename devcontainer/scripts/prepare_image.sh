@@ -132,7 +132,7 @@ ${CURL} "https://github.com/kadwanev/retry/releases/download/${RETRY_VERSION}/re
 
 # install pkgx
 # renovate: datasource=github-releases depName=pkgxdev/pkgx
-PKGX_VERSION="1.3.0"
+PKGX_VERSION="1.3.1"
 ${CURL} "https://github.com/pkgxdev/pkgx/releases/download/v${PKGX_VERSION}/pkgx-${PKGX_VERSION}+linux+${UNAME_ARCH//_/-}.tar.xz" |
     tar -C /usr/local/bin -xJf - pkgx
 
