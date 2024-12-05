@@ -115,13 +115,13 @@ else
 fi
 
 user_file="${script_dir}/user"
-# Wait for 10 seconds until the user file is created
-for attempt in {1..10}; do
+# Wait for 30 seconds until the user file is created
+for attempt in {1..30}; do
     if [[ -f "${user_file}" ]]; then
         break
     elif [[ "${attempt}" -eq 5 ]]; then
-        log_task "Waiting more 5s for the '${user_file}' file to be created"
-    elif [[ "${attempt}" -eq 10 ]]; then
+        log_task "Waiting more 25s for the '${user_file}' file to be created"
+    elif [[ "${attempt}" -eq 30 ]]; then
         error "The '${user_file}' file was not created. Did the entrypoint script run?" >&2
     fi
     sleep 1
