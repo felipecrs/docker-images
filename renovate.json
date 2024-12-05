@@ -13,6 +13,7 @@
     {
       "customType": "regex",
       "fileMatch": [
+        "^.devcontainer/post_create.sh$",
         "^devcontainer/scripts/prepare_image.sh$",
         "^devcontainer/scripts/prepare_user.sh$",
         "^jenkins-agent-dind/test.sh$"

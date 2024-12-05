@@ -103,7 +103,7 @@ packages=(
 
 ${APT_GET_INSTALL} "${packages[@]}"
 
-# setup docker-switch (docker-compose v1 compatibility)
+# setup docker-compose-switch (docker-compose v1 compatibility)
 # renovate: datasource=github-releases depName=docker/compose-switch
 DOCKER_COMPOSE_SWITCH_VERSION="1.0.5"
 ${CURL} "https://github.com/docker/compose-switch/releases/download/v${DOCKER_COMPOSE_SWITCH_VERSION}/docker-compose-linux-${DPKG_ARCH}" \
@@ -131,7 +131,7 @@ ${CURL} "https://github.com/kadwanev/retry/releases/download/${RETRY_VERSION}/re
     tar -C /usr/local/bin -xzf - retry
 
 # install pkgx
-# renovate: datasource=github-releases depName=pkgxdev/pkgx
+# renovate: datasource=github-releases depName=pkgx packageName=pkgxdev/pkgx
 PKGX_VERSION="1.3.1"
 ${CURL} "https://github.com/pkgxdev/pkgx/releases/download/v${PKGX_VERSION}/pkgx-${PKGX_VERSION}+linux+${UNAME_ARCH//_/-}.tar.xz" |
     tar -C /usr/local/bin -xJf - pkgx

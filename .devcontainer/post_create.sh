@@ -19,7 +19,9 @@ pkgx install \
 node --version
 npm --version
 
-npm install --global @devcontainers/cli@0.60
+# renovate: datasource=github-tags depName=devcontainers/cli
+devcontainers_version="0.60.0"
+npm install --global "@devcontainers/cli@${devcontainers_version}"
 devcontainer --version
 
 k3d version
