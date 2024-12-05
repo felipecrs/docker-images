@@ -84,8 +84,8 @@ if [[ "${as_pod}" == "false" ]]; then
         error "Cannot infer the SSHD port because the SSHD_PORT env var is not set. Check that you have set the SSHD_PORT in the Jenkinsfile."
     fi
 else
-    readonly sshd_port_file="${podinfo_dir}/sshd-port"
-    readonly node_fqdn_file="${podinfo_dir}/node-fqdn"
+    sshd_port_file="${podinfo_dir}/sshd-port"
+    node_fqdn_file="${podinfo_dir}/node-fqdn"
 
     for file in "${sshd_port_file}" "${node_fqdn_file}"; do
         if [[ ! -f "${file}" ]]; then
@@ -98,7 +98,7 @@ else
         if [[ -s "${sshd_port_file}" && -s "${node_fqdn_file}" ]]; then
             break
         elif [[ "${attempt}" -eq 5 ]]; then
-            log_task "Waiting more 25s for the '${sshd_port_file}' and '${node_fqdn_file}' to be populated"
+            log_task "Waiting more 25s for the '${sshd_port_file}' and '${node_fqdn_file}' files to be populated"
         elif [[ "${attempt}" -eq 30 ]]; then
             error "The '${sshd_port_file}' and '${node_fqdn_file}' files were not populated. Check the dynamic-hostports installation." >&2
         fi
@@ -107,17 +107,38 @@ else
 
     sshd_port="$(cat "${sshd_port_file}")"
     readonly sshd_port
+    unset sshd_port_file
 
     node_host="$(cat "${node_fqdn_file}")"
     readonly node_host
+    unset node_fqdn_file
 fi
 
-if [[ -f "${script_dir}/domain" ]]; then
-    domain="$(cat "${script_dir}/domain")"
+user_file="${script_dir}/user"
+# Wait for 10 seconds until the user file is created
+for attempt in {1..10}; do
+    if [[ -f "${user_file}" ]]; then
+        break
+    elif [[ "${attempt}" -eq 5 ]]; then
+        log_task "Waiting more 5s for the '${user_file}' file to be created"
+    elif [[ "${attempt}" -eq 10 ]]; then
+        error "The '${user_file}' file was not created. Did the entrypoint script run?" >&2
+    fi
+    sleep 1
+done
+
+user="$(cat "${user_file}")"
+readonly user
+unset user_file
+
+domain_file="${script_dir}/domain"
+if [[ -f "${domain_file}" ]]; then
+    domain="$(cat "${domain_file}")"
 else
     domain=""
 fi
 readonly domain
+unset domain_file
 
 # Check if node_host is a fully qualified domain name (have a dot)
 if [[ "${node_host}" == *.* ]]; then
@@ -132,9 +153,6 @@ else
     readonly node_fqdn="${node_host}"
     log_manual_action "Inferred node hostname does not seem to be a fully qualified domain name and the DOMAIN env var is not set. The SSH command may not work."
 fi
-
-user="$(cat "${script_dir}/user")"
-readonly user
 
 readonly ssh_host="${user}@${node_fqdn}:${sshd_port}"
 
