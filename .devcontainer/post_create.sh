@@ -20,7 +20,7 @@ node --version
 npm --version
 
 # renovate: datasource=github-tags depName=devcontainers/cli
-devcontainers_version="0.60.0"
+devcontainers_version="0.72.0"
 npm install --global "@devcontainers/cli@${devcontainers_version}"
 devcontainer --version
 
