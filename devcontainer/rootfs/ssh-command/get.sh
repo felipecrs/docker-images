@@ -134,6 +134,8 @@ unset user_file
 domain_file="${script_dir}/domain"
 if [[ -f "${domain_file}" ]]; then
     domain="$(cat "${domain_file}")"
+elif [[ -n "${DOMAIN:-}" ]]; then
+    domain="${DOMAIN}"
 else
     domain=""
 fi
