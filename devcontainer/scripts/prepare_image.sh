@@ -35,7 +35,7 @@ UNAME_ARCH=$(uname -m)
 readonly VERSION_CODENAME DPKG_ARCH UNAME_ARCH
 
 # git
-${CURL} "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xE1DD270288B4E6030699E45FA1715D88E1DF1F24" |
+${CURL} "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xF911AB184317630C59970973E363C90F8F1B6217" |
     gpg --dearmor -o /etc/apt/keyrings/git-core-ppa.gpg
 echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/git-core-ppa.gpg] http://ppa.launchpad.net/git-core/ppa/ubuntu ${VERSION_CODENAME} main" |
     tee /etc/apt/sources.list.d/git-core-ppa.list
