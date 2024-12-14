@@ -61,7 +61,7 @@ function handle_exit() {
 
 trap handle_exit EXIT
 
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 readonly script_dir
 
 readonly podinfo_dir="${script_dir}/podinfo"
