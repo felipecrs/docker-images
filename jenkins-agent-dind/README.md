@@ -17,7 +17,7 @@ A Docker in Docker image to provide fully ephemeral Jenkins agents.
 - Also supports **Docker on Docker**: you can choose to share the host's Docker daemon to avoid the overhead of running a nested Docker daemon.
 - Works as a Jenkins Agent out-of-the-box: run ephemeral build containers by using the Docker Plugin or Kubernetes Plugin on Jenkins. Works as the official [`jenkins/inbound-agent`](https://github.com/jenkinsci/docker-agent/blob/master/README_inbound-agent.md).
 - Several common packages installed: run your generic workflow without needing to install additional packages.
-- Bundles [**`pkgx`**](https://pkgx.sh), a convenient package manager that allows you to **easily and quickly install the necessary tools for your project**. Example: `pkgx install node@18 npm@10`.
+- Bundles [**`pkgx`**](https://pkgx.sh), a convenient package manager that allows you to **easily and quickly install the necessary tools for your project**. Example: `pkgx install node@22 npm@11`.
 - Facilitates debugging by providing an **opt-in SSH server** for your builds. Read more about it [here](#accessing-the-container-through-ssh).
 - Can also be used as a [**devcontainer**](https://containers.dev/), ensuring **both your development environment and your CI/CD environment are the same**. Read more about it [here](#devcontainer).
 

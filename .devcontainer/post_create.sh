@@ -6,10 +6,10 @@ set -ex
 export CI=true
 
 pkgx install \
-    node@20 \
-    npm@10 \
+    node@22 \
+    npm@11 \
     k3d@5 \
-    helmfile@0.164 \
+    helmfile@0.169 \
     werf@2 \
     yq@4 \
     kubectl@1 \

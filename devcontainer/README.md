@@ -55,7 +55,7 @@ Considering you have a `.devcontainer/Dockerfile` like this:
 FROM ghcr.io/felipecrs/devcontainer
 
 # Install your project's dependencies
-RUN pkgx install nodejs.org@20 npmjs.com@10 \
+RUN pkgx install nodejs.org@22 npmjs.com@11 \
     && node --version \
     && npm --version
 ```
@@ -109,7 +109,7 @@ Considering you have a `.devcontainer/Dockerfile` like this:
 FROM ghcr.io/felipecrs/devcontainer
 
 # Install your project's dependencies
-RUN pkgx install openjdk.org@21 maven.apache.org@3 \
+RUN pkgx install openjdk.org@21 maven.apache.org@3.9 \
     && java --version \
     && mvn --version
 ```
