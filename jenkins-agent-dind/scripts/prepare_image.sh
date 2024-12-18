@@ -16,3 +16,10 @@ paths:
     - /
     - '${AGENT_WORKDIR}'
 EOF
+
+# Add /opt/java/openjdk/bin to sudo secure_path
+default_secure_path=$(
+    sudo cat /etc/sudoers | grep -oP 'Defaults\s+secure_path="[^"]+"' | cut -d'"' -f2
+)
+echo "Defaults secure_path=\"${default_secure_path}:/opt/java/openjdk/bin\"" |
+    sudo tee /etc/sudoers.d/secure_path
