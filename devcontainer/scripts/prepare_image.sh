@@ -57,6 +57,8 @@ ${APT_GET} update
 
 # renovate: datasource=github-releases depName=docker packageName=moby/moby
 DOCKER_VERSION="27.4.1"
+# https://github.com/docker/compose/issues/12402
+DOCKER_COMPOSE_VERSION="2.31.0"
 
 packages=(
     build-essential
@@ -98,7 +100,7 @@ packages=(
     "docker-ce-cli=5:${DOCKER_VERSION}-*"
     containerd.io
     docker-buildx-plugin
-    docker-compose-plugin
+    "docker-compose-plugin=${DOCKER_COMPOSE_VERSION}-*"
 )
 
 ${APT_GET_INSTALL} "${packages[@]}"
