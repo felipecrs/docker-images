@@ -15,18 +15,16 @@ for file in /entrypoint.d/*; do
     source "${file}"
 done
 
-set -- /after_initialization.sh "$@"
-
 uid="$(id -u)"
 if [[ "${uid}" -eq 0 ]]; then
     # If running as root, simply execute s6-overlay
     export USER="root"
     export HOME="/root"
-    set -- /init "$@"
+    set -- /init /after_initialization.sh "$@"
 else
     # Otherwise, fix uid and gid, run s6-overlay as root and then drop
     # privileges back to the user
-    set -- fixdockergid /init_as_root s6-setuidgid "${USER}" "$@"
+    set -- fixdockergid /init_as_root /after_initialization.sh s6-setuidgid "${USER}" "$@"
 fi
 
 exec -- "$@"
