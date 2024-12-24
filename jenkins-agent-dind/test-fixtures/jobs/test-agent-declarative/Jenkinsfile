@@ -52,10 +52,8 @@ pipeline {
                         }
                     }
                     steps {
+                        sh 'docker version'
                         sh 'printenv | sort | tee /dev/stderr | grep -q ^USER='
-                        retry(3) {
-                            sh 'docker version'
-                        }
                         sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
                     }
                 }
