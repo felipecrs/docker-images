@@ -98,9 +98,9 @@ else
         if [[ -s "${sshd_port_file}" && -s "${node_fqdn_file}" ]]; then
             break
         elif [[ "${attempt}" -eq 5 ]]; then
-            log_task "Waiting more 25s for the '${sshd_port_file}' and '${node_fqdn_file}' files to be populated"
+            log_task "Waiting 25s more for the '${sshd_port_file}' and '${node_fqdn_file}' files to be populated"
         elif [[ "${attempt}" -eq 30 ]]; then
-            error "The '${sshd_port_file}' and '${node_fqdn_file}' files were not populated. Check the dynamic-hostports installation." >&2
+            error "The '${sshd_port_file}' and '${node_fqdn_file}' files were not populated after 30s. Check the dynamic-hostports installation." >&2
         fi
         sleep 1
     done
@@ -120,9 +120,9 @@ for attempt in {1..30}; do
     if [[ -f "${user_file}" ]]; then
         break
     elif [[ "${attempt}" -eq 5 ]]; then
-        log_task "Waiting more 25s for the '${user_file}' file to be created"
+        log_task "Waiting 25s more for the '${user_file}' file to be created"
     elif [[ "${attempt}" -eq 30 ]]; then
-        error "The '${user_file}' file was not created. Did the entrypoint script run?" >&2
+        error "The '${user_file}' file was not created after 30s. Did the entrypoint script run?" >&2
     fi
     sleep 1
 done
