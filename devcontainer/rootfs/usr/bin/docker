@@ -1,0 +1,51 @@
+#!/bin/bash
+#
+# Works around situations where the docker cli is called before the container
+# is fully initialized. For example, Jenkins does not wait for the entrypoint
+# script to finish before proceding with the build.
+
+set -euo pipefail
+
+function log_color() {
+    color_code="$1"
+    shift
+
+    printf "\033[${color_code}m%s\033[0m\n" "$*" >&2
+}
+
+function log_red() {
+    log_color "0;31" "$@"
+}
+
+function log_blue() {
+    log_color "0;34" "$@"
+}
+
+function log_task() {
+    log_blue "🔃" "$@"
+}
+
+function log_error() {
+    log_red "❌" "$@"
+}
+
+function error() {
+    log_error "$@"
+    exit 1
+}
+
+if [[ "${SKIP_CONTAINER_INITIALIZATION_CHECK:-"false"}" == "false" ]]; then
+    # Wait for 10s until the /tmp/container_initialized file is created
+    for attempt in {1..10}; do
+        if [[ -f /tmp/container_initialized ]]; then
+            break
+        elif [[ "${attempt}" -eq 5 ]]; then
+            log_task "Waiting more 5s for the /tmp/container_initialized file to be created"
+        elif [[ "${attempt}" -eq 10 ]]; then
+            error "The /tmp/container_initialized file was not created after 10s"
+        fi
+        sleep 1
+    done
+fi
+
+exec -- docker.orig "$@"

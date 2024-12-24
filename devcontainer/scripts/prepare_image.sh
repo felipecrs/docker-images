@@ -149,6 +149,10 @@ ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_O
 # fix sshd not starting
 mkdir -p /run/sshd
 
+# prepare for the docker shim that waits for the container initialization
+docker_path=$(command -v docker)
+mv -f "${docker_path}" "${docker_path}.orig"
+
 # install docker-on-docker-shim
 # renovate: datasource=github-releases depName=felipecrs/docker-on-docker-shim
 DOND_SHIM_VERSION="0.8.0"

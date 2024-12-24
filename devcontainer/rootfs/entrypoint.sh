@@ -15,6 +15,8 @@ for file in /entrypoint.d/*; do
     source "${file}"
 done
 
+set -- /after_initialization.sh "$@"
+
 uid="$(id -u)"
 if [[ "${uid}" -eq 0 ]]; then
     # If running as root, simply execute s6-overlay
