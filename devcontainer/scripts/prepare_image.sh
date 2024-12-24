@@ -151,11 +151,11 @@ mkdir -p /run/sshd
 
 # prepare for the docker shim that waits for the container initialization
 docker_path=$(command -v docker)
-mv -f "${docker_path}" "${docker_path}.orig"
+mv -f "${docker_path}" "${docker_path}.real"
 
 # install docker-on-docker-shim
 # renovate: datasource=github-releases depName=felipecrs/docker-on-docker-shim
-DOND_SHIM_VERSION="0.8.0"
+DOND_SHIM_VERSION="0.7.1"
 ${CURL} "https://github.com/felipecrs/docker-on-docker-shim/raw/v${DOND_SHIM_VERSION}/dond" \
     -o /usr/local/bin/dond
 chmod +x /usr/local/bin/dond
