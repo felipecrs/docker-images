@@ -25,8 +25,9 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build to export cache
-        uses: docker/bake-action@v5
+        uses: docker/bake-action@v6
         with:
+          source: .
           set: |
             devcontainer.cache-from=type=gha,scope=devcontainer-amd64
             jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-amd64
@@ -47,8 +48,9 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build to export cache
-        uses: docker/bake-action@v5
+        uses: docker/bake-action@v6
         with:
+          source: .
           set: |
             devcontainer.platform=linux/arm64
             jenkins-agent-dind.platform=linux/arm64
@@ -73,8 +75,9 @@ jobs:
           driver-opts: network=host
 
       - name: Build to import cache
-        uses: docker/bake-action@v5
+        uses: docker/bake-action@v6
         with:
+          source: .
           set: |
             devcontainer.cache-from=type=gha,scope=devcontainer-amd64
             jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-amd64
@@ -158,8 +161,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push
-        uses: docker/bake-action@v5
+        uses: docker/bake-action@v6
         with:
+          source: .
           files: |
             ./docker-bake.hcl
             ${{ steps.docker-meta-devcontainer.outputs.bake-file }}
