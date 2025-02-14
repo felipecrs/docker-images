@@ -1,26 +1,46 @@
 #!/bin/bash
 
-set -ex
+set -eu
 
 # quiets the output a little
 export CI=true
 
+# renovate: datasource=github-releases depName=node packageName=nodejs/node
+node_version="22.14.0"
+# renovate: datasource=github-releases depName=npm packageName=npm/cli
+npm_version="11.1.0"
+# renovate: datasource=github-releases depName=k3d packageName=k3s-io/k3d
+k3d_version="5.8.1"
+# renovate: datasource=github-releases depName=helmfile packageName=helmfile/helmfile
+helmfile_version="0.171.0"
+# renovate: datasource=github-releases depName=werf packageName=werf/werf
+werf_version="2.27.0"
+# renovate: datasource=github-tags depName=kubectl packageName=kubernetes/kubectl extractVersion=^kubernetes-(?<version>.*)$
+kubectl_version="1.32.2"
+# renovate: datasource=github-releases depName=yq packageName=mikefarah/yq
+yq_version="4.45.1"
+# renovate: datasource=github-tags depName=devcontainers/cli
+devcontainers_version="0.73.0"
+
+# hadolint and act are not part of any pipeline, there's no point in updating
+# them automatically
+
+set -x
+
 pkgx install \
-    node@22 \
-    npm@11 \
-    k3d@5 \
-    helmfile@0.169 \
-    werf@2 \
-    yq@4 \
-    kubectl@1 \
+    "node@${node_version}" \
+    "npm@${npm_version}" \
+    "k3d@${k3d_version}" \
+    "helmfile@${helmfile_version}" \
+    "werf@${werf_version}" \
+    "yq@${yq_version}" \
+    "kubectl@${kubectl_version}" \
     hadolint@2 \
     act@0.2
 
 node --version
 npm --version
 
-# renovate: datasource=github-tags depName=devcontainers/cli
-devcontainers_version="0.73.0"
 npm install --global "@devcontainers/cli@${devcontainers_version}"
 devcontainer --version
 
