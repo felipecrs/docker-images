@@ -34,15 +34,15 @@ function error() {
     exit 1
 }
 
-# Wait for 15s for the container to be initialized
-for attempt in {1..15}; do
+# Wait for 30s for the container to be initialized
+for attempt in {1..30}; do
     # When the container is initialized, docker.real will be relocated
     if ! command -v docker.real >/dev/null; then
         break
     elif [[ "${attempt}" -eq 5 ]]; then
-        log_task "Waiting 5s more for the container to be initialized"
-    elif [[ "${attempt}" -eq 15 ]]; then
-        error "The container was not initialized after 10s. Did the entrypoint script run?"
+        log_task "Waiting 25s more for the container to be initialized"
+    elif [[ "${attempt}" -eq 30 ]]; then
+        error "The container was not initialized after 30s. Did the entrypoint script run?"
     fi
     sleep 1
 done
