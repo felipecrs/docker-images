@@ -57,8 +57,6 @@ ${APT_GET} update
 
 # renovate: datasource=github-releases depName=docker packageName=moby/moby
 DOCKER_VERSION="27.5.1"
-# https://github.com/docker/compose/issues/12402
-DOCKER_COMPOSE_VERSION="2.31.0"
 
 packages=(
     build-essential
@@ -100,13 +98,13 @@ packages=(
     "docker-ce-cli=5:${DOCKER_VERSION}-*"
     containerd.io
     docker-buildx-plugin
-    "docker-compose-plugin=${DOCKER_COMPOSE_VERSION}-*"
+    docker-compose-plugin
 )
 
 ${APT_GET_INSTALL} "${packages[@]}"
 
 # setup docker-compose-switch (docker-compose v1 compatibility)
-# renovate: datasource=github-releases depName=docker/compose-switch
+# renovate: datasource=github-releases depName=docker-compose-switch packageName=docker/compose-switch
 DOCKER_COMPOSE_SWITCH_VERSION="1.0.5"
 ${CURL} "https://github.com/docker/compose-switch/releases/download/v${DOCKER_COMPOSE_SWITCH_VERSION}/docker-compose-linux-${DPKG_ARCH}" \
     -o /usr/local/bin/docker-compose
@@ -154,7 +152,7 @@ docker_path=$(command -v docker)
 mv -f "${docker_path}" "${docker_path}.real"
 
 # install docker-on-docker-shim
-# renovate: datasource=github-releases depName=felipecrs/docker-on-docker-shim
+# renovate: datasource=github-releases depName=docker-on-docker-shim packageName=felipecrs/docker-on-docker-shim
 DOND_SHIM_VERSION="0.7.1"
 ${CURL} "https://github.com/felipecrs/docker-on-docker-shim/raw/v${DOND_SHIM_VERSION}/dond" \
     -o /usr/local/bin/dond

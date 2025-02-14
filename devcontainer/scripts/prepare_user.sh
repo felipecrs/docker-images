@@ -24,7 +24,7 @@ sudo -u "${USER}" true
 usermod -aG docker "${USER}"
 
 # install fixdockergid
-# renovate: datasource=github-releases depName=felipecrs/fixdockergid
+# renovate: datasource=github-releases depName=fixdockergid packageName=felipecrs/fixdockergid
 FIXDOCKERGID_VERSION="0.7.3"
 ${CURL} "https://github.com/felipecrs/fixdockergid/raw/v${FIXDOCKERGID_VERSION}/install.sh" |
     FIXDOCKERGID_VERSION="${FIXDOCKERGID_VERSION}" USERNAME="${USER}" sh -
