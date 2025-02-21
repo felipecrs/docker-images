@@ -83,7 +83,7 @@ packages=(
     less
     fontconfig
     # required for docker in docker
-    # https://github.com/moby/moby/blob/97a5435d33f644e7cfc0285e483306f2ea410710/project/PACKAGERS.md#runtime-dependencies
+    # https://github.com/moby/moby/blob/7d9d601e6de0020bc49678d9b48b5d56d8163558/project/PACKAGERS.md#runtime-dependencies
     iptables
     xz-utils
     pigz
@@ -111,7 +111,7 @@ ${CURL} "https://github.com/docker/compose-switch/releases/download/v${DOCKER_CO
 chmod +x /usr/local/bin/docker-compose
 
 ## dind
-# https://github.com/docker-library/docker/blob/9ee39bafc3844108938e3469b262738a5b0e804b/Dockerfile-dind.template#L47
+# https://github.com/docker-library/docker/blob/485fefe743baed5a2dd9e5d22b685c14eda4c61e/Dockerfile-dind.template#L47
 addgroup --system dockremap
 adduser --system --ingroup dockremap dockremap
 echo 'dockremap:165536:65536' | tee -a /etc/subuid
@@ -119,7 +119,7 @@ echo 'dockremap:165536:65536' | tee -a /etc/subgid
 
 # install dind hack
 # https://github.com/moby/moby/commits/master/hack/dind
-DIND_COMMIT="65cfcc28ab37cb75e1560e4b4738719c07c6618e"
+DIND_COMMIT="c43aa0b6aa7c88343f0951ba9a39c69aa51c54ef"
 ${CURL} "https://github.com/moby/moby/raw/${DIND_COMMIT}/hack/dind" \
     -o /usr/local/bin/dind
 chmod +x /usr/local/bin/dind
