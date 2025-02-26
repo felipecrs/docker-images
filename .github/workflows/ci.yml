@@ -59,7 +59,7 @@ jobs:
   test:
     needs: build-amd64
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
@@ -90,7 +90,13 @@ jobs:
       - build-arm64
       - test
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
 
     steps:
       - name: Checkout
