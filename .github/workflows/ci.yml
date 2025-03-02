@@ -14,96 +14,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-amd64:
+  prepare:
     runs-on: ubuntu-24.04
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build to export cache
-        uses: docker/bake-action@v6
-        with:
-          source: .
-          set: |
-            devcontainer.cache-from=type=gha,scope=devcontainer-amd64
-            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-amd64
-            devcontainer.cache-to=type=gha,scope=devcontainer-amd64,mode=max
-            jenkins-agent-dind.cache-to=type=gha,scope=jenkins-agent-dind-amd64,mode=max
-
-  build-arm64:
-    runs-on: ubuntu-24.04-arm
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build to export cache
-        uses: docker/bake-action@v6
-        with:
-          source: .
-          set: |
-            devcontainer.platform=linux/arm64
-            jenkins-agent-dind.platform=linux/arm64
-            devcontainer.cache-from=type=gha,scope=devcontainer-arm64
-            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-arm64
-            devcontainer.cache-to=type=gha,scope=devcontainer-arm64,mode=max
-            jenkins-agent-dind.cache-to=type=gha,scope=jenkins-agent-dind-arm64,mode=max
-
-  test:
-    needs: build-amd64
-
-    runs-on: ubuntu-24.04
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          # Needed for jenkins-agent-dind/test.sh
-          driver-opts: network=host
-
-      - name: Build to import cache
-        uses: docker/bake-action@v6
-        with:
-          source: .
-          set: |
-            devcontainer.cache-from=type=gha,scope=devcontainer-amd64
-            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-amd64
-          load: true
-
-      - name: Test
-        uses: devcontainers/ci@v0.3
-        with:
-          runCmd: ./test.sh
-
-  push:
-    needs:
-      - build-arm64
-      - test
-
-    runs-on: ubuntu-24.04
-
-    permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       - name: Docker meta (devcontainer)
         id: docker-meta-devcontainer
@@ -153,6 +68,50 @@ jobs:
             type=raw,value=2,enable=${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
             type=raw,value=latest,enable=${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
 
+      - name: Rename meta bake definition file
+        run: |
+          mv -fv "${{ steps.docker-meta-devcontainer.outputs.bake-file }}" "${{ runner.temp }}/bake-meta-devcontainer.json"
+          mv -fv "${{ steps.docker-meta-devcontainer.outputs.bake-file-annotations }}" "${{ runner.temp }}/bake-meta-annotations-devcontainer.json"
+          mv -fv "${{ steps.docker-meta-jenkins-agent-dind.outputs.bake-file }}" "${{ runner.temp }}/bake-meta-jenkins-agent-dind.json"
+          mv -fv "${{ steps.docker-meta-jenkins-agent-dind.outputs.bake-file-annotations }}" "${{ runner.temp }}/bake-meta-annotations-jenkins-agent-dind.json"
+
+      - name: Upload meta bake definition
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-bake-meta
+          path: ${{ runner.temp }}/bake-meta-*.json
+          if-no-files-found: error
+          retention-days: 1
+
+  build:
+    needs:
+      - prepare
+
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download meta bake definition
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-bake-meta
+          path: ${{ runner.temp }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          # Needed for jenkins-agent-dind/test.sh
+          driver-opts: network=host
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -160,21 +119,108 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push
+      - name: Build
+        uses: docker/bake-action@v6
+        with:
+          source: .
+          set: |
+            devcontainer.cache-from=type=gha,scope=devcontainer-${{ matrix.runner }}
+            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-${{ matrix.runner }}
+            devcontainer.cache-to=type=gha,scope=devcontainer-${{ matrix.runner }}
+            jenkins-agent-dind.cache-to=type=gha,scope=jenkins-agent-dind-${{ matrix.runner }}
+          load: true
+
+      - name: Test
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd: ./test.sh
+
+      - name: Push by digest
+        id: docker-bake
         uses: docker/bake-action@v6
         with:
           source: .
           files: |
             ./docker-bake.hcl
-            ${{ steps.docker-meta-devcontainer.outputs.bake-file }}
-            ${{ steps.docker-meta-devcontainer.outputs.bake-file-annotations }}
-            ${{ steps.docker-meta-jenkins-agent-dind.outputs.bake-file }}
-            ${{ steps.docker-meta-jenkins-agent-dind.outputs.bake-file-annotations }}
+            cwd://${{ runner.temp }}/bake-meta-devcontainer.json
+            cwd://${{ runner.temp }}/bake-meta-annotations-devcontainer.json
+            cwd://${{ runner.temp }}/bake-meta-jenkins-agent-dind.json
+            cwd://${{ runner.temp }}/bake-meta-annotations-jenkins-agent-dind.json
           set: |
-            devcontainer.platform=linux/amd64,linux/arm64
-            jenkins-agent-dind.platform=linux/amd64,linux/arm64
-            devcontainer.cache-from=type=gha,scope=devcontainer-amd64
-            devcontainer.cache-from=type=gha,scope=devcontainer-arm64
-            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-amd64
-            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-arm64
-          push: true
+            devcontainer.tags=ghcr.io/${{ github.repository_owner }}/devcontainer
+            jenkins-agent-dind.tags=ghcr.io/${{ github.repository_owner }}/jenkins-agent-dind
+            *.output=type=image,push-by-digest=true,name-canonical=true,push=true
+
+      - name: Export digest
+        run: |
+          set -eux
+          tee "${{ runner.temp }}/docker-bake-metada.json" <<'EOF'
+          ${{ steps.docker-bake.outputs.metadata }}
+          EOF
+          for target in devcontainer jenkins-agent-dind; do
+            mkdir -p "${{ runner.temp }}/digests/${target}"
+            digest="$(jq -er --arg t "$target" '.[$t]["containerimage.digest"]' "${{ runner.temp }}/docker-bake-metada.json")"
+            touch "${{ runner.temp }}/digests/${target}/${digest#sha256:}"
+          done
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ matrix.runner }}
+          path: ${{ runner.temp }}/digests/**/*
+          if-no-files-found: error
+          retention-days: 1
+
+  finish:
+    needs:
+      - build
+
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download meta bake definition
+        uses: actions/download-artifact@v4
+        with:
+          name: docker-bake-meta
+          path: ${{ runner.temp }}
+
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create manifest list and push
+        run: |
+          set -eux
+          for target in devcontainer jenkins-agent-dind; do
+            image="ghcr.io/${{ github.repository_owner }}/${target}"
+            tag_args="$(jq -cer --arg t "${target}" '.target[$t].tags | map("-t " + .) | join(" ")' "${{ runner.temp }}/bake-meta-${target}.json")"
+            cd "${{ runner.temp }}/digests/${target}"
+            digest_args="$(printf "${image}@sha256:%s " *)"
+            cd -
+            docker buildx imagetools create ${tag_args} ${digest_args}
+          done
+
+      - name: Inspect image
+        run: |
+          set -eux
+          for target in devcontainer jenkins-agent-dind; do
+            image="ghcr.io/${{ github.repository_owner }}/${target}"
+            version="$(jq -er --arg t "${target}" '.target[$t].args.DOCKER_META_VERSION' "${{ runner.temp }}/bake-meta-${target}.json")"
+            docker buildx imagetools inspect "${image}:${version}"
+          done
