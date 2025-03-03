@@ -33,8 +33,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
-          # https://github.com/docker/buildx/issues/3038
-          version: v0.20.1
           # Needed for jenkins-agent-dind/test.sh
           driver-opts: network=host
 
@@ -72,9 +70,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          # https://github.com/docker/buildx/issues/3038
-          version: v0.20.1
 
       - name: Docker meta (devcontainer)
         id: docker-meta-devcontainer
