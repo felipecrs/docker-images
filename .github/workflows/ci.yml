@@ -18,13 +18,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build:
+        target:
           - arch: amd64
             runner: ubuntu-24.04
           - arch: arm64
             runner: ubuntu-24.04-arm
 
-    runs-on: ${{ matrix.build.runner }}
+    name: build (${{ matrix.target.arch }})
+    runs-on: ${{ matrix.target.runner }}
 
     steps:
       - name: Checkout
@@ -43,10 +44,10 @@ jobs:
         with:
           source: .
           set: |
-            devcontainer.cache-from=type=gha,scope=devcontainer-${{ matrix.build.arch }}
-            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-${{ matrix.build.arch }}
-            devcontainer.cache-to=type=gha,scope=devcontainer-${{ matrix.build.arch }},mode=max
-            jenkins-agent-dind.cache-to=type=gha,scope=jenkins-agent-dind-${{ matrix.build.arch }},mode=max
+            devcontainer.cache-from=type=gha,scope=devcontainer-${{ matrix.target.arch }}
+            jenkins-agent-dind.cache-from=type=gha,scope=jenkins-agent-dind-${{ matrix.target.arch }}
+            devcontainer.cache-to=type=gha,scope=devcontainer-${{ matrix.target.arch }},mode=max
+            jenkins-agent-dind.cache-to=type=gha,scope=jenkins-agent-dind-${{ matrix.target.arch }},mode=max
           load: true
 
       - name: Test
