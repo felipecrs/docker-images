@@ -8,7 +8,7 @@ export CI=true
 # renovate: datasource=github-releases depName=node packageName=nodejs/node
 node_version="22.14.0"
 # renovate: datasource=github-releases depName=npm packageName=npm/cli
-npm_version="11.2.0"
+npm_version="11.3.0"
 # renovate: datasource=github-releases depName=k3d packageName=k3d-io/k3d
 k3d_version="5.8.3"
 # renovate: datasource=github-releases depName=helmfile packageName=helmfile/helmfile
