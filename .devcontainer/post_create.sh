@@ -8,13 +8,13 @@ export CI=true
 # renovate: datasource=github-releases depName=node packageName=nodejs/node
 node_version="22.14.0"
 # renovate: datasource=github-releases depName=npm packageName=npm/cli
-npm_version="11.2.0"
+npm_version="11.3.0"
 # renovate: datasource=github-releases depName=k3d packageName=k3d-io/k3d
 k3d_version="5.8.3"
 # renovate: datasource=github-releases depName=helmfile packageName=helmfile/helmfile
 helmfile_version="0.171.0"
 # renovate: datasource=github-releases depName=werf packageName=werf/werf
-werf_version="2.32.2"
+werf_version="2.35.1"
 # renovate: datasource=github-tags depName=kubectl packageName=kubernetes/kubectl extractVersion=^kubernetes-(?<version>.*)$
 kubectl_version="1.32.3"
 # renovate: datasource=github-releases depName=yq packageName=mikefarah/yq

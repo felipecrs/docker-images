@@ -1,8 +1,8 @@
 # renovate: datasource=github-releases depName=jenkins-docker-agent packageName=jenkinsci/docker-agent versioning=loose
-ARG JENKINS_AGENT_VERSION="3291.vb_131b_dc231fa_-1"
+ARG JENKINS_AGENT_VERSION="3301.v4363ddcca_4e7-3"
 
 
-FROM ubuntu:noble-20250127 AS ubuntu
+FROM ubuntu:noble-20250404 AS ubuntu
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
