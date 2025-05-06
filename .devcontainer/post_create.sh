@@ -5,8 +5,8 @@ set -eu
 # quiets the output a little
 export CI=true
 
-# renovate: datasource=github-releases depName=node packageName=nodejs/node
-node_version="22.15.0"
+# renovate: datasource=node-version depName=node
+node_version="22.13.0"
 # renovate: datasource=github-releases depName=npm packageName=npm/cli
 npm_version="11.3.0"
 # renovate: datasource=github-releases depName=k3d packageName=k3d-io/k3d
