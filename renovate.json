@@ -1,23 +1,28 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended"
+  ],
   "dependencyDashboard": true,
   "packageRules": [
     {
       "description": "Automerge non-major updates",
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "automerge": true
     }
   ],
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "^.devcontainer/post_create.sh$",
-        "^devcontainer/scripts/prepare_image.sh$",
-        "^devcontainer/scripts/prepare_user.sh$",
-        "^jenkins-agent-dind/test.sh$",
-        "^Dockerfile$"
+      "managerFilePatterns": [
+        "/^.devcontainer/post_create.sh$/",
+        "/^devcontainer/scripts/prepare_image.sh$/",
+        "/^devcontainer/scripts/prepare_user.sh$/",
+        "/^jenkins-agent-dind/test.sh$/",
+        "/^Dockerfile$/"
       ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>[a-z-.]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[^\\s]+?))?(?: extractVersion=(?<extractVersion>[^\\s]+?))?(?: registryUrl=(?<registryUrl>[^\\s]+?))?\\s(?:ENV |ARG |local )?.+?_(?:VERSION|version)[ =]\"?(?<currentValue>.+?)\"?\\s"
