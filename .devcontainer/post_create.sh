@@ -6,7 +6,7 @@ set -eu
 export CI=true
 
 # renovate: datasource=node-version depName=node
-node_version="22.15.1"
+node_version="22.16.0"
 # renovate: datasource=github-releases depName=npm packageName=npm/cli
 npm_version="11.4.1"
 # renovate: datasource=github-releases depName=k3d packageName=k3d-io/k3d
