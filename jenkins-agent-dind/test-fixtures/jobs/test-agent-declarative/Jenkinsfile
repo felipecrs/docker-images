@@ -26,8 +26,7 @@ pipeline {
                     steps {
                         sh 'printenv | sort | tee /dev/stderr | grep -q ^USER='
                         sh 'docker version'
-                        // TODO: fix this test on arm64
-                        sh 'if [ "$(uname -m)" = "x86_64" ]; then export IGNORE_FAILURE=false; fi; /ssh-command/get.sh'
+                        sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
                     }
                 }
                 stage ('nested dond') {
@@ -41,8 +40,7 @@ pipeline {
                     steps {
                         sh 'printenv | sort | tee /dev/stderr | grep -q ^USER='
                         sh 'docker version'
-                        // TODO: fix this test on arm64
-                        sh 'if [ "$(uname -m)" = "x86_64" ]; then export IGNORE_FAILURE=false; fi; /ssh-command/get.sh'
+                        sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
                     }
                 }
                 stage ('nested dind') {
@@ -56,8 +54,7 @@ pipeline {
                     steps {
                         sh 'docker version'
                         sh 'printenv | sort | tee /dev/stderr | grep -q ^USER='
-                        // TODO: fix this test on arm64
-                        sh 'if [ "$(uname -m)" = "x86_64" ]; then export IGNORE_FAILURE=false; fi; /ssh-command/get.sh'
+                        sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
                     }
                 }
                 stage ('volta') {
