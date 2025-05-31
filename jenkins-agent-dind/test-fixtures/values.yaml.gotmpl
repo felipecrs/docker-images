@@ -76,7 +76,7 @@ controller:
                   cps {
                     sandbox()
                     script('''\
-                      {{- readFile "jobs/test-agent-declarative/Jenkinsfile" | nindent 30 }}
+                      {{- readFile "jobs/test-agent-declarative/Jenkinsfile" | replace "\\" "\\\\" | replace "'''" "\\'''" | nindent 30 }}
                       '''.stripIndent())
                   }
                 }
@@ -87,7 +87,7 @@ controller:
                   cps {
                     sandbox()
                     script('''\
-                      {{- readFile "jobs/test-agent-scripted/Jenkinsfile" | nindent 30 }}
+                      {{- readFile "jobs/test-agent-scripted/Jenkinsfile" | replace "\\" "\\\\" | replace "'''" "\\'''" | nindent 30 }}
                       '''.stripIndent())
                   }
                 }

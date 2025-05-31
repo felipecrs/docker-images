@@ -61,7 +61,7 @@ pipeline {
                     steps {
                         sh 'docker compose version'
                         sh 'docker-compose version'
-                        writeFile('docker-compose.yml', '''\
+                        writeFile file: 'docker-compose.yaml', text: '''\
                             services:
                                 service1:
                                     image: test1
@@ -74,15 +74,16 @@ pipeline {
                                 service2:
                                     depends_on:
                                         service1:
-                                            condition: service_completed_successfully
+                                          condition: service_completed_successfully
                                     image: busybox
                                     pull_policy: always
                                     command:
                                         - sh
                                         - -c
                                         - exit 123
-                            ''').stripIndent()
-                        sh 'set +e; docker compose up --wait --exit-code-from service2; test $? -eq 123'
+                            '''.stripIndent()
+                        sh 'cat docker-compose.yaml'
+                        sh 'set +e; docker compose up --exit-code-from service2; test $? -eq 123'
                     }
                 }
                 stage ('volta') {
