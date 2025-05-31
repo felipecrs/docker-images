@@ -57,6 +57,34 @@ pipeline {
                         sh 'IGNORE_FAILURE=false /ssh-command/get.sh'
                     }
                 }
+                stage ('docker compose') {
+                    steps {
+                        sh 'docker compose version'
+                        sh 'docker-compose version'
+                        writeFile('docker-compose.yml', """\
+                            services:
+                                service1:
+                                    image: test1
+                                    pull_policy: build
+                                    build:
+                                        dockerfile_inline: FROM busybox
+                                    command:
+                                        - echo
+                                        - service 1 success
+                                service2:
+                                    depends_on:
+                                        service1:
+                                            condition: service_completed_successfully
+                                    image: busybox
+                                    pull_policy: always
+                                    command:
+                                        - sh
+                                        - -c
+                                        - exit 123
+                            """).stripIndent()
+                        sh 'set +e; docker compose up --wait --exit-code-from service2; test $? -eq 123'
+                    }
+                }
                 stage ('volta') {
                     steps {
                         retry(3) {
