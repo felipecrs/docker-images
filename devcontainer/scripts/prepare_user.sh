@@ -42,6 +42,9 @@ chown "${USER}:${USER}" "${HOME}/.bashrc"
 VOLTA_VERSION="2.0.2"
 sudo -u "${USER}" pkgx install "volta.sh@${VOLTA_VERSION}"
 
+# avoids ~/.docker being owned by root when mounting like ~/.docker/buildx
+sudo -u "${USER}" mkdir -p "${HOME}/.docker"
+
 # cleanup
 sudo -u "${USER}" rm -rf "${HOME}/.pkgx" "${HOME}/.cache/pkgx" "${HOME}/.local/share/pkgx"
 
