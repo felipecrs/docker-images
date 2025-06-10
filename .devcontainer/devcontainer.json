@@ -22,7 +22,8 @@
         "docker.docker",
         "exiasr.hadolint",
         "github.vscode-github-actions",
-        "ms-kubernetes-tools.vscode-kubernetes-tools"
+        "ms-kubernetes-tools.vscode-kubernetes-tools",
+        "tim-koehler.helm-intellisense"
       ]
     }
   }
