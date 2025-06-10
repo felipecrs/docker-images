@@ -4,8 +4,9 @@ agent:
   image:
     repository: jenkins-agent-dind-test-registry:5000/jenkins-agent-dind
     tag: latest
-  alwaysPullImage: false
+  alwaysPullImage: true
   args: ""
+  websocket: true
   resources:
     requests:
       cpu: "2"
@@ -61,13 +62,28 @@ controller:
     registry: jenkins-agent-dind-test-registry:5000
     repository: jenkins
     tag: latest
+    pullPolicy: Always
   installPlugins: false
   sidecars:
     configAutoReload:
       enabled: false
+  jenkinsUrl: '{{ requiredEnv "JENKINS_URL" }}'
+  jenkinsUriPrefix: '{{ requiredEnv "JENKINS_PREFIX" }}'
+  ingress:
+    enabled: true
+    hostName: '{{ requiredEnv "INGRESS_HOST" }}'
+    path: '{{ requiredEnv "JENKINS_PREFIX" }}'
+  agentListenerEnabled: false
   JCasC:
     authorizationStrategy: unsecured
     configScripts:
+      jenkins: |
+        appearance:
+          locale:
+            systemLocale: en
+            ignoreAcceptLanguage: true
+          themeManager:
+            theme: darkSystem
       jobs: |
         jobs:
           - script: >

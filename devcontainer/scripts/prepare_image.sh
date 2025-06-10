@@ -119,7 +119,7 @@ echo 'dockremap:165536:65536' | tee -a /etc/subgid
 
 # install dind hack
 # https://github.com/moby/moby/commits/master/hack/dind
-DIND_COMMIT="c43aa0b6aa7c88343f0951ba9a39c69aa51c54ef"
+DIND_COMMIT="8d9e3502aba39127e4d12196dae16d306f76993d"
 ${CURL} "https://github.com/moby/moby/raw/${DIND_COMMIT}/hack/dind" \
     -o /usr/local/bin/dind
 chmod +x /usr/local/bin/dind
