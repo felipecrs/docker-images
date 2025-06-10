@@ -1,6 +1,7 @@
 persistence:
   enabled: true
 agent:
+  containerCap: 1
   image:
     repository: jenkins-agent-dind-test-registry:5000/jenkins-agent-dind
     tag: latest
@@ -85,6 +86,31 @@ controller:
             ignoreAcceptLanguage: true
           themeManager:
             theme: darkSystem
+        unclassified:
+          prioritySorterConfiguration:
+            strategy:
+              absoluteStrategy:
+                defaultPriority: 2
+                numberOfPriorities: 2
+          priorityConfiguration:
+            jobGroups:
+              - description: highest priority
+                id: 0
+                priority: 1
+                jobGroupStrategy:
+                  viewBased:
+                    viewName: all
+                    useJobFilter: true
+                    jobPattern: "^test-agent-declarative$"
+              - description: lowest priority
+                id: 1
+                # https://issues.jenkins.io/browse/JENKINS-72401?focusedId=454953&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-454953
+                priority: 2
+                jobGroupStrategy:
+                  viewBased:
+                    viewName: all
+                    useJobFilter: true
+                    jobPattern: "^test-agent-scripted$"
       jobs: |
         jobs:
           - script: >

@@ -18,4 +18,5 @@ RUN jenkins-plugin-cli --plugins \
     pipeline-graph-view \
     saferestart \
     dark-theme \
-    locale
+    locale \
+    PrioritySorter:863.v4a_b_974a_5d042
