@@ -74,6 +74,7 @@ controller:
     hostName: '{{ requiredEnv "INGRESS_HOST" }}'
     path: '{{ requiredEnv "JENKINS_PREFIX" }}'
   agentListenerEnabled: false
+  executorMode: EXCLUSIVE
   JCasC:
     authorizationStrategy: unsecured
     configScripts:
