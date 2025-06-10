@@ -17,4 +17,5 @@ RUN jenkins-plugin-cli --plugins \
     "ansicolor:${ANSICOLOR_VERSION}" \
     pipeline-graph-view \
     dark-theme \
-    locale
+    locale \
+    PrioritySorter:863.v4a_b_974a_5d042
