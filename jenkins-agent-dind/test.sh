@@ -17,7 +17,6 @@ fi
 
 if ! k3d cluster get jenkins-agent-dind-test; then
     k3d cluster create jenkins-agent-dind-test \
-        --agents 3 \
         --registry-create jenkins-agent-dind-test-registry:0.0.0.0:15432 \
         --port 80:80@loadbalancer
 fi
