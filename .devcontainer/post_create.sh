@@ -19,7 +19,7 @@ werf_version="2.37.1"
 kubectl_version="1.33.1"
 # renovate: datasource=github-releases depName=yq packageName=mikefarah/yq
 yq_version="4.45.4"
-# renovate: datasource=github-tags depName=devcontainers/cli
+# renovate: datasource=npm depName=@devcontainers/cli
 devcontainers_version="0.77.0"
 
 # hadolint and act are not part of any pipeline, there's no point in updating

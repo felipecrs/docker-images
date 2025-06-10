@@ -8,4 +8,4 @@ releases:
   - name: jenkins
     chart: ./jenkins/
     values:
-      - values.yaml.gotmpl
+      - jenkins.values.yaml.gotmpl
