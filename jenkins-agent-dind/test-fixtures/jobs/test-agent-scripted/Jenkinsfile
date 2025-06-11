@@ -1,23 +1,33 @@
 timeout(time: 10, unit: 'MINUTES') {
     node {
-        // docker can only pull from insecure registries at localhost by default
+        stage('Prepare') {
+            // docker can only pull from insecure registries at localhost by default
         sh 'docker run --name socat -d --network=host alpine/socat tcp-listen:15432,reuseaddr,fork tcp:jenkins-agent-dind-test-registry:5000'
-        
-        sh 'pkgx +java@17 mvn@3 -ntp archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-simple -DarchetypeVersion=1.4 -DgroupId=test -DartifactId=test -Dversion=1.0-SNAPSHOT -DinteractiveMode=false'
+        }
 
-        dir('test') {
-            sh 'pkgx +java@17 mvn@3 -ntp clean package'
+        stage('Generate Maven project') {
+            sh 'pkgx +java@17 mvn@3 -ntp archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-simple -DarchetypeVersion=1.4 -DgroupId=test -DartifactId=test -Dversion=1.0-SNAPSHOT -DinteractiveMode=false'
+        }
 
+        stage('Check Docker on Docker') {
             docker.image('localhost:15432/jenkins-agent-dind:latest')
                 .inside('--volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host') {
                 // depending on the system, dond binary relocation can take some ms
                 sh 'sleep 1s'
                 sh 'docker version'
             }
+        }
 
-            docker.image('localhost:15432/jenkins-agent-dind:latest')
-                .inside('--volume=/home/jenkins/.pkgx:/home/jenkins/.pkgx --volume=/home/jenkins/.m2:/home/jenkins/.m2 --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host') {
-                sh 'pkgx +java@17 mvn@3 -o clean package'
+        dir('test') {
+            stage('Build Maven') {
+                sh 'pkgx +java@17 mvn@3 -ntp clean package'
+            }
+
+            stage('Build Maven through Docker on Docker') {
+                docker.image('localhost:15432/jenkins-agent-dind:latest')
+                    .inside('--volume=/home/jenkins/.pkgx:/home/jenkins/.pkgx --volume=/home/jenkins/.m2:/home/jenkins/.m2 --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host') {
+                    sh 'pkgx +java@17 mvn@3 -o clean package'
+                }
             }
         }
     }
