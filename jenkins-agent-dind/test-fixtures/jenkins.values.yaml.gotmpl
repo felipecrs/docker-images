@@ -88,7 +88,9 @@ controller:
       jobs: |
         jobs:
           - script: >
-              pipelineJob('test-agent-declarative') {
+              folder('test-agent')
+          - script: >
+              pipelineJob('test-agent/declarative') {
                 definition {
                   cps {
                     sandbox()
@@ -99,7 +101,7 @@ controller:
                 }
               }
           - script: >
-              pipelineJob('test-agent-scripted') {
+              pipelineJob('test-agent/scripted') {
                 definition {
                   cps {
                     sandbox()

@@ -101,5 +101,5 @@ parallel_cmd=(parallel --line-buffer --tag --halt 'now,fail=1')
 
 if [[ "${SKIP_BUILDS:-false}" == false ]]; then
     "${parallel_cmd[@]}" -- \
-        build_jenkins_job ::: test-agent-declarative test-agent-scripted
+        build_jenkins_job ::: test-agent/declarative test-agent/scripted
 fi
