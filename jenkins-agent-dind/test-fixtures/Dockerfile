@@ -16,5 +16,6 @@ RUN jenkins-plugin-cli --plugins \
     "docker-workflow:${DOCKER_PIPELINE_VERSION}" \
     "ansicolor:${ANSICOLOR_VERSION}" \
     pipeline-graph-view \
+    saferestart \
     dark-theme \
     locale
