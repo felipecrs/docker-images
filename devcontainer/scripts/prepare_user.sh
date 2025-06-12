@@ -45,6 +45,10 @@ sudo -u "${USER}" pkgx install "volta.sh@${VOLTA_VERSION}"
 # avoids ~/.docker being owned by root when mounting like ~/.docker/buildx
 sudo -u "${USER}" mkdir -p "${HOME}/.docker"
 
+# avoids /workspace being owned by root when VS Code mounts the repository into it
+mkdir -p /workspace
+chown "${USER}:${USER}" /workspace
+
 # cleanup
 sudo -u "${USER}" rm -rf "${HOME}/.pkgx" "${HOME}/.cache/pkgx" "${HOME}/.local/share/pkgx"
 
