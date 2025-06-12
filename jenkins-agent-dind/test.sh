@@ -16,6 +16,7 @@ if [[ "${CLEAN:-false}" == true ]]; then
 fi
 
 if k3d cluster get jenkins-agent-dind-test; then
+    k3d cluster start jenkins-agent-dind-test
     k3d kubeconfig merge jenkins-agent-dind-test --kubeconfig-merge-default
 else
     k3d cluster create jenkins-agent-dind-test --port 80:80@loadbalancer \
