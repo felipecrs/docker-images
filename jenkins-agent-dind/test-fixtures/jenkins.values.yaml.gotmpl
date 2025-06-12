@@ -99,18 +99,14 @@ controller:
                 priority: 1
                 jobGroupStrategy:
                   viewBased:
-                    viewName: all
-                    useJobFilter: true
-                    jobPattern: "^test-agent-declarative$"
+                    viewName: declarative
               - description: lowest priority
                 id: 1
                 # https://issues.jenkins.io/browse/JENKINS-72401?focusedId=454953&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-454953
                 priority: 2
                 jobGroupStrategy:
                   viewBased:
-                    viewName: all
-                    useJobFilter: true
-                    jobPattern: "^test-agent-scripted$"
+                    viewName: scripted
       jobs: |
         jobs:
           - script: >
@@ -135,5 +131,25 @@ controller:
                       {{- readFile "jobs/test-agent-scripted/Jenkinsfile" | replace "\\" "\\\\" | replace "'''" "\\'''" | nindent 30 }}
                       '''.stripIndent())
                   }
+                }
+              }
+          - script: >
+              listView('declarative') {
+                jobs {
+                  recurse()
+                  regex('^test-agent/declarative$')
+                }
+                columns {
+                  name()
+                }
+              }
+          - script: >
+              listView('scripted') {
+                jobs {
+                  recurse()
+                  regex('^test-agent/scripted$')
+                }
+                columns {
+                  name()
                 }
               }
