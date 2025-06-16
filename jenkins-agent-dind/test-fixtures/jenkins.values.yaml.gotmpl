@@ -27,7 +27,8 @@ agent:
       # the agent will connect to jenkins using the k8s svc name
       # dnsPolicy: Default
       restartPolicy: Never
-      terminationGracePeriodSeconds: 30
+      # 120s for finish-tasks, 30s for the rest
+      terminationGracePeriodSeconds: 150
       containers:
         - name: jnlp
           env:

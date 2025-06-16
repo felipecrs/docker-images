@@ -49,6 +49,10 @@ sudo -u "${USER}" mkdir -p "${HOME}/.docker"
 mkdir -p /workspace
 chown "${USER}:${USER}" /workspace
 
+# allows to run tasks at the end of the container initialization
+mkdir -p /finish-tasks.d
+chown "${USER}:${USER}" /finish-tasks.d
+
 # cleanup
 sudo -u "${USER}" rm -rf "${HOME}/.pkgx" "${HOME}/.cache/pkgx" "${HOME}/.local/share/pkgx"
 

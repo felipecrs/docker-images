@@ -82,7 +82,8 @@ spec:
   enableServiceLinks: false
   dnsPolicy: Default
   restartPolicy: Never
-  terminationGracePeriodSeconds: 30
+  # 120s for finish-tasks, 30s for the rest
+  terminationGracePeriodSeconds: 150
   volumes:
     - name: workspace-volume
       emptyDir: {}
@@ -223,7 +224,8 @@ spec:
   automountServiceAccountToken: false
   enableServiceLinks: false
   restartPolicy: Never
-  terminationGracePeriodSeconds: 30
+  # 120s for finish-tasks, 30s for the rest
+  terminationGracePeriodSeconds: 150
   volumes:
     - name: workspace-volume
       emptyDir: {}

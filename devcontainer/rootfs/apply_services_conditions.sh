@@ -13,6 +13,7 @@ for service_dir in "/etc/s6-overlay/s6-rc.d/"*; do
         if "${service_dir}/condition.sh"; then
             service_name="$(basename "${service_dir}")"
             touch "/etc/s6-overlay/s6-rc.d/user/contents.d/${service_name}"
+            touch "/etc/s6-overlay/s6-rc.d/finish-tasks-handler/dependencies.d/${service_name}"
         fi
     fi
 done
