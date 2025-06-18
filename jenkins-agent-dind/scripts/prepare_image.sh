@@ -4,8 +4,10 @@ set -euxo pipefail
 
 shopt -s inherit_errexit
 
-mkdir -p "${AGENT_WORKDIR?}"
-chown -R "${USER?}:${USER}" "${AGENT_WORKDIR}"
+sudo -u "${USER}" mkdir -p "${AGENT_WORKDIR?}"
+
+# avoids ~/.m2 being owned by root when mounting in containers
+sudo -u "${USER}" mkdir -p "${HOME}/.m2"
 
 new_json=$(jq --arg d "${AGENT_WORKDIR}/docker" '.["data-root"] = $d' /etc/docker/daemon.json)
 echo "${new_json}" | tee /etc/docker/daemon.json
