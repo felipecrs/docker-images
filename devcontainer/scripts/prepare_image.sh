@@ -98,7 +98,7 @@ packages=(
     "docker-ce-cli=5:${DOCKER_VERSION}-*"
     containerd.io
     docker-buildx-plugin
-    docker-compose-plugin="2.35.1-*" # https://github.com/docker/compose/issues/12892
+    docker-compose-plugin
 )
 
 ${APT_GET_INSTALL} "${packages[@]}"
