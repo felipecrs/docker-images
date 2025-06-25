@@ -55,8 +55,14 @@ echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/docker.gpg] https://dow
 # install apt packages
 ${APT_GET} update
 
-# renovate: datasource=github-releases depName=docker packageName=moby/moby
+# renovate: datasource=deb depName=docker packageName=docker-ce extractVersion=^5:(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
 DOCKER_VERSION="28.2.2"
+# renovate: datasource=deb depName=containerd packageName=containerd.io extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
+CONTAINERD_VERSION="1.7.27"
+# renovate: datasource=deb depName=docker-buildx packageName=docker-buildx-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
+DOCKER_BUILDX_VERSION="0.24.0"
+# renovate: datasource=deb depName=docker-compose packageName=docker-compose-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
+DOCKER_COMPOSE_VERSION="2.36.2"
 
 packages=(
     build-essential
@@ -96,9 +102,9 @@ packages=(
     # docker
     "docker-ce=5:${DOCKER_VERSION}-*"
     "docker-ce-cli=5:${DOCKER_VERSION}-*"
-    containerd.io
-    docker-buildx-plugin
-    docker-compose-plugin
+    "containerd.io=${CONTAINERD_VERSION}-*"
+    "docker-buildx-plugin=${DOCKER_BUILDX_VERSION}-*"
+    "docker-compose-plugin=${DOCKER_COMPOSE_VERSION}-*"
 )
 
 ${APT_GET_INSTALL} "${packages[@]}"
@@ -119,8 +125,7 @@ echo 'dockremap:165536:65536' | tee -a /etc/subgid
 
 # install dind hack
 # https://github.com/moby/moby/commits/master/hack/dind
-DIND_COMMIT="8d9e3502aba39127e4d12196dae16d306f76993d"
-${CURL} "https://github.com/moby/moby/raw/${DIND_COMMIT}/hack/dind" \
+${CURL} "https://github.com/moby/moby/raw/v${DOCKER_VERSION}/hack/dind" \
     -o /usr/local/bin/dind
 chmod +x /usr/local/bin/dind
 

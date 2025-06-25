@@ -7,6 +7,15 @@
       "description": "Automerge non-major updates",
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
+    },
+    {
+      "groupName": "docker",
+      "matchPackageNames": [
+        "docker",
+        "containerd",
+        "docker-buildx",
+        "docker-compose"
+      ]
     }
   ],
   "customManagers": [
