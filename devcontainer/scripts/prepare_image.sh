@@ -56,7 +56,7 @@ echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/docker.gpg] https://dow
 ${APT_GET} update
 
 # renovate: datasource=deb depName=docker packageName=docker-ce extractVersion=^5:(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
-DOCKER_VERSION="28.2.2"
+DOCKER_VERSION="28.3.0"
 # renovate: datasource=deb depName=containerd packageName=containerd.io extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
 CONTAINERD_VERSION="1.7.27"
 # renovate: datasource=deb depName=docker-buildx packageName=docker-buildx-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
