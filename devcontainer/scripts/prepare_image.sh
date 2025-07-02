@@ -22,34 +22,27 @@ sed --in-place "/${LANG}/s/^# //g" /etc/locale.gen
 locale-gen
 
 ## apt repositories
-${APT_GET_INSTALL} \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release
+${APT_GET_INSTALL} ca-certificates curl
 
-VERSION_CODENAME=$(lsb_release -cs)
+# shellcheck source=/dev/null
+VERSION_CODENAME=$(. /etc/os-release && echo "${VERSION_CODENAME?}")
 DPKG_ARCH=$(dpkg --print-architecture)
 UNAME_ARCH=$(uname -m)
 readonly VERSION_CODENAME DPKG_ARCH UNAME_ARCH
 
 # git
-${CURL} "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xF911AB184317630C59970973E363C90F8F1B6217" |
-    gpg --dearmor -o /etc/apt/keyrings/git-core-ppa.gpg
-echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/git-core-ppa.gpg] http://ppa.launchpad.net/git-core/ppa/ubuntu ${VERSION_CODENAME} main" |
+${CURL} "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xF911AB184317630C59970973E363C90F8F1B6217" -o /etc/apt/keyrings/git-core-ppa.asc
+echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/git-core-ppa.asc] http://ppa.launchpad.net/git-core/ppa/ubuntu ${VERSION_CODENAME} main" |
     tee /etc/apt/sources.list.d/git-core-ppa.list
 
 # git-lfs
-${CURL} https://packagecloud.io/github/git-lfs/gpgkey |
-    gpg --dearmor -o /etc/apt/keyrings/git-lfs.gpg
-echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/git-lfs.gpg] https://packagecloud.io/github/git-lfs/ubuntu/ ${VERSION_CODENAME} main" |
+${CURL} https://packagecloud.io/github/git-lfs/gpgkey -o /etc/apt/keyrings/git-lfs.asc
+echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/git-lfs.asc] https://packagecloud.io/github/git-lfs/ubuntu/ ${VERSION_CODENAME} main" |
     tee /etc/apt/sources.list.d/git-lfs.list
 
 # docker
-${CURL} https://download.docker.com/linux/ubuntu/gpg |
-    gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu ${VERSION_CODENAME} stable" |
+${CURL} https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu ${VERSION_CODENAME} stable" |
     tee /etc/apt/sources.list.d/docker.list
 
 # install apt packages
@@ -65,6 +58,8 @@ DOCKER_BUILDX_VERSION="0.25.0"
 DOCKER_COMPOSE_VERSION="2.37.3"
 
 packages=(
+    gnupg
+    lsb-release
     build-essential
     git
     git-lfs
