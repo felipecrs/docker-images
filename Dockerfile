@@ -2,7 +2,7 @@
 ARG JENKINS_AGENT_VERSION="3324.vea_eda_e98cd69-2"
 
 
-FROM ubuntu:noble-20250619 AS ubuntu
+FROM ubuntu:noble-20250714 AS ubuntu
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
