@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# For backwards compatibility with pkgx v1
+# shellcheck disable=SC2249
+case "${1}" in
+"install" | "uninstall")
+    exec pkgs "${@}"
+    ;;
+esac
+
+exec pkgx.orig "${@}"
