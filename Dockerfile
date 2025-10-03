@@ -1,5 +1,5 @@
 # renovate: datasource=github-releases depName=jenkins-docker-agent packageName=jenkinsci/docker-agent versioning=loose
-ARG JENKINS_AGENT_VERSION="3341.v0766d82b_dec0-3"
+ARG JENKINS_AGENT_VERSION="3341.v0766d82b_dec0-4"
 
 
 FROM ubuntu:noble-20250925 AS ubuntu
