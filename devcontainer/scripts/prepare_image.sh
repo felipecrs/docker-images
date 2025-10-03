@@ -53,7 +53,7 @@ DOCKER_VERSION="28.5.0"
 # renovate: datasource=deb depName=containerd packageName=containerd.io extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
 CONTAINERD_VERSION="1.7.28"
 # renovate: datasource=deb depName=docker-buildx packageName=docker-buildx-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
-DOCKER_BUILDX_VERSION="0.29.0"
+DOCKER_BUILDX_VERSION="0.29.1"
 # renovate: datasource=deb depName=docker-compose packageName=docker-compose-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
 DOCKER_COMPOSE_VERSION="2.39.4"
 
