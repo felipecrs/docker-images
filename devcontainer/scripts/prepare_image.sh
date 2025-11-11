@@ -120,7 +120,7 @@ echo 'dockremap:165536:65536' | tee -a /etc/subgid
 
 # install dind hack
 # https://github.com/moby/moby/commits/master/hack/dind
-${CURL} "https://github.com/moby/moby/raw/v${DOCKER_VERSION}/hack/dind" \
+${CURL} "https://github.com/moby/moby/raw/docker-v${DOCKER_VERSION}/hack/dind" \
     -o /usr/local/bin/dind
 chmod +x /usr/local/bin/dind
 
