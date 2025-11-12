@@ -14,7 +14,7 @@ k3d_version="5.8.3"
 # renovate: datasource=github-releases depName=helmfile packageName=helmfile/helmfile
 helmfile_version="1.1.9"
 # renovate: datasource=github-releases depName=werf packageName=werf/werf
-werf_version="2.53.1"
+werf_version="2.53.2"
 # renovate: datasource=github-tags depName=kubectl packageName=kubernetes/kubectl extractVersion=^kubernetes-(?<version>.*)$
 kubectl_version="1.34.1"
 # renovate: datasource=github-releases depName=yq packageName=mikefarah/yq
