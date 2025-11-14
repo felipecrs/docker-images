@@ -49,7 +49,7 @@ echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/docker.asc] https://dow
 ${APT_GET} update
 
 # renovate: datasource=deb depName=docker packageName=docker-ce extractVersion=^5:(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
-DOCKER_VERSION="28.5.2"
+DOCKER_VERSION="29.0.0"
 # renovate: datasource=deb depName=containerd packageName=containerd.io extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
 CONTAINERD_VERSION="2.1.5"
 # renovate: datasource=deb depName=docker-buildx packageName=docker-buildx-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
@@ -120,7 +120,7 @@ echo 'dockremap:165536:65536' | tee -a /etc/subgid
 
 # install dind hack
 # https://github.com/moby/moby/commits/master/hack/dind
-${CURL} "https://github.com/moby/moby/raw/v${DOCKER_VERSION}/hack/dind" \
+${CURL} "https://github.com/moby/moby/raw/docker-v${DOCKER_VERSION}/hack/dind" \
     -o /usr/local/bin/dind
 chmod +x /usr/local/bin/dind
 
