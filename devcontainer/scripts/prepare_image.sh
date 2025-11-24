@@ -89,6 +89,7 @@ packages=(
     xz-utils
     pigz
     # network debugging
+    socat
     net-tools
     iputils-ping
     traceroute
