@@ -93,8 +93,8 @@ jobs:
             type=ref,event=branch
             type=ref,event=pr
             type=sha,enable=${{ github.event_name == 'push' }},priority=9999
-            type=raw,value=2,enable=${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
-            type=raw,value=latest,enable=${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+            type=raw,value=2,enable={{ is_default_branch }}
+            type=raw,value=latest,enable={{ is_default_branch }}
 
       - name: Docker meta (jenkins-agent-dind)
         id: docker-meta-jenkins-agent-dind
@@ -117,8 +117,8 @@ jobs:
             type=ref,event=branch
             type=ref,event=pr
             type=sha,enable=${{ github.event_name == 'push' }},priority=9999
-            type=raw,value=2,enable=${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
-            type=raw,value=latest,enable=${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+            type=raw,value=2,enable={{ is_default_branch }}
+            type=raw,value=latest,enable={{ is_default_branch }}
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
