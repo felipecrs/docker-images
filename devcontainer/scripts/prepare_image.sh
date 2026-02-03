@@ -132,16 +132,15 @@ ${CURL} "https://github.com/kadwanev/retry/releases/download/${RETRY_VERSION}/re
     tar -C /usr/local/bin -xzf - retry
 
 # install pkgx
-# Using my fork until https://github.com/pkgxdev/pkgx/pull/1187 is merged and released
-# renovate: datasource=github-releases depName=pkgx packageName=felipecrs/pkgx
-PKGX_VERSION="2.8.0-felipecrs.0"
-${CURL} "https://github.com/felipecrs/pkgx/releases/download/v${PKGX_VERSION}/pkgx-linux-${DPKG_ARCH}" \
-    -o /usr/local/bin/pkgx.orig
-chmod +x /usr/local/bin/pkgx.orig
+# renovate: datasource=github-releases depName=pkgx packageName=pkgxdev/pkgx
+PKGX_VERSION="2.9.0"
+${CURL} "https://github.com/pkgxdev/pkgx/releases/download/v${PKGX_VERSION}/pkgx-${PKGX_VERSION}+linux+${UNAME_ARCH//_/-}.tar.xz" |
+    tar -C /tmp -xJf - pkgx
+mv -f /tmp/pkgx /usr/local/bin/pkgx.orig
 
 # install pkgs
 # https://github.com/felipecrs/dotfiles/commits/master/home/dot_local/bin/executable_pkgs
-PKGS_REVISION="eaa40dff3a02579e12ab9d84a7b018c899553bae"
+PKGS_REVISION="a514da4ae491f1aeaa5870612acae60ab2640b97"
 ${CURL} "https://github.com/felipecrs/dotfiles/raw/${PKGS_REVISION}/home/dot_local/bin/executable_pkgs" \
     -o /usr/local/bin/pkgs
 chmod +x /usr/local/bin/pkgs
