@@ -147,7 +147,7 @@ chmod +x /usr/local/bin/pkgs
 
 # install s6-overlay
 # renovate: datasource=github-releases depName=s6-overlay packageName=just-containers/s6-overlay versioning=loose
-S6_OVERLAY_VERSION="3.2.1.0"
+S6_OVERLAY_VERSION="3.2.2.0"
 ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" |
     tar -C / -Jxpf -
 ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${UNAME_ARCH}.tar.xz" |
