@@ -74,7 +74,7 @@ jobs:
 
       - name: Docker meta (devcontainer)
         id: docker-meta-devcontainer
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: index
         with:
@@ -98,7 +98,7 @@ jobs:
 
       - name: Docker meta (jenkins-agent-dind)
         id: docker-meta-jenkins-agent-dind
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         env:
           DOCKER_METADATA_ANNOTATIONS_LEVELS: index
         with:
