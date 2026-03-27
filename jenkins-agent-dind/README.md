@@ -37,9 +37,9 @@ docker run -it --rm --privileged ghcr.io/felipecrs/jenkins-agent-dind
 Alternatively, you can use the Docker on Docker mode:
 
 ```sh
-# --volume: shares the host's Docker socket with the container
+# --use-api-socket: shares the host's Docker socket with the container
 # --network=host: allows to access ports from other containers running on the host
-docker run -it --rm --volume=/var/run/docker.sock:/var/run/docker.sock --network=host \
+docker run -it --rm --use-api-socket --network=host \
   ghcr.io/felipecrs/jenkins-agent-dind
 ```
 
@@ -137,7 +137,7 @@ pipeline {
     docker {
       image 'ghcr.io/felipecrs/jenkins-agent-dind'
       alwaysPull true
-      args '--volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host'
+      args '--use-api-socket --group-add=docker --network=host'
     }
   }
   stages {
@@ -268,7 +268,7 @@ pipeline {
     docker {
       image 'ghcr.io/felipecrs/jenkins-agent-dind'
       alwaysPull true
-      args '--volume=/ssh-command:/ssh-command --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host'
+      args '--volume=/ssh-command:/ssh-command --use-api-socket --group-add=docker --network=host'
     }
   }
   options {
