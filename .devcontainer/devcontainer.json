@@ -6,6 +6,11 @@
   },
   "overrideCommand": false,
   "runArgs": ["--use-api-socket", "--network=host"],
+  "mounts": [
+    // TODO: Test if this is still needed with --use-api-socket
+    // This allows sharing the build cache when running in GitHub Actions
+    "source=${localEnv:HOME}/.docker/buildx,target=/home/devcontainer/.docker/buildx,type=bind"
+  ],
   "postCreateCommand": [".devcontainer/post_create.sh"],
   "customizations": {
     "vscode": {

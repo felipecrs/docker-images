@@ -25,7 +25,7 @@ timeout(time: 10, unit: 'MINUTES') {
 
             stage('Build Maven through Docker on Docker') {
                 docker.image('localhost:15432/jenkins-agent-dind:latest')
-                    .inside('--volume=/home/jenkins/.pkgx:/home/jenkins/.pkgx --volume=/home/jenkins/.m2:/home/jenkins/.m2 --use-api-socket --network=host') {
+                    .inside('--volume=/home/jenkins/.pkgx:/home/jenkins/.pkgx --volume=/home/jenkins/.m2:/home/jenkins/.m2 --use-api-socket --group-add=docker --network=host') {
                     sh 'pkgx +java@17 mvn@3 -o clean package'
                 }
             }
