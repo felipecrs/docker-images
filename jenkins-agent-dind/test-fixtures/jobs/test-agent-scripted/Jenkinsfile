@@ -11,7 +11,7 @@ timeout(time: 10, unit: 'MINUTES') {
 
         stage('Check Docker on Docker') {
             docker.image('localhost:15432/jenkins-agent-dind:latest')
-                .inside('--volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host') {
+                .inside('--use-api-socket --group-add=docker --network=host') {
                 // depending on the system, dond binary relocation can take some ms
                 sh 'sleep 1s'
                 sh 'docker version'
@@ -25,7 +25,7 @@ timeout(time: 10, unit: 'MINUTES') {
 
             stage('Build Maven through Docker on Docker') {
                 docker.image('localhost:15432/jenkins-agent-dind:latest')
-                    .inside('--volume=/home/jenkins/.pkgx:/home/jenkins/.pkgx --volume=/home/jenkins/.m2:/home/jenkins/.m2 --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host') {
+                    .inside('--volume=/home/jenkins/.pkgx:/home/jenkins/.pkgx --volume=/home/jenkins/.m2:/home/jenkins/.m2 --use-api-socket --group-add=docker --network=host') {
                     sh 'pkgx +java@17 mvn@3 -o clean package'
                 }
             }
