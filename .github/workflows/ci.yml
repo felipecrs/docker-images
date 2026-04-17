@@ -48,6 +48,10 @@ jobs:
             jenkins-agent-dind.cache-to=type=gha,scope=jenkins-agent-dind-${{ matrix.target.arch }},mode=max
           load: true
 
+      # TODO: Remove this before merging
+      - name: Print Docker version
+        run: docker version
+
       - name: Test
         uses: devcontainers/ci@v0.3
         with:

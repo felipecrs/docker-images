@@ -29,9 +29,9 @@ Spin this image in your terminal, if you want to play with it:
 ```sh
 # --rm: removes the container and its volumes after exiting
 # -it: allows to interact with the container
-# --volume: shares the host's Docker socket with the container
+# --use-api-socket: shares the host's Docker socket with the container
 # --network=host: allows to access ports from other containers running on the host
-docker run --rm -it --volume=/var/run/docker.sock:/var/run/docker.sock --network=host \
+docker run --rm -it --use-api-socket --network=host \
   ghcr.io/felipecrs/devcontainer
 ```
 
@@ -66,13 +66,10 @@ To use it as a **Docker on Docker** devcontainer:
 // .devcontainer/devcontainer.json
 {
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
   },
   "overrideCommand": false,
-  "mounts": [
-    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
-  ],
-  "runArgs": ["--network=host"]
+  "runArgs": ["--use-api-socket", "--network=host"],
 }
 ```
 
@@ -82,10 +79,10 @@ Or, to use it as a **Docker in Docker** devcontainer:
 // .devcontainer/devcontainer.json
 {
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
   },
   "overrideCommand": false,
-  "privileged": true
+  "privileged": true,
 }
 ```
 
@@ -124,7 +121,7 @@ pipeline {
       dir '.devcontainer'
       // --group-add=docker: is needed when using docker exec to run commands,
       // which is what Jenkins does when running as a Jenkinsfile docker agent
-      args '--volume=/var/run/docker.sock:/var/run/docker.sock --network=host --group-add=docker'
+      args '--use-api-socket --network=host --group-add=docker'
     }
   }
   stages {
