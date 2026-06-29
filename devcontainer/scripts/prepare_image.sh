@@ -35,11 +35,6 @@ ${CURL} "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xF911AB184317630
 echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/git-core-ppa.asc] http://ppa.launchpad.net/git-core/ppa/ubuntu ${VERSION_CODENAME} main" |
     tee /etc/apt/sources.list.d/git-core-ppa.list
 
-# git-lfs
-${CURL} https://packagecloud.io/github/git-lfs/gpgkey -o /etc/apt/keyrings/git-lfs.asc
-echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/git-lfs.asc] https://packagecloud.io/github/git-lfs/ubuntu/ ${VERSION_CODENAME} main" |
-    tee /etc/apt/sources.list.d/git-lfs.list
-
 # docker
 ${CURL} https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 echo "deb [arch=${DPKG_ARCH} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu ${VERSION_CODENAME} stable" |

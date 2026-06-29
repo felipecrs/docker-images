@@ -2,7 +2,7 @@
 ARG JENKINS_AGENT_VERSION="3355.v388858a_47b_33-19"
 
 
-FROM ubuntu:26.04 AS ubuntu
+FROM ubuntu:resolute-20260610 AS ubuntu
 
 SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
