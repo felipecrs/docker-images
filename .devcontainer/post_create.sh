@@ -8,11 +8,11 @@ export CI=true
 # renovate: datasource=node-version depName=node
 node_version="24.18.0"
 # renovate: datasource=github-releases depName=npm packageName=npm/cli
-npm_version="11.17.0"
+npm_version="11.18.0"
 # renovate: datasource=github-releases depName=k3d packageName=k3d-io/k3d
-k3d_version="5.8.3"
+k3d_version="5.9.0"
 # renovate: datasource=github-releases depName=helmfile packageName=helmfile/helmfile
-helmfile_version="1.4.4"
+helmfile_version="1.6.0"
 # renovate: datasource=github-releases depName=werf packageName=werf/werf
 werf_version="2.72.1"
 # renovate: datasource=github-tags depName=kubectl packageName=kubernetes/kubectl extractVersion=^kubernetes-(?<version>.*)$
@@ -20,7 +20,7 @@ kubectl_version="1.36.2"
 # renovate: datasource=github-releases depName=yq packageName=mikefarah/yq
 yq_version="4.53.3"
 # renovate: datasource=npm depName=@devcontainers/cli
-devcontainers_version="0.86.0"
+devcontainers_version="0.87.0"
 
 # hadolint and act are not part of any pipeline, there's no point in updating
 # them automatically

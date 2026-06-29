@@ -46,9 +46,9 @@ ${APT_GET} update
 # renovate: datasource=deb depName=docker packageName=docker-ce extractVersion=^5:(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
 DOCKER_VERSION="29.6.1"
 # renovate: datasource=deb depName=containerd packageName=containerd.io extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
-CONTAINERD_VERSION="2.2.3"
+CONTAINERD_VERSION="2.2.5"
 # renovate: datasource=deb depName=docker-buildx packageName=docker-buildx-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
-DOCKER_BUILDX_VERSION="0.33.0"
+DOCKER_BUILDX_VERSION="0.35.0"
 # renovate: datasource=deb depName=docker-compose packageName=docker-compose-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
 DOCKER_COMPOSE_VERSION="5.2.0"
 
@@ -142,7 +142,7 @@ chmod +x /usr/local/bin/pkgs
 
 # install s6-overlay
 # renovate: datasource=github-releases depName=s6-overlay packageName=just-containers/s6-overlay versioning=loose
-S6_OVERLAY_VERSION="3.2.2.0"
+S6_OVERLAY_VERSION="3.2.3.0"
 ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" |
     tar -C / -Jxpf -
 ${CURL} "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${UNAME_ARCH}.tar.xz" |
@@ -157,7 +157,7 @@ mv -f "${docker_path}" "${docker_path}.real"
 
 # install docker-on-docker-shim
 # renovate: datasource=github-releases depName=docker-on-docker-shim packageName=felipecrs/docker-on-docker-shim
-DOND_SHIM_VERSION="0.8.2"
+DOND_SHIM_VERSION="0.9.0"
 ${CURL} "https://github.com/felipecrs/docker-on-docker-shim/raw/v${DOND_SHIM_VERSION}/dond" \
     -o /usr/local/bin/dond
 chmod +x /usr/local/bin/dond
