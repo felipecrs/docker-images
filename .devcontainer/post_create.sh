@@ -10,7 +10,7 @@ node_version="24.18.0"
 # renovate: datasource=github-releases depName=npm packageName=npm/cli
 npm_version="11.17.0"
 # renovate: datasource=github-releases depName=k3d packageName=k3d-io/k3d
-k3d_version="5.8.3"
+k3d_version="5.9.0"
 # renovate: datasource=github-releases depName=helmfile packageName=helmfile/helmfile
 helmfile_version="1.4.4"
 # renovate: datasource=github-releases depName=werf packageName=werf/werf
