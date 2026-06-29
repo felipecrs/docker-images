@@ -1,4 +1,4 @@
-ARG JENKINS_VERSION="lts"
+ARG JENKINS_VERSION="lts-alpine-jdk21"
 
 FROM jenkins/jenkins:${JENKINS_VERSION}
 
