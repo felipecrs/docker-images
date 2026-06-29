@@ -6,7 +6,7 @@ timeout(time: 10, unit: 'MINUTES') {
         }
 
         stage('Generate Maven project') {
-            sh 'pkgx +java@17 mvn@3 -ntp archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-simple -DarchetypeVersion=1.4 -DgroupId=test -DartifactId=test -Dversion=1.0-SNAPSHOT -DinteractiveMode=false'
+            sh 'pkgx +openjdk.org@17 mvn@3 -ntp archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-simple -DarchetypeVersion=1.4 -DgroupId=test -DartifactId=test -Dversion=1.0-SNAPSHOT -DinteractiveMode=false'
         }
 
         stage('Check Docker on Docker') {
@@ -20,13 +20,13 @@ timeout(time: 10, unit: 'MINUTES') {
 
         dir('test') {
             stage('Build Maven') {
-                sh 'pkgx +java@17 mvn@3 -ntp clean package'
+                sh 'pkgx +openjdk.org@17 mvn@3 -ntp clean package'
             }
 
             stage('Build Maven through Docker on Docker') {
                 docker.image('localhost:15432/jenkins-agent-dind:latest')
                     .inside('--volume=/home/jenkins/.pkgx:/home/jenkins/.pkgx --volume=/home/jenkins/.m2:/home/jenkins/.m2 --volume=/var/run/docker.sock:/var/run/docker.sock --group-add=docker --network=host') {
-                    sh 'pkgx +java@17 mvn@3 -o clean package'
+                    sh 'pkgx +openjdk.org@17 mvn@3 -o clean package'
                 }
             }
         }

@@ -61,7 +61,7 @@ function prepare_jenkins() {
     cd "${SCRIPT_DIR}/test-fixtures"
 
     # renovate: datasource=github-releases depName=jenkins-helm-chart packageName=jenkinsci/helm-charts extractVersion=^jenkins-(?<version>.*)$
-    local jenkins_chart_version="5.9.8"
+    local jenkins_chart_version="5.9.29"
 
     rm -rf jenkins jenkins-*.tgz
     ./werf_as_helm.sh pull --untar \
@@ -82,14 +82,14 @@ function prepare_jenkins() {
     helmfile sync --enable-live-output
 
     kubectl exec jenkins-0 --container=jenkins -- \
-        curl -fsSL "http://127.0.0.1:8080${JENKINS_PREFIX}/jnlpJars/jenkins-cli.jar" --output /tmp/jenkins-cli.jar
+        curl -fsSL "${JENKINS_URL}/jnlpJars/jenkins-cli.jar" --output /tmp/jenkins-cli.jar
 }
 
 function build_jenkins_job() {
     set -eux
 
     kubectl exec jenkins-0 --container=jenkins -- \
-        java -jar /tmp/jenkins-cli.jar -s "http://127.0.0.1:8080${JENKINS_PREFIX}" \
+        java -jar /tmp/jenkins-cli.jar -s "${JENKINS_URL}" \
         build "${1}" -s -v -f
 }
 
