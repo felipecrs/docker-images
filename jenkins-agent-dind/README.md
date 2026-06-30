@@ -223,6 +223,7 @@ spec:
   hostNetwork: false
   automountServiceAccountToken: false
   enableServiceLinks: false
+  dnsPolicy: Default
   restartPolicy: Never
   # 120s for finish-tasks, 30s for the rest
   terminationGracePeriodSeconds: 150
