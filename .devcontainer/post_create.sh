@@ -18,7 +18,7 @@ werf_version="2.77.0"
 # renovate: datasource=github-tags depName=kubectl packageName=kubernetes/kubectl extractVersion=^kubernetes-(?<version>.*)$
 kubectl_version="1.36.3"
 # renovate: datasource=github-releases depName=yq packageName=mikefarah/yq
-yq_version="4.53.3"
+yq_version="4.53.4"
 # renovate: datasource=npm depName=@devcontainers/cli
 devcontainers_version="0.88.0"
 
