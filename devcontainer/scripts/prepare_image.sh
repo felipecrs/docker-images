@@ -50,7 +50,7 @@ CONTAINERD_VERSION="2.3.3"
 # renovate: datasource=deb depName=docker-buildx packageName=docker-buildx-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
 DOCKER_BUILDX_VERSION="0.36.1"
 # renovate: datasource=deb depName=docker-compose packageName=docker-compose-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
-DOCKER_COMPOSE_VERSION="5.4.0"
+DOCKER_COMPOSE_VERSION="5.5.0"
 
 packages=(
     gnupg
