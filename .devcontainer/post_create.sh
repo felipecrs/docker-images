@@ -20,7 +20,7 @@ kubectl_version="1.37.0"
 # renovate: datasource=github-releases depName=yq packageName=mikefarah/yq
 yq_version="4.53.6"
 # renovate: datasource=npm depName=@devcontainers/cli
-devcontainers_version="0.88.0"
+devcontainers_version="0.89.0"
 
 # hadolint and act are not part of any pipeline, there's no point in updating
 # them automatically
