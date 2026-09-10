@@ -46,7 +46,7 @@ ${APT_GET} update
 # renovate: datasource=deb depName=docker packageName=docker-ce extractVersion=^5:(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
 DOCKER_VERSION="29.8.0"
 # renovate: datasource=deb depName=containerd packageName=containerd.io extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
-CONTAINERD_VERSION="2.3.4"
+CONTAINERD_VERSION="2.3.5"
 # renovate: datasource=deb depName=docker-buildx packageName=docker-buildx-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
 DOCKER_BUILDX_VERSION="0.37.0"
 # renovate: datasource=deb depName=docker-compose packageName=docker-compose-plugin extractVersion=^(?<version>[0-9]+\.[0-9]+\.[0-9]+)-.+$ registryUrl=https://download.docker.com/linux/ubuntu?suite=noble&components=stable&binaryArch=amd64
