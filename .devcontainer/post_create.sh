@@ -16,7 +16,7 @@ helmfile_version="1.8.0"
 # renovate: datasource=github-releases depName=werf packageName=werf/werf
 werf_version="2.79.0"
 # renovate: datasource=github-tags depName=kubectl packageName=kubernetes/kubectl extractVersion=^kubernetes-(?<version>.*)$
-kubectl_version="1.37.0"
+kubectl_version="1.37.1"
 # renovate: datasource=github-releases depName=yq packageName=mikefarah/yq
 yq_version="4.53.6"
 # renovate: datasource=npm depName=@devcontainers/cli
