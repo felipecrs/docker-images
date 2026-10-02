@@ -12,7 +12,7 @@ npm_version="11.20.0"
 # renovate: datasource=github-releases depName=k3d packageName=k3d-io/k3d
 k3d_version="5.9.0"
 # renovate: datasource=github-releases depName=helmfile packageName=helmfile/helmfile
-helmfile_version="1.8.0"
+helmfile_version="1.8.1"
 # renovate: datasource=github-releases depName=werf packageName=werf/werf
 werf_version="2.80.1"
 # renovate: datasource=github-tags depName=kubectl packageName=kubernetes/kubectl extractVersion=^kubernetes-(?<version>.*)$
